@@ -19,7 +19,7 @@ export default function Caption() {
         async function sendingError() {
             let code1 = "Caption Page"
             let code2 = "userData.imageURL does not match cookies.userData.imageURL"
-            console.log("caption:err")
+            // console.log("caption:err")
             await sendError(code1, code2)
         }
         sendingError()
@@ -90,8 +90,8 @@ export default function Caption() {
     }
     async function getCaptions(){
         const submittedCaptions = await getSubmittedCaptions(userData)
-        console.log("get from service:Caption")
-        console.log(submittedCaptions)
+        // console.log("get from service:Caption")
+        // console.log(submittedCaptions)
         return submittedCaptions;
     }
     useEffect(() => {

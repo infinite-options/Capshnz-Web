@@ -89,6 +89,7 @@ export default function ScoreBoard(){
                     ...userData,
                     scoreBoardEnd: event.data.scoreBoard
                 }
+                setloadingImg(false)
                 setUserData(updatedEndUserData)
                 setCookie("userData", updatedUserData, {path: '/'})
                 setScoreBoard(event.data.scoreBoard)

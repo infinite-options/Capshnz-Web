@@ -22,8 +22,8 @@ export default function EndGame(){
         if (cookies.userData === undefined || cookies.userData.scoreBoard === undefined || cookies.userData.scoreBoard.length == 0) {
             scoreBoard()
         } else {
-            console.log(cookies.userData)
-            console.log(cookies.userData.scoreBoard.lenght)
+            // console.log(cookies.userData)
+            // console.log(cookies.userData.scoreBoard.lenght)
             const scoreboard = cookies.userData.scoreBoard;
             scoreboard.sort((a, b) => b.game_score - a.game_score)
             setScoreBoard(scoreboard)

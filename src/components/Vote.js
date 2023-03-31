@@ -26,7 +26,7 @@ export default function Vote(){
         async function sendingError(){
             let code1 = "Vote Page"
             let code2 = "userData.imageURL does not match cookies.userData.imageURL"
-            console.log("vote:err")
+            // console.log("vote:err")
             await sendError(code1, code2)
         }
         sendingError()
@@ -85,23 +85,23 @@ export default function Vote(){
     }
 
     useEffect(() => {
-        console.log("Start")
-        console.log(captions)
-        console.log(cookies.userData)
+        // console.log("Start")
+        // console.log(captions)
+        // console.log(cookies.userData)
         if (captions.length === 0 && cookies.userData.captions != undefined) {
             setloadingImg(false)
             setSubmittedCaptions(cookies.userData.captions)
             isCaptionSubmitted.current = true
-            console.log("get from cookie")
-            console.log(cookies.userData.captions)
+            // console.log("get from cookie")
+            // console.log(cookies.userData.captions)
             
         }
 
         if(userData.host && cookies.userData.captions === undefined){
             async function getCaptions(){
                 const submittedCaptions = await getSubmittedCaptions(userData)
-                console.log("get from service")
-                console.log(submittedCaptions)
+                // console.log("get from service")
+                // console.log(submittedCaptions)
                 channel.publish({data: {
                     message: "Set Vote",
                     submittedCaptions: submittedCaptions
@@ -114,8 +114,8 @@ export default function Vote(){
 
         channel.subscribe( event => {
             if (event.data.message === "Set Vote") {
-                console.log("get from ably")
-                console.log(event.data.submittedCaptions)
+                // console.log("get from ably")
+                // console.log(event.data.submittedCaptions)
                 isCaptionSubmitted.current = true
                 setloadingImg(false)
                 setSubmittedCaptions(event.data.submittedCaptions)
@@ -147,8 +147,8 @@ export default function Vote(){
     }, [])
     async function getCaptionsForUser() {
         const submittedCaptions = await getSubmittedCaptions(userData)
-        console.log("get from service:user")
-        console.log(submittedCaptions)
+        // console.log("get from service:user")
+        // console.log(submittedCaptions)
         setloadingImg(false)
         setSubmittedCaptions(submittedCaptions)        
     }
@@ -156,7 +156,7 @@ export default function Vote(){
         const interval = setInterval(() => {
             if (!isCaptionSubmitted.current) {
                 getCaptionsForUser()
-                console.log(isCaptionSubmitted)
+                // console.log(isCaptionSubmitted)
                 isCaptionSubmitted.current = true
             }
         }, 5000);

@@ -31,7 +31,7 @@ export default function CnnDeck(){
                 sendError(code1, code2)
             } else {
                 setloadingImg(4)
-                console.log(CNNImageURLResponse)
+                // console.log(CNNImageURLResponse)
                 setCNNImageURL(CNNImageURLResponse)
             }
         }
@@ -46,7 +46,7 @@ export default function CnnDeck(){
                 if (loadingImg == 1) {
                     alert("Loading of the CNN deck is taking longer than expected.  Please be patient.");
                     setloadingImg(2)
-                } else {
+                } else if(loadingImg == 2) {
                     setloadingImg(3)
                     isMessageDisplayed.current = true
                     let code1 = "CNN Deck is not loading"
