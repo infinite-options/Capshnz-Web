@@ -134,7 +134,7 @@ export default function Caption() {
             </h3>
             <br/>
             <img className="imgCaption" src={userData.imageURL} alt="Loading Image...."/>
-            <p style={{textAlign:"center", overflow:"hidden"}}>ImageURL: {userData.imageURL}</p>
+            {/* <p style={{textAlign:"center", overflow:"hidden"}}>ImageURL: {userData.imageURL}</p> */}
             <br/>
             {!captionSubmitted &&
                 <input className="inputCaption" onChange={handleChange} type="text" placeholder="Enter your caption here"/>
