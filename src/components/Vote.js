@@ -29,7 +29,7 @@ export default function Vote(){
             // console.log("vote:err")
             await sendError(code1, code2)
         }
-        sendingError()
+        // sendingError()
     }
     async function scoreBoard(){
         const scoreboard = await getScoreBoard(userData)

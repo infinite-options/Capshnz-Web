@@ -15,26 +15,33 @@ export default function Caption() {
     const [captionSubmitted, setCaptionSubmitted] = useState(false)
     const isCaptionDisplayed = useRef(false)
 
-    if (cookies.userData != undefined && cookies.userData.imageURL !== userData.imageURL) {
         async function sendingError() {
             let code1 = "Caption Page"
             let code2 = "userData.imageURL does not match cookies.userData.imageURL"
             // console.log("caption:err")
             await sendError(code1, code2)
+            // console.log(cookies.userData.imageURL)
+            // console.log("user")
+            // console.log(userData.imageURL)
         }
-        sendingError()
-    }
     useEffect(() => {
-        const interval = setInterval(() => {
-            if (!isCaptionDisplayed.current && cookies.userData.imageURL !== userData.imageURL) {
-                // getCaptionsForUser()
-                const image_URL = getGameImageForRound(userData.gameCode, userData.roundNumber)
+        async function getCaptionsForUser(){
+            const image_URL = await getGameImageForRound(userData.gameCode, userData.roundNumber)
+            if (image_URL != userData.imageURL) {
+                sendingError()
                 const updatedUserData = {
                     ...userData,
                     imageURL: image_URL
                 }
                 setUserData(updatedUserData)
                 setCookie("userData", updatedUserData, {path: '/'})
+            } else {
+                setCookie("userData", userData, {path: '/'})
+            }
+        }
+        const interval = setInterval(() => {
+            if (!isCaptionDisplayed.current && cookies.userData.imageURL !== userData.imageURL) {
+                getCaptionsForUser()
                 isCaptionDisplayed.current = true
             }
         }, 5000);
