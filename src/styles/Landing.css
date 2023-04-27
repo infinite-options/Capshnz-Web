@@ -26,9 +26,11 @@
     border-width: 3px;
     background-color: white;
     font-size: 20px;
-    line-height: 3;
+    line-height: 50px;
     padding-left: 25px;
     margin-left: 12px;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 .inputLanding::placeholder, .inputGameCode::placeholder {
     color: black;
@@ -38,6 +40,8 @@
     text-align: left;
     border-radius: 15px;
     border-color: black;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 .buttonLanding {
     width: 275px;

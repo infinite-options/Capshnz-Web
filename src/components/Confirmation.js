@@ -46,7 +46,7 @@ export default function Confirmation(){
             {!valid &&
                 <h3 className="validConfirmation">Invalid Code. Please Try Again.</h3>
             }
-            <ReactCodeInput type='text' inputStyle={{height:"100px", width:"50px", fontSize:"20px"}} fields={3}  onChange={handleChange}/>
+            <ReactCodeInput type='text' fields={3} onChange={handleChange}/>
             <br/>
             <br/>
             <button className="buttonConfirmation" onClick={submitButton}>

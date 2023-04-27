@@ -9,7 +9,8 @@ export default function Landing(){
     const [userData, setUserData] = useState({name: "", email: "", zipCode: "", alias: ""})
     const [cookies, setCookie] = useCookies(["userData"])
     const [cookiesUsed, setCookiesUsed] = useState(false)
-    const [isLoading, setLoading] = useState(false)
+    const [isCreateLoading, setCreateLoading] = useState(false)
+    const [isJoinLoading, setJoinLoading] = useState(false)
 
     if(!cookiesUsed && cookies.userData != undefined) {
         userData.name = cookies.userData.name
@@ -75,26 +76,33 @@ export default function Landing(){
     }
 
     async function createNewGameButton() {
-        if (!validateUserData())
-            return
-        const playerInfo = await addUser(userData)
-        const updatedUserData = {
-            ...userData,
-            roundNumber: 1,
-            host: true,
-            playerUID: playerInfo.user_uid
+        try {
+            setCreateLoading(true)
+            if (!validateUserData())
+                return
+            const playerInfo = await addUser(userData)
+            const updatedUserData = {
+                ...userData,
+                roundNumber: 1,
+                host: true,
+                playerUID: playerInfo.user_uid
+            }
+            setUserData(updatedUserData)
+            setCookie("userData", updatedUserData, {path: '/'})
+            if(playerInfo.user_code === "TRUE")
+                navigate("/ScoreType", {state: updatedUserData})
+            else
+                navigate("/Confirmation", {state: updatedUserData})
+        } catch(error) {
+            console.error(error);
+        } finally {
+            setCreateLoading(false)
         }
-        setUserData(updatedUserData)
-        setCookie("userData", updatedUserData, {path: '/'})
-        if(playerInfo.user_code === "TRUE")
-            navigate("/ScoreType", {state: updatedUserData})
-        else
-            navigate("/Confirmation", {state: updatedUserData})
     }
 
     async function joinGameButton() {
         try {
-            setLoading(true)
+            setJoinLoading(true)
             if (!validateUserData())
                 return
             if(!await checkGameCode(userData.gameCode))
@@ -126,7 +134,7 @@ export default function Landing(){
         } catch (error) {
             console.error(error);
         } finally {
-            setLoading(false)
+            setJoinLoading(false)
         }
     }
 
@@ -162,15 +170,15 @@ export default function Landing(){
                     <input className="inputLanding" type="text" name="alias" placeholder="Alias (screen name)"/>
                 </form>
             }
-            <button className="buttonLanding" onClick={createNewGameButton}>
-                Create New Game
+            <button className="buttonLanding" onClick={createNewGameButton} disabled={isCreateLoading}>
+                {isCreateLoading?"Creating...":"Create New Game"}
             </button>
             <div className="textLanding">
                 OR
             </div>
             <input className="inputGameCode" onChange={handleChange} type="text" name="gameCode" placeholder="Enter Game Code"/>
-            <button className="buttonLanding" onClick={joinGameButton} disabled={isLoading}>
-                {isLoading?"Joining...":"Join Game"}
+            <button className="buttonLanding" onClick={joinGameButton} disabled={isJoinLoading}>
+                {isJoinLoading?"Joining...":"Join Game"}
             </button>
         </div>
     )
