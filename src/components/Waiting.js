@@ -13,6 +13,7 @@ export default function Waiting(){
     const [lobby, setLobby] = useState([])
     const [initialize, setInitialize] = useState(false)
     const [loadingImg, setloadingImg] = useState(false)
+    const [isLoading, setLoading] = useState(false)
 
     function copyGameCodeButton(){
         navigator.clipboard.writeText(userData.gameCode)
@@ -27,22 +28,29 @@ export default function Waiting(){
     }
 
     async function startGameButton() {
-        let imageURL = ""
-        if(userData.isApi){
-            const imageURLs = await getApiImages(userData)
-            imageURL = await postCreateRounds(userData.gameCode, imageURLs)
+        try {
+            setLoading(true)
+            let imageURL = ""
+            if(userData.isApi){
+                const imageURLs = await getApiImages(userData)
+                imageURL = await postCreateRounds(userData.gameCode, imageURLs)
+            }
+            channel.publish({data: {
+                    message: "Start Game",
+                    numOfPlayers: lobby.length,
+                    isApi: userData.isApi,
+                    deckTitle: userData.deckTitle,
+                    deckUID: userData.deckUID,
+                    gameUID: userData.gameUID,
+                    numOfRounds: userData.numOfRounds,
+                    roundTime: userData.roundTime,
+                    imageURL: imageURL
+            }})
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
         }
-        channel.publish({data: {
-                message: "Start Game",
-                numOfPlayers: lobby.length,
-                isApi: userData.isApi,
-                deckTitle: userData.deckTitle,
-                deckUID: userData.deckUID,
-                gameUID: userData.gameUID,
-                numOfRounds: userData.numOfRounds,
-                roundTime: userData.roundTime,
-                imageURL: imageURL
-        }})
     }
 
     useEffect(() => {
@@ -123,8 +131,8 @@ export default function Waiting(){
                 </button>
             }
             {userData.host && userData.deckSelected &&
-                <button className="buttonRoundType" onClick={startGameButton}>
-                    Start Game
+                <button className="buttonRoundType" onClick={startGameButton} disabled={isLoading}>
+                    {isLoading?"Starting...":"Start Game"}
                 </button>
             }
         </div>
