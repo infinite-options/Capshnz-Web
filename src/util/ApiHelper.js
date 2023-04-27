@@ -84,7 +84,7 @@ async function getCnnImgURLs(URL){
     const imgItems = scriptObj.itemListElement
     let imgURLs = []
     for (let i = 0; i < imgItems.length; i++){
-        imgURLs.push(imgItems[i].item.url)
+        imgURLs.push(imgItems[i].url)
     }
    
     return imgURLs
