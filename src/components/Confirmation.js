@@ -5,6 +5,18 @@ import ReactCodeInput from "react-code-input"
 import { ably, checkEmailCode, joinGame } from "../util/Api.js"
 import "../styles/Confirmation.css"
 
+const codeInputStyle = {
+    borderRadius: '6px',
+    border: '1px solid',
+    boxShadow: '0px 0px 10px 0px rgba(0,0,0,.10)',
+    margin: '4px',
+    padding: '0 0 0 10px',
+    width: '40px',
+    height: '46px',
+    fontSize: '32px',
+    boxSizing: 'border-box',
+}
+
 export default function Confirmation(){
     const navigate = useNavigate(), location = useLocation()
     const [userData, setUserData] = useState(location.state)
@@ -46,7 +58,7 @@ export default function Confirmation(){
             {!valid &&
                 <h3 className="validConfirmation">Invalid Code. Please Try Again.</h3>
             }
-            <ReactCodeInput type='text' fields={3} onChange={handleChange}/>
+            <ReactCodeInput type='text' inputStyle={codeInputStyle} fields={3} onChange={handleChange}/>
             <br/>
             <br/>
             <button className="buttonConfirmation" onClick={submitButton}>
