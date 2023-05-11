@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useNavigate, useLocation, Link } from "react-router-dom"
 import { useCookies } from 'react-cookie'
 import { ably, getApiImages, getPlayers, postCreateRounds,checkGameStarted } from "../util/Api"
 import "../styles/Waiting.css"
+import { handleApiError } from "../util/ApiHelper"
+import { ErrorContext } from "../App"
 
 export default function Waiting(){
     const navigate = useNavigate(), location = useLocation()
@@ -14,6 +16,7 @@ export default function Waiting(){
     const [initialize, setInitialize] = useState(false)
     const [loadingImg, setloadingImg] = useState(false)
     const [isLoading, setLoading] = useState(false)
+    const context = useContext(ErrorContext)
 
     function copyGameCodeButton(){
         navigator.clipboard.writeText(userData.gameCode)
@@ -47,7 +50,7 @@ export default function Waiting(){
                     imageURL: imageURL
             }})
         } catch (error) {
-            console.error(error)
+            handleApiError(error, startGameButton, context)
         } finally {
             setLoading(false)
         }

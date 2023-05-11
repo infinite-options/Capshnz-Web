@@ -1,8 +1,10 @@
-import { useState, useEffect,useRef } from "react"
+import { useState, useEffect,useRef, useContext } from "react"
 import { useNavigate, useLocation, Link } from "react-router-dom"
 import { useCookies } from 'react-cookie'
 import { ably, getScoreBoard, getNextImage,getGameScore } from "../util/Api"
 import "../styles/ScoreBoard.css"
+import { handleApiError } from "../util/ApiHelper"
+import { ErrorContext } from "../App"
 
 export default function ScoreBoard(){
     const navigate = useNavigate(), location = useLocation()
@@ -14,6 +16,7 @@ export default function ScoreBoard(){
     const [isScoreBoard, setisScoreBoard] = useState(false)
     const isScoreBoardDisplayed = useRef(false)
     const [loadingImg, setloadingImg] = useState(true)
+    const context = useContext(ErrorContext)
 
     if (scoreBoard.length === 0 && cookies.userData.scoreBoard != undefined) {
         setloadingImg(false)
@@ -65,13 +68,17 @@ export default function ScoreBoard(){
         })
     }
     async function nextRoundButton() {
-        const nextRound = userData.roundNumber + 1
-        const imageURL = await getNextImage(userData.gameCode, nextRound)
-        channel.publish({data: {
-                message: "Start Next Round",
-                roundNumber: nextRound,
-                imageURL: imageURL
-        }})
+        try {
+            const nextRound = userData.roundNumber + 1
+            const imageURL = await getNextImage(userData.gameCode, nextRound)
+            channel.publish({data: {
+                    message: "Start Next Round",
+                    roundNumber: nextRound,
+                    imageURL: imageURL
+            }})
+        } catch(error) {
+            handleApiError(error, nextRoundButton, context)
+        }
     }
 
     function finalScoresButton(){

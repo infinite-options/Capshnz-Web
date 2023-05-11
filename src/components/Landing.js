@@ -1,7 +1,9 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { useCookies } from 'react-cookie'
 import { ably, addUser, checkGameCode, joinGame } from "../util/Api"
+import { handleApiError } from "../util/ApiHelper"
+import { ErrorContext } from "../App"
 import "../styles/Landing.css"
 
 export default function Landing(){
@@ -11,6 +13,7 @@ export default function Landing(){
     const [cookiesUsed, setCookiesUsed] = useState(false)
     const [isCreateLoading, setCreateLoading] = useState(false)
     const [isJoinLoading, setJoinLoading] = useState(false)
+    const context = useContext(ErrorContext)
 
     if(!cookiesUsed && cookies.userData != undefined) {
         userData.name = cookies.userData.name
@@ -94,7 +97,7 @@ export default function Landing(){
             else
                 navigate("/Confirmation", {state: updatedUserData})
         } catch(error) {
-            console.error(error);
+            handleApiError(error, createNewGameButton, context)
         } finally {
             setCreateLoading(false)
         }
@@ -132,7 +135,7 @@ export default function Landing(){
             else
                 navigate("/Confirmation", {state: updatedUserData})
         } catch (error) {
-            console.error(error);
+            handleApiError(error, joinGameButton, context)
         } finally {
             setJoinLoading(false)
         }

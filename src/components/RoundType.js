@@ -1,14 +1,18 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { useNavigate, useLocation, Link } from "react-router-dom"
 import { useCookies } from 'react-cookie'
 import { createGame, joinGame } from "../util/Api.js"
 import "../styles/RoundType.css"
+import { ErrorContext } from "../App.js"
+import { handleApiError } from "../util/ApiHelper.js"
 
 export default function RoundType() {
     const navigate = useNavigate(), location = useLocation()
     const [userData, setUserData] = useState(location.state)
     const [cookies, setCookie] = useCookies(["userData"])
     const [roundInfo, setRoundInfo] = useState({numOfRounds: 10, roundTime: 30})
+    const [isLoading, setLoading] = useState(false)
+    const context = useContext(ErrorContext)
 
     function handleChange(event){
         if(event.target.name === "numOfRounds"){
@@ -38,21 +42,28 @@ export default function RoundType() {
     }
 
     async function continueButton() {
-        if (!validateRoundInfo())
-            return
-        const gameInfo = await createGame(userData.playerUID, roundInfo.numOfRounds, roundInfo.roundTime, userData.scoreType)
-        const updatedUserData = {
-            ...userData,
-            deckSelected: false,
-            numOfRounds: roundInfo.numOfRounds,
-            roundTime: roundInfo.roundTime,
-            gameUID: gameInfo.game_uid,
-            gameCode: gameInfo.game_code
+        try {
+            setLoading(true)
+            if (!validateRoundInfo())
+                return
+            const gameInfo = await createGame(userData.playerUID, roundInfo.numOfRounds, roundInfo.roundTime, userData.scoreType)
+            const updatedUserData = {
+                ...userData,
+                deckSelected: false,
+                numOfRounds: roundInfo.numOfRounds,
+                roundTime: roundInfo.roundTime,
+                gameUID: gameInfo.game_uid,
+                gameCode: gameInfo.game_code
+            }
+            setUserData(updatedUserData)
+            setCookie("userData", updatedUserData, {path: '/'})
+            await joinGame(updatedUserData)
+            navigate("/Waiting", { state: updatedUserData })
+        } catch(error) {
+            handleApiError(error, continueButton, context)
+        } finally {
+            setLoading(false)
         }
-        setUserData(updatedUserData)
-        setCookie("userData", updatedUserData, {path: '/'})
-        await joinGame(updatedUserData)
-        navigate("/Waiting", { state: updatedUserData })
     }
 
     return(
@@ -89,8 +100,8 @@ export default function RoundType() {
                 We recommend 30 seconds!
             </h5>
             <br/>
-            <button className="buttonRoundType" onClick={continueButton}>
-                Continue
+            <button className="buttonRoundType" onClick={continueButton} disabled={isLoading}>
+                {isLoading?"Loading...":"Continue"}
             </button>
         </div>
     )

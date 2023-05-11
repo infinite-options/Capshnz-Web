@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from "./config"
 import cheerio from "cheerio"
 
 const clevelandURL = "https://openaccess-api.clevelandart.org/api/artworks/"
@@ -118,4 +118,21 @@ async function getCurrentCnnURL() {
     return getCnnImgURLs(cnnURL)
 }
 
-export { getApiImagesHelper }
+const handleApiError = (error, onRetry, context) => {
+    console.error(error)
+    const {setShow, setOnRetry, setTitle, setDescription} = context
+    if(error.response) {
+        setTitle("Server error - SQL error")
+        setDescription(error.response.data.message)
+    } else if(error.code==="ECONNABORTED" && error.message.includes("timeout")) {
+        setTitle("Network error - Timeout error")
+        setDescription("This is taking longer than ususal. Please check your network connection and try again")
+    } else {
+        setTitle("Network error - Send error")
+        setDescription("Unable to reach server. Please check your network connection and try again")
+    }
+    setOnRetry(()=>onRetry)
+    setShow(true)
+}
+
+export { getApiImagesHelper, handleApiError }

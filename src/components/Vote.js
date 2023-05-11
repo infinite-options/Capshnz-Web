@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useContext } from "react"
 import { useState, useEffect ,useRef} from "react"
 import { useNavigate, useLocation , Link } from "react-router-dom"
 import { useCookies } from 'react-cookie'
@@ -6,6 +6,8 @@ import { ably, getSubmittedCaptions, postVote, sendError ,getScoreBoard } from "
 import { CountdownCircleTimer } from "react-countdown-circle-timer"
 import "../styles/Vote.css"
 import * as ReactBootStrap from "react-bootstrap";
+import { handleApiError } from "../util/ApiHelper"
+import { ErrorContext } from "../App"
 
 export default function Vote(){
     const navigate = useNavigate(), location = useLocation()
@@ -21,6 +23,7 @@ export default function Vote(){
     const isGameEnded = useRef(false)
     const isCaptionSubmitted = useRef(false)
     const [loadingImg, setloadingImg] = useState(true)
+    const context = useContext(ErrorContext)
 
     if(cookies.userData != undefined && cookies.userData.imageURL !== userData.imageURL){
         async function sendingError(){
@@ -164,19 +167,23 @@ export default function Vote(){
         return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
     }, [])
     async function closeButton() {
-        let scoreboard = userData.scoreBoardEnd
-        if (scoreboard === undefined) {
-            scoreboard = await scoreBoard()
-            for(let i = 0; i < scoreboard.length; i++){
-                scoreboard[i].game_score = 0
+        try {
+            let scoreboard = userData.scoreBoardEnd
+            if (scoreboard === undefined) {
+                scoreboard = await scoreBoard()
+                for(let i = 0; i < scoreboard.length; i++){
+                    scoreboard[i].game_score = 0
+                }
             }
+            channel.publish({
+                data: {
+                    message: "EndGame vote",
+                    scoreBoard : scoreboard
+                }
+            })
+        } catch(error) {
+            handleApiError(error, closeButton, context)
         }
-        channel.publish({
-            data: {
-                message: "EndGame vote",
-                scoreBoard : scoreboard
-            }
-        })
     }
     function updateToggles(index){
         if(captions[index] === isMyCaption)
@@ -193,26 +200,29 @@ export default function Vote(){
     }
 
     async function voteButton(timerComplete) {
-        
-        let numOfPlayersVoting = -1
-        // for(let i = 0; i < toggles.length; i++){
-        //     if(toggles[i] === true){
-        //         votedCaption = captions[i]
-        //     }
-        // }
-        if(votedCaption === -1 && !timerComplete){
-            alert("Please vote for a caption.")
-            return
-        }
-        setVoteSubmitted(true)
-        if(votedCaption === -1 && timerComplete){
-            numOfPlayersVoting = await postVote(null, userData)
-        }
-        else if(votedCaption !== -1){
-            numOfPlayersVoting = await postVote(captions[votedCaption], userData)
-        }
-        if(numOfPlayersVoting === 0){
-            channel.publish({data: {message: "Start ScoreBoard"}})
+        try {
+            let numOfPlayersVoting = -1
+            // for(let i = 0; i < toggles.length; i++){
+            //     if(toggles[i] === true){
+            //         votedCaption = captions[i]
+            //     }
+            // }
+            if(votedCaption === -1 && !timerComplete){
+                alert("Please vote for a caption.")
+                return
+            }
+            setVoteSubmitted(true)
+            if(votedCaption === -1 && timerComplete){
+                numOfPlayersVoting = await postVote(null, userData)
+            }
+            else if(votedCaption !== -1){
+                numOfPlayersVoting = await postVote(captions[votedCaption], userData)
+            }
+            if(numOfPlayersVoting === 0){
+                channel.publish({data: {message: "Start ScoreBoard"}})
+            }
+        } catch(error) {
+            handleApiError(error, voteButton, context)
         }
     }
 

@@ -1,9 +1,11 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useCookies } from 'react-cookie'
 import ReactCodeInput from "react-code-input"
 import { ably, checkEmailCode, joinGame } from "../util/Api.js"
 import "../styles/Confirmation.css"
+import { handleApiError } from "../util/ApiHelper.js"
+import { ErrorContext } from "../App.js"
 
 const codeInputStyle = {
     borderRadius: '6px',
@@ -23,29 +25,34 @@ export default function Confirmation(){
     const [cookies, setCookie] = useCookies(["userData"])
     const [code, setCode] = useState("")
     const [valid, setValid] = useState(true)
+    const context = useContext(ErrorContext)
 
     function handleChange(code){
         setCode(code)
     }
 
     async function submitButton(){
-        const status = await checkEmailCode(userData.playerUID, code)
-        if(status.email_validated_status === "TRUE"){
-            if(userData.host){
-                navigate("/ScoreType", {state: userData})
+        try {
+            const status = await checkEmailCode(userData.playerUID, code)
+            if(status.email_validated_status === "TRUE"){
+                if(userData.host){
+                    navigate("/ScoreType", {state: userData})
+                }
+                else if(!userData.host){
+                    await joinGame(userData)
+                    const channel = ably.channels.get(`BizBuz/${userData.gameCode}`)
+                    channel.publish({data: {message: "New Player Joined Lobby"}})
+                    navigate("/Waiting", {state: userData})
+                }
             }
-            else if(!userData.host){
-                await joinGame(userData)
-                const channel = ably.channels.get(`BizBuz/${userData.gameCode}`)
-                channel.publish({data: {message: "New Player Joined Lobby"}})
-                navigate("/Waiting", {state: userData})
+            else{
+                setValid(false)
+                setTimeout(() => {
+                    setValid(true)
+                }, 2500)
             }
-        }
-        else{
-            setValid(false)
-            setTimeout(() => {
-                setValid(true)
-            }, 2500)
+        } catch(error) {
+            handleApiError(error, submitButton, context)
         }
     }
 

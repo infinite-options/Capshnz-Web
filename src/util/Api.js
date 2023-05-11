@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from "./config"
 import Ably from "ably/callbacks"
 import { getApiImagesHelper } from "./ApiHelper"
 
@@ -77,13 +77,14 @@ async function addUser(userData) {
 }
 
 async function getCnnImageURLS() {
-    const CnnImageURLS = await axios.get(getCNNDeckURLS)
-        .then(response => {
-            if (response.status != 200) {
-                return []
-            }            
-            return response.data
-        })
+    const CnnImageURLS = await axios.get(getCNNDeckURLS, {
+        timeout: 30000
+    }).then(response => {
+        if (response.status != 200) {
+            return []
+        }            
+        return response.data
+    })
     return CnnImageURLS
 }
 

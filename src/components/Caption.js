@@ -1,10 +1,12 @@
-import { useState, useEffect,useRef } from "react"
+import { useState, useEffect, useRef, useContext } from "react"
 import { useNavigate, useLocation,Link } from "react-router-dom"
 import { useCookies } from 'react-cookie'
 import { ably, submitCaption, sendError , getScoreBoard,getSubmittedCaptions,getGameImageForRound } from "../util/Api"
 import { CountdownCircleTimer } from "react-countdown-circle-timer"
 import * as ReactBootStrap from 'react-bootstrap'
 import "../styles/Caption.css"
+import { ErrorContext } from "../App"
+import { handleApiError } from "../util/ApiHelper"
 
 export default function Caption() {
     const navigate = useNavigate(), location = useLocation()
@@ -14,6 +16,7 @@ export default function Caption() {
     const [caption, setCaption] = useState("")
     const [captionSubmitted, setCaptionSubmitted] = useState(false)
     const isCaptionDisplayed = useRef(false)
+    const context = useContext(ErrorContext)
 
         async function sendingError() {
             let code1 = "Caption Page"
@@ -57,42 +60,50 @@ export default function Caption() {
         setCaption(event.target.value)
     }
     async function closeButton() {
-        let scoreboard = userData.scoreBoardEnd
-        if (scoreboard === undefined) {
-            scoreboard = await scoreBoard()
-            for(let i = 0; i < scoreboard.length; i++){
-                scoreboard[i].game_score = 0
+        try {
+            let scoreboard = userData.scoreBoardEnd
+            if (scoreboard === undefined) {
+                scoreboard = await scoreBoard()
+                for(let i = 0; i < scoreboard.length; i++){
+                    scoreboard[i].game_score = 0
+                }
             }
-        }
-        channel.publish({
-            data: {
-                message: "EndGame caption",
-                scoreBoard : scoreboard
-            }
-        })
-    }
-    async function submitButton(timerComplete) {
-        let numOfPlayersSubmitting = -1
-        if (caption === "" && !timerComplete) {
-            alert("Please enter a valid caption.")
-            return
-        }
-        setCaptionSubmitted(true)
-        if (caption !== "" && !timerComplete) {
-            numOfPlayersSubmitting = await submitCaption(caption, userData)
-        }
-        else if (timerComplete) {
-            numOfPlayersSubmitting = await submitCaption(caption, userData)
-        }
-        if (numOfPlayersSubmitting === 0) {
-            // const submittedCaptions = await getCaptions()
-
             channel.publish({
                 data: {
-                    message: "Start Vote"
-                    // ,submittedCaptions: submittedCaptions,
+                    message: "EndGame caption",
+                    scoreBoard : scoreboard
                 }
             })
+        } catch(error) {
+            handleApiError(error, closeButton, context)
+        }
+    }
+    async function submitButton(timerComplete) {
+        try {
+            let numOfPlayersSubmitting = -1
+            if (caption === "" && !timerComplete) {
+                alert("Please enter a valid caption.")
+                return
+            }
+            setCaptionSubmitted(true)
+            if (caption !== "" && !timerComplete) {
+                numOfPlayersSubmitting = await submitCaption(caption, userData)
+            }
+            else if (timerComplete) {
+                numOfPlayersSubmitting = await submitCaption(caption, userData)
+            }
+            if (numOfPlayersSubmitting === 0) {
+                // const submittedCaptions = await getCaptions()
+
+                channel.publish({
+                    data: {
+                        message: "Start Vote"
+                        // ,submittedCaptions: submittedCaptions,
+                    }
+                })
+            }
+        } catch(error) {
+            handleApiError(error, submitButton, context)
         }
     }
     async function getCaptions(){

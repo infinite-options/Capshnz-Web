@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { useNavigate, useLocation, Link } from "react-router-dom"
 import { useCookies } from 'react-cookie'
 import { ably, getDecks, selectDeck } from "../util/Api.js"
 import "../styles/SelectDeck.css"
+import { ErrorContext } from "../App.js"
+import { handleApiError } from "../util/ApiHelper.js"
 
 export default function SelectDeck(){
     const navigate = useNavigate(), location = useLocation()
@@ -10,6 +12,7 @@ export default function SelectDeck(){
     const [cookies, setCookie] = useCookies(["userData"])
     const [decksInfo, setDecksInfo] = useState([])
     const channel = ably.channels.get(`BizBuz/${userData.gameCode}`)
+    const context = useContext(ErrorContext)
 
     useEffect( () => {
         async function getDecksInfo(){
@@ -19,36 +22,39 @@ export default function SelectDeck(){
         getDecksInfo()
     }, [userData.playerUID])
     async function handleClick(deckTitle, deckUID,thumbnail_url) {
-        await selectDeck(deckUID, userData.gameCode, userData.roundNumber)
-        let isApi
-        if(deckTitle === "Google Photos"){
-            channel.publish({data: {message: "Deck Selected"}})
-            navigate("/GooglePhotos", {state: userData})
-            return
+        try {
+            await selectDeck(deckUID, userData.gameCode, userData.roundNumber)
+            let isApi
+            if(deckTitle === "Google Photos"){
+                channel.publish({data: {message: "Deck Selected"}})
+                navigate("/GooglePhotos", {state: userData})
+                return
+            }
+            else if (deckTitle === "Cleveland Gallery" || deckTitle === "Chicago Gallery" ||
+                deckTitle === "Giphy Gallery" || deckTitle === "Harvard Gallery" || deckTitle === "CNN Gallery") {
+                isApi = true
+            }
+            else {
+                isApi = false
+            }
+            const updatedUserData = {
+                ...userData,
+                isApi: isApi,
+                deckSelected: true,
+                deckTitle: deckTitle,
+                deckUID: deckUID,
+                deckThumbnail_url: thumbnail_url
+            }
+            setUserData(updatedUserData)
+            setCookie("userData", updatedUserData, { path: '/' })
+            if (deckTitle === "CNN Gallery") {
+                navigate("/CnnDeck", {state: updatedUserData})
+            } else {
+                navigate("/Waiting", {state: updatedUserData})    
+            }
+        } catch(error) {
+            handleApiError(error, ()=>handleClick(deckTitle, deckUID,thumbnail_url), context)
         }
-        else if (deckTitle === "Cleveland Gallery" || deckTitle === "Chicago Gallery" ||
-            deckTitle === "Giphy Gallery" || deckTitle === "Harvard Gallery" || deckTitle === "CNN Gallery") {
-            isApi = true
-        }
-        else {
-            isApi = false
-        }
-        const updatedUserData = {
-            ...userData,
-            isApi: isApi,
-            deckSelected: true,
-            deckTitle: deckTitle,
-            deckUID: deckUID,
-            deckThumbnail_url: thumbnail_url
-        }
-        setUserData(updatedUserData)
-        setCookie("userData", updatedUserData, { path: '/' })
-        if (deckTitle === "CNN Gallery") {
-            navigate("/CnnDeck", {state: updatedUserData})
-        } else {
-            navigate("/Waiting", {state: updatedUserData})    
-        }
-        
     }
 
     return(
