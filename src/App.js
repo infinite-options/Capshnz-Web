@@ -1,5 +1,8 @@
 import GameRules from "./components/GameRules"
 import Confirmation from "./components/Confirmation"
+import UserInfo from "./components/UserInfo"
+import JoinGame from "./components/JoinGame"
+import Feedback from "./components/Feedback"
 import Landing from "./components/Landing"
 import RoundType from "./components/RoundType"
 import ScoreType from "./components/ScoreType"
@@ -27,6 +30,7 @@ export default function App() {
     const [description, setDescription] = useState("");
     return (
     <div className="app">
+        <div className="bg-image"></div>
         <ErrorContext.Provider value={{setShow, setOnRetry, setTitle, setDescription}}>
             <ApiError show={show} onRetry={onRetry} title={title} description={description} />
             <GoogleOAuthProvider clientId="336598290180-69pe1qeuqku450vnoi8v1ehhi19jhpmt.apps.googleusercontent.com">
@@ -34,6 +38,9 @@ export default function App() {
                     <Router>
                         <Routes>
                             <Route path="/" element={<Landing />} />
+                            <Route path="/UserInfo" element={<UserInfo />} />
+                            <Route path="/JoinGame" element={<JoinGame />} />
+                            <Route path="/Feedback" element={<Feedback />} />
                             <Route path="/GameRules" element={<GameRules />} />
                             <Route path="/Confirmation" element={<Confirmation />} />
                             <Route path="/ScoreType" element={<ScoreType />} />

@@ -31,6 +31,7 @@ const errorURL = "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api
 const CheckGameURL = "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/getRoundImage"
 const getCNNDeckURLS = "https://myx6g22dd2rtcpviw3d5wuz7eu0zudaq.lambda-url.us-west-2.on.aws/"
 const getgameScoreURL =  "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/getScores/"
+const addUserByEmailURL =  "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/addUserByEmail"
 
 async function checkGameCode(gameCode){
     const codeStatus = await axios.get(checkGameURL + '/' + gameCode)
@@ -74,6 +75,12 @@ async function addUser(userData) {
     const playerInfo = await axios.post(addUserURL, payload)
         .then(response => response.data)
     return playerInfo
+}
+
+async function addUserByEmail(email) {
+    const response = await axios.post(addUserByEmailURL, 
+        { email })
+    return response.data
 }
 
 async function getCnnImageURLS() {
@@ -252,7 +259,7 @@ async function getGameScore(gameCode,roundNo){
     })
     return scoreboard
 }
-export { ably, checkGameCode, checkEmailCode, addUser, createGame,
+export { ably, checkGameCode, checkEmailCode, addUser, createGame, addUserByEmail,
     joinGame, getDecks, selectDeck, assignDeck, setDatabaseImages,
     getApiImages, postRoundImage, getDatabaseImage, getPlayers, submitCaption,
     getSubmittedCaptions, postVote, updateScores, leftOverVotingPlayers, getScoreBoard,

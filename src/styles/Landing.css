@@ -1,72 +1,11 @@
-.landing {
-    max-width: 375px;
-    height: 812px;
-    background-image: url("../assets/landing.png");
+.container {
+  height: 100vh;
+  max-width: 400px;
 }
-.gameRulesLanding {
-    display: inline-block;
-    position: absolute;
-    margin-top: 175px;
-    margin-left: 30px;
-    margin-bottom: 20px;
-    font-family: Josefin Sans, sans-serif;
-    font-weight: bold;
-    color: blue;
-    text-decoration: none;
-}
-.userDataFormLanding {
-    padding-top: 60%;
-    margin-bottom: 12%;
-}
-.inputLanding, .inputGameCode {
-    width: 350px;
-    height: 50px;
-    border-radius: 25px;
-    border-color: black;
-    border-width: 3px;
-    background-color: white;
-    font-size: 20px;
-    line-height: 50px;
-    padding-left: 25px;
-    margin-left: 12px;
-    padding-top: 0;
-    padding-bottom: 0;
-}
-.inputLanding::placeholder, .inputGameCode::placeholder {
-    color: black;
-    font-family: Josefin Sans, sans-serif;
-    font-weight: bold;
-    font-size: 20px;
-    text-align: left;
-    border-radius: 15px;
-    border-color: black;
-    padding-top: 0;
-    padding-bottom: 0;
-}
-.buttonLanding {
-    width: 275px;
-    height: 50px;
-    border-width: 3px;
-    border-radius: 25px;
-    border-color: black;
-    font-family: Josefin Sans, sans-serif;
-    font-weight: bold;
-    font-size: 20px;
-    color: black;
-    background-color: #f9dd25;
-    margin-left: 50px;
-}
-.textLanding {
-    color: black;
-    font-family: Josefin Sans, sans-serif;
-    font-weight: bold;
-    font-size: 20px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    margin-left: 45%;
-    border-radius: 15px;
-    border-color: black;
-}
-.inputGameCode {
-    margin-bottom: 7%;
+
+.gameRules {
+  font-family: Josefin Sans, sans-serif;
+  font-weight: bold;
+  color: blue;
+  text-decoration: none;
 }
