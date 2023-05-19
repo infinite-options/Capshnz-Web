@@ -1,6 +1,9 @@
 .container {
-  height: 100vh;
-  max-width: 400px;
+  max-width: 375px;
+  height: 812px;
+  background-image: url("../assets/landing.png");
+  background-repeat: no-repeat;
+  margin-left: 0;
 }
 
 .gameRules {

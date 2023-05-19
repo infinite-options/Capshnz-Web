@@ -54,14 +54,6 @@ const Landing = () => {
             <h2>Welcome to Capshnz!</h2>
           </Col>
         </Row>
-        <Row className="py-5 ps-4">
-          <Col>
-            <Link to="/GameRules" className="gameRules">
-              <i className="fa fa-info-circle"></i>
-              Game Rules
-            </Link>
-          </Col>
-        </Row>
         <Row className="d-flex justify-content-center">
           <Form.Group as={Col} md="10">
             <Form.Label>Enter your Email Address</Form.Label>
@@ -78,7 +70,7 @@ const Landing = () => {
             </Form.Control.Feedback>
           </Form.Group>
         </Row>
-        <Row className="text-center pb-3" style={{ paddingTop: "300px" }}>
+        <Row className="text-center py-3">
           <Col>
             By pressing Enter you agree to let us use cookies to improve game
             performance
@@ -89,6 +81,14 @@ const Landing = () => {
             <Button variant="success" type="submit">
               Enter
             </Button>
+          </Col>
+        </Row>
+        <Row className="py-3 ps-4">
+          <Col>
+            <Link to="/GameRules" className="gameRules">
+              <i className="fa fa-info-circle"></i>
+              Game Rules
+            </Link>
           </Col>
         </Row>
       </Container>

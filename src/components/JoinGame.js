@@ -47,6 +47,7 @@ const JoinGame = () => {
       if (!(await checkGameCode(gameCode))) return;
       const updatedUserData = {
         ...userData,
+        gameCode,
         roundNumber: 1,
         host: false,
       };
@@ -101,7 +102,7 @@ const JoinGame = () => {
           </Row>
         </Container>
       </Form>
-      <Container style={{ paddingTop: "200px" }} fluid>
+      <Container style={{ paddingTop: "150px" }} fluid>
         <Row className="text-center py-3">
           <Col>Want to provide game feedback?</Col>
         </Row>

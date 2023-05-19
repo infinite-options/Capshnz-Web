@@ -30,7 +30,6 @@ export default function App() {
     const [description, setDescription] = useState("");
     return (
     <div className="app">
-        <div className="bg-image"></div>
         <ErrorContext.Provider value={{setShow, setOnRetry, setTitle, setDescription}}>
             <ApiError show={show} onRetry={onRetry} title={title} description={description} />
             <GoogleOAuthProvider clientId="336598290180-69pe1qeuqku450vnoi8v1ehhi19jhpmt.apps.googleusercontent.com">
