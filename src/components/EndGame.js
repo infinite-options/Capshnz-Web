@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { useCookies } from 'react-cookie'
 import { getScoreBoard,getGameScore } from "../util/Api"
 import "../styles/EndGame.css"
+import { Container, Row, Col } from "react-bootstrap"
 
 export default function EndGame(){
     const navigate = useNavigate(), location = useLocation()
@@ -49,18 +50,28 @@ export default function EndGame(){
                 // <img  href="" />
 
             }
-            <div className="columnsEndGame">
+            {/* <div className="columnsEndGame">
                 <div>Alias</div>
                 <div>Total</div>
-            </div>
-            {scoreBoard.map((player, index) => {
-                return(
-                    <div key={index} className="valuesEndGame">
-                        <div>{player.user_alias}</div>
-                        <div>{player.game_score}</div>
-                    </div>
-                )})
-            }
+            </div> */}
+            <Container className="results">
+                <Row key="heading" className="text-center py-1">
+                    <Col>{"Alias"}</Col>
+                    <Col>{"Total"}</Col>
+                </Row>
+                {scoreBoard.map((player, index) => {
+                    return(
+                        // <div key={index} className="valuesEndGame">
+                        //     <div>{player.user_alias}</div>
+                        //     <div>{player.game_score}</div>
+                        // </div>
+                        <Row key={index} className="text-center py-1">
+                            <Col>{player.user_alias}</Col>
+                            <Col>{player.game_score}</Col>
+                        </Row>
+                    )})
+                }
+            </Container>
             <br/>
             <button className="buttonEndGame" onClick={landingButton}>
                 Return to Landing Page
