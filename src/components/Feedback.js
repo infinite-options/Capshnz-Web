@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { addFeedback } from "../util/Api";
 import { Col, Container, Row } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -8,8 +9,9 @@ import "../styles/Landing.css";
 
 const Feedback = () => {
   const [feedback, setFeedback] = useState("");
-  const navigate = useNavigate(), location = useLocation();
-  const userDataLoc = location.state
+  const navigate = useNavigate(),
+    location = useLocation();
+  const userData = location.state;
 
   const handleFeedbackChange = (event) => {
     setFeedback(event.target.value);
@@ -17,28 +19,12 @@ const Feedback = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const res = {}; //await addUserByEmail(email);
-      const userData = {
-        ...res.userData,
-        // roundNumber: 1,
-        // host: true,
-        // playerUID: res.userData.user_uid
-      };
-      if (res.emailExists) {
-        navigate("/Waiting", { state: userData });
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleSubmitFB = () => {
-    navigate("/JoinGame", { state: userDataLoc })
+    await addFeedback(userData, feedback);
+    navigate("/JoinGame", { state: userData });
   };
 
   return (
-    <Form className="container" noValidate onSubmit={handleSubmit}>
+    <Form className="container" onSubmit={handleSubmit}>
       <Container fluid>
         <Row className="text-center py-5">
           <Col>Tell us what you think</Col>
@@ -57,7 +43,7 @@ const Feedback = () => {
         </Row>
         <Row className="text-center py-3">
           <Col>
-            <Button variant="success" type="submit" onClick={handleSubmitFB}>
+            <Button variant="success" type="submit">
               Enter
             </Button>
           </Col>

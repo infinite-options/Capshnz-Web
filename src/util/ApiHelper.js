@@ -1,5 +1,5 @@
 import axios from "./config"
-import cheerio from "cheerio"
+import * as cheerio from 'cheerio';
 
 const clevelandURL = "https://openaccess-api.clevelandart.org/api/artworks/"
 const chicagoURL = "https://api.artic.edu/api/v1/artworks?fields=id,title,image_id"
@@ -79,14 +79,11 @@ function randomize(inputArray, numOfRounds){
 async function getCnnImgURLs(URL){
     const htmlString = await axios.get(URL).then(response => response.data)
     const $ = cheerio.load(htmlString)
-    const scriptString = $("script")
-    const scriptObj = JSON.parse($(scriptString[2]).text())
-    const imgItems = scriptObj.itemListElement
+    const imgElements = $("body").find("img")
     let imgURLs = []
-    for (let i = 0; i < imgItems.length; i++){
-        imgURLs.push(imgItems[i].url)
+    for (let i = 0; i < imgElements.length; i++){
+        imgURLs.push(imgElements[i].attribs.src)
     }
-   
     return imgURLs
 }
 
