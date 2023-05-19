@@ -42,4 +42,9 @@
 .results {
     background-image: none;
     height: auto;
+    margin-right: 5rem;
+}
+
+.score {
+    margin-right: 8rem !important;
 }

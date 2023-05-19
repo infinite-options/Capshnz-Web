@@ -93,7 +93,7 @@ export default function RoundType() {
                     Time for each round (seconds)
                 </h4>
             </div>
-            <input className="inputRoundType" onChange={handleChange} type="text" name="roundTime" defaultValue="30" />
+            <input className="inputRoundType" onChange={handleChange} type="text" name="roundTime" defaultValue="60" />
             <h5 className="threeRoundType">
                 This defines how many seconds you would like to give everyone to caption an image.
                 <br/>

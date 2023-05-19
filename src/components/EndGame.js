@@ -50,24 +50,16 @@ export default function EndGame(){
                 // <img  href="" />
 
             }
-            {/* <div className="columnsEndGame">
-                <div>Alias</div>
-                <div>Total</div>
-            </div> */}
-            <Container className="results">
-                <Row key="heading" className="text-center py-1">
+            <Container className="results mx-5">
+                <Row key="heading" className="text-start py-1">
                     <Col>{"Alias"}</Col>
                     <Col>{"Total"}</Col>
                 </Row>
                 {scoreBoard.map((player, index) => {
                     return(
-                        // <div key={index} className="valuesEndGame">
-                        //     <div>{player.user_alias}</div>
-                        //     <div>{player.game_score}</div>
-                        // </div>
-                        <Row key={index} className="text-center py-1">
+                        <Row key={index} className="py-1">
                             <Col>{player.user_alias}</Col>
-                            <Col>{player.game_score}</Col>
+                            <Col className="text-end score">{player.game_score}</Col>
                         </Row>
                     )})
                 }
