@@ -90,6 +90,7 @@ const JoinGame = () => {
                 type="text"
                 placeholder="Enter game code here..."
                 onChange={handleGameCodeChange}
+                inputMode="numeric"
               />
             </Form.Group>
           </Row>

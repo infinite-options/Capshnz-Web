@@ -50,7 +50,7 @@ export default function EndGame(){
                 // <img  href="" />
 
             }
-            <Container className="results mx-5">
+            <Container className="results">
                 <Row key="heading" className="text-start py-1">
                     <Col>{"Alias"}</Col>
                     <Col>{"Total"}</Col>

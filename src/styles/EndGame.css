@@ -1,6 +1,6 @@
 .endgame {
-    max-width: 370px;
-    height: 100%;
+    max-width: 375px;
+    height: 812px;
     background-color: red;
 }
 .headerEndGame, .columnsEndGame {
@@ -43,6 +43,7 @@
     background-image: none;
     height: auto;
     margin-right: 5rem;
+    margin-left: 60px;
 }
 
 .score {
