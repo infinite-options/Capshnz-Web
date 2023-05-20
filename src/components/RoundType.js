@@ -10,7 +10,7 @@ export default function RoundType() {
     const navigate = useNavigate(), location = useLocation()
     const [userData, setUserData] = useState(location.state)
     const [cookies, setCookie] = useCookies(["userData"])
-    const [roundInfo, setRoundInfo] = useState({numOfRounds: 10, roundTime: 30})
+    const [roundInfo, setRoundInfo] = useState({numOfRounds: 10, roundTime: 60})
     const [isLoading, setLoading] = useState(false)
     const context = useContext(ErrorContext)
 
@@ -97,7 +97,7 @@ export default function RoundType() {
             <h5 className="threeRoundType">
                 This defines how many seconds you would like to give everyone to caption an image.
                 <br/>
-                We recommend 30 seconds!
+                We recommend 60 seconds!
             </h5>
             <br/>
             <button className="buttonRoundType" onClick={continueButton} disabled={isLoading}>
