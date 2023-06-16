@@ -1,7 +1,8 @@
 import { useState, useEffect,useRef, useContext } from "react"
 import { useNavigate, useLocation, Link } from "react-router-dom"
 import { useCookies } from 'react-cookie'
-import { ably, getScoreBoard, getNextImage,getGameScore } from "../util/Api"
+import useAbly from "../util/ably"
+import { getScoreBoard, getNextImage,getGameScore } from "../util/Api"
 import "../styles/ScoreBoard.css"
 import { handleApiError } from "../util/ApiHelper"
 import { ErrorContext } from "../App"
@@ -10,7 +11,7 @@ export default function ScoreBoard(){
     const navigate = useNavigate(), location = useLocation()
     const [userData, setUserData] = useState(location.state)
     const [cookies, setCookie] = useCookies(["userData"])
-    const channel = ably.channels.get(`BizBuz/${userData.gameCode}/${userData.roundNumber}`)
+    const { publish, subscribe, unSubscribe, detach } = useAbly(`${userData.gameCode}/${userData.roundNumber}`);
     const [scoreBoard, setScoreBoard] = useState([])
     const isGameEnded = useRef(false)
     const [isScoreBoard, setisScoreBoard] = useState(false)
@@ -31,7 +32,7 @@ export default function ScoreBoard(){
                 scoreBoard.sort((a, b) => b.votes - a.votes)
                 // console.log(scoreBoard)
                 setisScoreBoard(true)
-                channel.publish({
+                publish({
                     data: {
                         message: "Set ScoreBoard",
                         scoreBoard: scoreBoard
@@ -60,8 +61,8 @@ export default function ScoreBoard(){
       
         return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
     }, [scoreBoard])
-    function closeButton() {
-        channel.publish({
+    async function closeButton() {
+        await publish({
             data: {
                 message: "EndGame scoreboard"
             }
@@ -71,7 +72,7 @@ export default function ScoreBoard(){
         try {
             const nextRound = userData.roundNumber + 1
             const imageURL = await getNextImage(userData.gameCode, nextRound)
-            channel.publish({data: {
+            await publish({data: {
                     message: "Start Next Round",
                     roundNumber: nextRound,
                     imageURL: imageURL
@@ -81,12 +82,12 @@ export default function ScoreBoard(){
         }
     }
 
-    function finalScoresButton(){
-        channel.publish({data: {message: "Start EndGame"}})
+    async function finalScoresButton(){
+        await publish({data: {message: "Start EndGame"}})
     }
 
     useEffect(() => {
-        channel.subscribe( async event => {
+        subscribe( async event => {
             if(event.data.message === "Set ScoreBoard"){
                 const updatedUserData = {
                     ...userData,
@@ -115,11 +116,13 @@ export default function ScoreBoard(){
                 navigate("/EndGame", {state: userData})
             }
         })
-    })
+        return () => unSubscribe()
+    }, [])
     
     useEffect(() => {
-        channel.subscribe(async event => {
+        subscribe(async event => {
             if (event.data.message === "EndGame scoreboard") {
+                detach()
                 const updatedUserData = {
                     ...userData,
                     scoreBoard: scoreBoard
