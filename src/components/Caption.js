@@ -72,7 +72,7 @@ export default function Caption() {
                     scoreboard[i].game_score = 0
                 }
             }
-            publish({
+            await publish({
                 data: {
                     message: "EndGame caption",
                     scoreBoard : scoreboard
@@ -99,7 +99,7 @@ export default function Caption() {
             if (numOfPlayersSubmitting === 0) {
                 // const submittedCaptions = await getCaptions()
 
-                publish({
+                await publish({
                     data: {
                         message: "Start Vote"
                         // ,submittedCaptions: submittedCaptions,

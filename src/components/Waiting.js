@@ -20,7 +20,7 @@ export default function Waiting(){
         addMember,
       } = useAbly(userData.gameCode);
     const [buttonText, setButtonText] = useState("Share with other players")
-    const [lobby, setLobby] = useState([{ alias: userData.alias }])
+    const [lobby, setLobby] = useState([])
     const [isLoading, setLoading] = useState(false)
     const context = useContext(ErrorContext)
 
@@ -44,7 +44,7 @@ export default function Waiting(){
                 const imageURLs = await getApiImages(userData)
                 imageURL = await postCreateRounds(userData.gameCode, imageURLs)
             }
-            publish({data: {
+            await publish({data: {
                     message: "Start Game",
                     numOfPlayers: lobby.length,
                     isApi: userData.isApi,
@@ -62,34 +62,35 @@ export default function Waiting(){
         }
     }
 
-    useEffect(() => {
-        getMembers((members) => {
-            setLobby(members.map((member) => member.data));
-            addMember(userData.playerUID, { alias: userData.alias });
+    const initializeLobby = async () => {
+        await onMemberUpdate(async () => {
+            const members = await getMembers()
+            setLobby(members.map((member) => member.data))
         });
-        onMemberUpdate((member) => {
-            if(member.clientId !== userData.playerUID)
-                setLobby([...lobby, member.data])
-        });
-        subscribe(async event => {
-            if (event.data.message === "Start Game") {
+        await addMember(userData.playerUID, { alias: userData.alias });
+        await subscribe(async (event) => {
+          if (event.data.message === "Start Game") {
                 detach()
                 const updatedUserData = {
-                    ...userData,
-                    numOfPlayers: event.data.numOfPlayers,
-                    isApi: event.data.isApi,
-                    deckTitle: event.data.deckTitle,
-                    deckUID: event.data.deckUID,
-                    gameUID: event.data.gameUID,
-                    numOfRounds: event.data.numOfRounds,
-                    roundTime: event.data.roundTime,
-                    imageURL: event.data.imageURL
-                }
-                setUserData(updatedUserData)
-                setCookie("userData", updatedUserData, {path: '/'})
-                navigate("/Caption", {state: updatedUserData})
+                ...userData,
+                numOfPlayers: event.data.numOfPlayers,
+                isApi: event.data.isApi,
+                deckTitle: event.data.deckTitle,
+                deckUID: event.data.deckUID,
+                gameUID: event.data.gameUID,
+                numOfRounds: event.data.numOfRounds,
+                roundTime: event.data.roundTime,
+                imageURL: event.data.imageURL,
+                };
+                setUserData(updatedUserData);
+                setCookie("userData", updatedUserData, { path: "/" });
+                navigate("/Caption", { state: updatedUserData });
             }
         })
+    }
+
+    useEffect(() => {
+        initializeLobby()
     }, [])
 
     return(

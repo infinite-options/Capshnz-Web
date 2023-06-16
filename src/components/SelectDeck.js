@@ -27,7 +27,7 @@ export default function SelectDeck(){
             await selectDeck(deckUID, userData.gameCode, userData.roundNumber)
             let isApi
             if(deckTitle === "Google Photos"){
-                publish({data: {message: "Deck Selected"}})
+                await publish({data: {message: "Deck Selected"}})
                 navigate("/GooglePhotos", {state: userData})
                 return
             }

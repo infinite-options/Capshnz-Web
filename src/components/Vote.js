@@ -106,7 +106,7 @@ export default function Vote(){
                 const submittedCaptions = await getSubmittedCaptions(userData)
                 // console.log("get from service")
                 // console.log(submittedCaptions)
-                publish({data: {
+                await publish({data: {
                     message: "Set Vote",
                     submittedCaptions: submittedCaptions
                 }})
@@ -180,7 +180,7 @@ export default function Vote(){
                     scoreboard[i].game_score = 0
                 }
             }
-            publish({
+            await publish({
                 data: {
                     message: "EndGame vote",
                     scoreBoard : scoreboard
@@ -224,7 +224,7 @@ export default function Vote(){
                 numOfPlayersVoting = await postVote(captions[votedCaption], userData)
             }
             if(numOfPlayersVoting === 0){
-                publish({data: {message: "Start ScoreBoard"}})
+                await publish({data: {message: "Start ScoreBoard"}})
             }
         } catch(error) {
             handleApiError(error, voteButton, context)

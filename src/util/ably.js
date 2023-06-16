@@ -1,4 +1,4 @@
-import Ably from "ably/callbacks";
+import * as Ably from "ably";
 
 const ABLY_API_KEY = process.env.REACT_APP_ABLY_API_KEY;
 
@@ -6,14 +6,12 @@ const useAbly = (() => {
   let channel = null;
 
   return (channelId) => {
-    const setChannelId = (channelId) => {
+    const setChannelId = async (channelId) => {
       const channelName = `BizBuz/${channelId}`;
       if (!channel || channel.name !== channelName) {
-        const ably = new Ably.Realtime(ABLY_API_KEY);
-        channel = ably.channels.get(channelName);
-        channel.attach((err) => {
-          if (err) console.error("Error when attaching: " + err.message);
-        });
+        const ablyClient = new Ably.Realtime.Promise(ABLY_API_KEY);
+        channel = ablyClient.channels.get(channelName);
+        await channel.attach();
       }
     };
 
@@ -21,37 +19,28 @@ const useAbly = (() => {
       setChannelId(channelId);
     }
 
-    const publish = (message) => {
-      channel.publish({ data: message }, (err) => {
-        if (err) console.error("Error when publishing: " + err.message);
-      });
+    const publish = async (message) => {
+      await channel.publish({ data: message });
     };
 
-    const getMembers = (callback) => {
-      channel.presence.get((err, members) => {
-        if (err) console.error("Error when getting members: " + err.message);
-        else callback(members);
-      });
+    const getMembers = async () => {
+      return await channel.presence.get();
     };
 
-    const addMember = (clientId, data) => {
-      channel.presence.enterClient(clientId, data, (err) => {
-        if (err) console.error("Error when entering: " + err.message);
-      });
+    const addMember = async (clientId, data) => {
+      await channel.presence.enterClient(clientId, data);
     };
 
-    const removeMember = (clientId) => {
-      channel.presence.leaveClient(clientId, (err) => {
-        if (err) console.error("Error when leaving: " + err.message);
-      });
+    const removeMember = async (clientId) => {
+      await channel.presence.leaveClient(clientId);
     };
 
-    const onMemberUpdate = (callback) => {
-      channel.presence.subscribe(["enter"], callback);
+    const onMemberUpdate = async (callback) => {
+      await channel.presence.subscribe("enter", callback);
     };
 
-    const subscribe = (listener) => {
-      channel.subscribe(listener);
+    const subscribe = async (listener) => {
+      await channel.subscribe(listener);
     };
 
     const unSubscribe = () => {
@@ -59,11 +48,9 @@ const useAbly = (() => {
       channel.unsubscribe();
     };
 
-    const detach = () => {
-      channel.detach((err) => {
-        if (err) console.error("Error when detaching: " + err.message);
-        else channel.release();
-      });
+    const detach = async () => {
+      await channel.detach();
+      await channel.release();
     };
 
     return {

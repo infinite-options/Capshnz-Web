@@ -61,8 +61,8 @@ export default function ScoreBoard(){
       
         return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
     }, [scoreBoard])
-    function closeButton() {
-        publish({
+    async function closeButton() {
+        await publish({
             data: {
                 message: "EndGame scoreboard"
             }
@@ -72,7 +72,7 @@ export default function ScoreBoard(){
         try {
             const nextRound = userData.roundNumber + 1
             const imageURL = await getNextImage(userData.gameCode, nextRound)
-            publish({data: {
+            await publish({data: {
                     message: "Start Next Round",
                     roundNumber: nextRound,
                     imageURL: imageURL
@@ -82,8 +82,8 @@ export default function ScoreBoard(){
         }
     }
 
-    function finalScoresButton(){
-        publish({data: {message: "Start EndGame"}})
+    async function finalScoresButton(){
+        await publish({data: {message: "Start EndGame"}})
     }
 
     useEffect(() => {
