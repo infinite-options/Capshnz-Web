@@ -1,7 +1,8 @@
 import { useContext, useEffect, useState } from "react"
 import { useNavigate, useLocation, Link } from "react-router-dom"
 import { useCookies } from 'react-cookie'
-import { ably, getApiImages, getPlayers, postCreateRounds,checkGameStarted } from "../util/Api"
+import { getApiImages, postCreateRounds } from "../util/Api"
+import useAbly from "../util/ably";
 import "../styles/Waiting.css"
 import { handleApiError } from "../util/ApiHelper"
 import { ErrorContext } from "../App"
@@ -10,11 +11,16 @@ export default function Waiting(){
     const navigate = useNavigate(), location = useLocation()
     const [userData, setUserData] = useState(location.state)
     const [cookies, setCookie] = useCookies(["userData"])
-    const channel = ably.channels.get(`BizBuz/${userData.gameCode}`)
+    const {
+        publish,
+        subscribe,
+        onMemberUpdate,
+        getMembers,
+        detach,
+        addMember,
+      } = useAbly(userData.gameCode);
     const [buttonText, setButtonText] = useState("Share with other players")
-    const [lobby, setLobby] = useState([])
-    const [initialize, setInitialize] = useState(false)
-    const [loadingImg, setloadingImg] = useState(false)
+    const [lobby, setLobby] = useState([{ alias: userData.alias }])
     const [isLoading, setLoading] = useState(false)
     const context = useContext(ErrorContext)
 
@@ -38,7 +44,7 @@ export default function Waiting(){
                 const imageURLs = await getApiImages(userData)
                 imageURL = await postCreateRounds(userData.gameCode, imageURLs)
             }
-            channel.publish({data: {
+            publish({data: {
                     message: "Start Game",
                     numOfPlayers: lobby.length,
                     isApi: userData.isApi,
@@ -57,24 +63,17 @@ export default function Waiting(){
     }
 
     useEffect(() => {
-        async function initializeLobby() {
-            setloadingImg(true)
-            const newLobby = await getPlayers(userData.gameCode)
-            setloadingImg(false)
-            setLobby(newLobby)
-        }
-
-        if(!initialize){
-            initializeLobby()
-            setInitialize(true)
-        }
-
-        channel.subscribe(async event => {
-            if (event.data.message === "New Player Joined Lobby") {
-                await checkGameStarted(userData.gameCode,1)
-                initializeLobby()
-            }
-            else if (event.data.message === "Start Game") {
+        getMembers((members) => {
+            setLobby(members.map((member) => member.data));
+            addMember(userData.playerUID, { alias: userData.alias });
+        });
+        onMemberUpdate((member) => {
+            if(member.clientId !== userData.playerUID)
+                setLobby([...lobby, member.data])
+        });
+        subscribe(async event => {
+            if (event.data.message === "Start Game") {
+                detach()
                 const updatedUserData = {
                     ...userData,
                     numOfPlayers: event.data.numOfPlayers,
@@ -91,7 +90,7 @@ export default function Waiting(){
                 navigate("/Caption", {state: updatedUserData})
             }
         })
-    }, [userData])
+    }, [])
 
     return(
         <div className="waiting">
@@ -107,19 +106,11 @@ export default function Waiting(){
                     return(
                         <li key={index} className="lobbyPlayerWaiting">
                             <i className="fas fa-circle fa-3x" style={{color: "purple"}}/>
-                            {player.user_alias}
+                            {player.alias}
                         </li>
                     )
                 })}
             </ul>
-            {loadingImg &&
-                 <div>
-                 <img src="/Loading_icon.gif" alt="loading CNN images"  width="250"  className="loadingimg"/>
-                 {/* <br/> <h6> CNN Deck may take more time for loading </h6> */}
-                 </div>
-                // <img  href="" />
-
-            }
             <button className="gameCodeWaiting">Game Code: {userData.gameCode}</button>
             <br/>
             <br/>

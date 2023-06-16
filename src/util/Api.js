@@ -1,10 +1,5 @@
 import axios from "./config"
-import Ably from "ably/callbacks"
 import { getApiImagesHelper } from "./ApiHelper"
-
-//KdQRaQ.Xl1OGw:yvmvuVmPZkzLf3ZF 
-const ably_api_key = "uVw8ZQ.JeIy0w:oGVPDlf8XqW8GGYFkjpbMaxjGb7PFr0Go8xp7NMWB28"
-const ably = new Ably.Realtime(ably_api_key)
 
 const checkGameURL = "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/checkGame"
 const checkEmailCodeURL = "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/checkEmailValidationCode"
@@ -268,7 +263,7 @@ async function addFeedback(userData, feedback) {
     }
     await axios.post(addFeedbackURL, payload)
 }
-export { ably, checkGameCode, checkEmailCode, addUser, createGame, addUserByEmail,
+export { checkGameCode, checkEmailCode, addUser, createGame, addUserByEmail,
     joinGame, getDecks, selectDeck, assignDeck, setDatabaseImages, addFeedback,
     getApiImages, postRoundImage, getDatabaseImage, getPlayers, submitCaption,
     getSubmittedCaptions, postVote, updateScores, leftOverVotingPlayers, getScoreBoard,

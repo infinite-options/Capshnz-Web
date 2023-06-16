@@ -2,7 +2,8 @@ import React, { useContext } from "react"
 import { useState, useEffect ,useRef} from "react"
 import { useNavigate, useLocation , Link } from "react-router-dom"
 import { useCookies } from 'react-cookie'
-import { ably, getSubmittedCaptions, postVote, sendError ,getScoreBoard } from "../util/Api"
+import useAbly from "../util/ably"
+import { getSubmittedCaptions, postVote, sendError ,getScoreBoard } from "../util/Api"
 import { CountdownCircleTimer } from "react-countdown-circle-timer"
 import "../styles/Vote.css"
 import * as ReactBootStrap from "react-bootstrap";
@@ -13,7 +14,7 @@ export default function Vote(){
     const navigate = useNavigate(), location = useLocation()
     const [userData, setUserData] = useState(location.state)
     const [cookies, setCookie] = useCookies(["userData"])
-    const channel = ably.channels.get(`BizBuz/${userData.gameCode}/${userData.roundNumber}`)
+    const { publish, subscribe, unSubscribe, detach } = useAbly(`${userData.gameCode}/${userData.roundNumber}`);
     const [captions, setCaptions] = useState([])
     const [toggles, setToggles] = useState([])
     const [isMyCaption, setIsMyCaption] = useState("")
@@ -105,7 +106,7 @@ export default function Vote(){
                 const submittedCaptions = await getSubmittedCaptions(userData)
                 // console.log("get from service")
                 // console.log(submittedCaptions)
-                channel.publish({data: {
+                publish({data: {
                     message: "Set Vote",
                     submittedCaptions: submittedCaptions
                 }})
@@ -115,7 +116,7 @@ export default function Vote(){
 
         
 
-        channel.subscribe( event => {
+        subscribe( event => {
             if (event.data.message === "Set Vote") {
                 // console.log("get from ably")
                 // console.log(event.data.submittedCaptions)
@@ -132,8 +133,9 @@ export default function Vote(){
     }, [userData])
 
     useEffect( () => {      
-        channel.subscribe( event => {
+        subscribe( event => {
             if (event.data.message === "EndGame vote") {
+                detach()
                 if (!userData.host && !isGameEnded.current) {
                     isGameEnded.current = true
                     alert("Host has Ended the game")
@@ -164,7 +166,10 @@ export default function Vote(){
             }
         }, 5000);
       
-        return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+        return () => {
+            clearInterval(interval) // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+            unSubscribe()
+        }
     }, [])
     async function closeButton() {
         try {
@@ -175,7 +180,7 @@ export default function Vote(){
                     scoreboard[i].game_score = 0
                 }
             }
-            channel.publish({
+            publish({
                 data: {
                     message: "EndGame vote",
                     scoreBoard : scoreboard
@@ -219,7 +224,7 @@ export default function Vote(){
                 numOfPlayersVoting = await postVote(captions[votedCaption], userData)
             }
             if(numOfPlayersVoting === 0){
-                channel.publish({data: {message: "Start ScoreBoard"}})
+                publish({data: {message: "Start ScoreBoard"}})
             }
         } catch(error) {
             handleApiError(error, voteButton, context)

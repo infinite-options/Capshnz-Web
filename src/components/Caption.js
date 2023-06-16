@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useContext } from "react"
 import { useNavigate, useLocation,Link } from "react-router-dom"
 import { useCookies } from 'react-cookie'
-import { ably, submitCaption, sendError , getScoreBoard,getSubmittedCaptions,getGameImageForRound } from "../util/Api"
+import useAbly from "../util/ably"
+import { submitCaption, sendError , getScoreBoard,getSubmittedCaptions,getGameImageForRound } from "../util/Api"
 import { CountdownCircleTimer } from "react-countdown-circle-timer"
 import * as ReactBootStrap from 'react-bootstrap'
 import "../styles/Caption.css"
@@ -12,7 +13,7 @@ export default function Caption() {
     const navigate = useNavigate(), location = useLocation()
     const [userData, setUserData] = useState(location.state)
     const [cookies, setCookie] = useCookies(["userData"])
-    const channel = ably.channels.get(`BizBuz/${userData.gameCode}/${userData.roundNumber}`)
+    const { publish, subscribe, unSubscribe, detach } = useAbly(`${userData.gameCode}/${userData.roundNumber}`);
     const [caption, setCaption] = useState("")
     const [captionSubmitted, setCaptionSubmitted] = useState(false)
     const isCaptionDisplayed = useRef(false)
@@ -49,7 +50,10 @@ export default function Caption() {
             }
         }, 5000);
       
-        return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+        return () => {
+            clearInterval(interval) // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+            unSubscribe();
+        }
     }, [])
     async function scoreBoard(){
         const scoreboard = await getScoreBoard(userData)
@@ -68,7 +72,7 @@ export default function Caption() {
                     scoreboard[i].game_score = 0
                 }
             }
-            channel.publish({
+            publish({
                 data: {
                     message: "EndGame caption",
                     scoreBoard : scoreboard
@@ -95,7 +99,7 @@ export default function Caption() {
             if (numOfPlayersSubmitting === 0) {
                 // const submittedCaptions = await getCaptions()
 
-                channel.publish({
+                publish({
                     data: {
                         message: "Start Vote"
                         // ,submittedCaptions: submittedCaptions,
@@ -113,7 +117,7 @@ export default function Caption() {
         return submittedCaptions;
     }
     useEffect(() => {
-        channel.subscribe(event => {
+        subscribe(event => {
             if (event.data.message === "Start Vote") {
                 // const updatedUserData = {
                 //     ...userData,
@@ -123,6 +127,7 @@ export default function Caption() {
                 // console.log(cookies)
                 navigate("/Vote", { state: userData })
             } else if (event.data.message === "EndGame caption") {
+                detach()
                 if (!userData.host) {
                     alert("Host has Ended the game")
                 }                

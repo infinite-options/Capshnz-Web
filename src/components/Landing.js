@@ -58,6 +58,7 @@ const Landing = () => {
           <Form.Group as={Col} md="10">
             <Form.Label>Enter your Email Address</Form.Label>
             <Form.Control
+              id="email"
               required
               value={email}
               type="text"

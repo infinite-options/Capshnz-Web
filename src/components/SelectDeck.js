@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext } from "react"
 import { useNavigate, useLocation, Link } from "react-router-dom"
 import { useCookies } from 'react-cookie'
-import { ably, getDecks, selectDeck } from "../util/Api.js"
+import useAbly from "../util/ably.js"
+import { getDecks, selectDeck } from "../util/Api.js"
 import "../styles/SelectDeck.css"
 import { ErrorContext } from "../App.js"
 import { handleApiError } from "../util/ApiHelper.js"
@@ -11,7 +12,7 @@ export default function SelectDeck(){
     const [userData, setUserData] = useState(location.state)
     const [cookies, setCookie] = useCookies(["userData"])
     const [decksInfo, setDecksInfo] = useState([])
-    const channel = ably.channels.get(`BizBuz/${userData.gameCode}`)
+    const { publish } = useAbly(userData.gameCode)
     const context = useContext(ErrorContext)
 
     useEffect( () => {
@@ -26,7 +27,7 @@ export default function SelectDeck(){
             await selectDeck(deckUID, userData.gameCode, userData.roundNumber)
             let isApi
             if(deckTitle === "Google Photos"){
-                channel.publish({data: {message: "Deck Selected"}})
+                publish({data: {message: "Deck Selected"}})
                 navigate("/GooglePhotos", {state: userData})
                 return
             }

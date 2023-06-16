@@ -2,7 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { handleApiError } from "../util/ApiHelper";
 import { ErrorContext } from "../App";
-import { ably, addUser, checkGameCode, joinGame } from "../util/Api";
+import { addUser, checkGameCode, joinGame } from "../util/Api";
 import { Col, Container, Row } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -53,8 +53,6 @@ const JoinGame = () => {
       };
       try {
         await joinGame(updatedUserData);
-        const channel = ably.channels.get(`BizBuz/${updatedUserData.gameCode}`);
-        channel.publish({ data: { message: "New Player Joined Lobby" } });
       } catch (error) {
         if (error.response && error.response.status === 409)
           console.error(error);
