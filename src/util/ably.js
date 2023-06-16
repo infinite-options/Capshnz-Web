@@ -20,7 +20,7 @@ const useAbly = (() => {
     }
 
     const publish = async (message) => {
-      await channel.publish({ data: message });
+      await channel.publish(message);
     };
 
     const getMembers = async () => {
