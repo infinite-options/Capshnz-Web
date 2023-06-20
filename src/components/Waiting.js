@@ -19,7 +19,7 @@ export default function Waiting(){
         addMember,
         unSubscribe,
         removeMember
-      } = useAbly(userData.gameCode);
+      } = useAbly(userData.gameCode)
     const [buttonText, setButtonText] = useState("Share with other players")
     const [lobby, setLobby] = useState([])
     const [isLoading, setLoading] = useState(false)
@@ -66,12 +66,12 @@ export default function Waiting(){
     const destroyLobby = async () => {
         unSubscribe()
         removeMember(userData.playerUID)
-    };
+    }
 
     const refreshLobby = async () => {
         const members = await getMembers()
         setLobby(members.map((member) => member.data))
-    };
+    }
 
     const initializeLobby = async () => {
         await onMemberUpdate(refreshLobby);
@@ -98,7 +98,7 @@ export default function Waiting(){
 
     useEffect(() => {
         initializeLobby()
-    return () => destroyLobby()
+        return () => destroyLobby()
     }, [])
 
     return(

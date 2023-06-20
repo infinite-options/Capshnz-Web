@@ -1,9 +1,12 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useCookies } from 'react-cookie'
-import { getScoreBoard,getGameScore } from "../util/Api"
+import useAbly from "../util/ably";
+import { postCreateRounds, getGameScore } from "../util/Api"
 import "../styles/EndGame.css"
 import { Container, Row, Col } from "react-bootstrap"
+import { handleApiError } from "../util/ApiHelper"
+import { ErrorContext } from "../App"
 
 export default function EndGame(){
     const navigate = useNavigate(), location = useLocation()
@@ -11,6 +14,61 @@ export default function EndGame(){
     const [cookies, setCookie] = useCookies(["userData"])
     const [scoreBoard, setScoreBoard] = useState([])
     const [loadingImg, setloadingImg] = useState(false)
+    const { publish, subscribe, unSubscribe } = useAbly(userData.gameCode)
+    const [isLoading, setLoading] = useState(false)
+    const context = useContext(ErrorContext)
+
+    async function startGameButton() {
+        try {
+            setLoading(true)
+            let imageURL = ""
+            if(userData.isApi){
+                imageURL = await postCreateRounds(userData.gameCode, [], true)
+            }
+            await publish({data: {
+                    message: "Start Again",
+                    numOfPlayers: userData.numOfPlayers,
+                    isApi: userData.isApi,
+                    deckTitle: userData.deckTitle,
+                    deckUID: userData.deckUID,
+                    gameUID: userData.gameUID,
+                    numOfRounds: userData.numOfRounds,
+                    roundTime: userData.roundTime,
+                    imageURL: imageURL
+            }})
+        } catch (error) {
+            handleApiError(error, startGameButton, context)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const subscribePlayAgain = async () => {
+        await subscribe(async (event) => {
+          if (event.data.message === "Start Again") {
+                const updatedUserData = {
+                ...userData,
+                numOfPlayers: event.data.numOfPlayers,
+                isApi: event.data.isApi,
+                deckTitle: event.data.deckTitle,
+                deckUID: event.data.deckUID,
+                gameUID: event.data.gameUID,
+                numOfRounds: event.data.numOfRounds,
+                roundTime: event.data.roundTime,
+                imageURL: event.data.imageURL,
+                roundNumber: 1,
+                };
+                setUserData(updatedUserData);
+                setCookie("userData", updatedUserData, { path: "/" });
+                navigate("/Caption", { state: updatedUserData });
+            }
+        })
+    }
+
+    useEffect(() => {
+        subscribePlayAgain()
+        return () => unSubscribe()
+    }, [])
 
     useEffect(() => {
         async function scoreBoard() {
@@ -65,7 +123,12 @@ export default function EndGame(){
                 }
             </Container>
             <br/>
-            <button className="buttonEndGame" onClick={landingButton}>
+            {userData.host && userData.deckSelected &&
+                <button className="buttonRoundType" onClick={startGameButton} disabled={isLoading} style={{marginBottom: "20px"}}>
+                    {isLoading?"Starting...":"Start again"}
+                </button>
+            }
+            <button className="buttonRoundType" onClick={landingButton}>
                 Return to Landing Page
             </button>
             <br/>
