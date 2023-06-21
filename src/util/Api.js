@@ -225,11 +225,10 @@ async function createNextRound(userData){
     return
 }
 
-async function postCreateRounds(gameCode, imageURLs, replay = false){
+async function postCreateRounds(gameCode, imageURLs){
     const payload = {
         game_code: gameCode,
-        images: imageURLs,
-        replay
+        images: imageURLs
     }
     const imageURL = await axios.post(createRounds, payload)
         .then(response => response.data.image)

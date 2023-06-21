@@ -1,6 +1,7 @@
 import { useContext, useState } from "react"
 import { useNavigate, useLocation, Link } from "react-router-dom"
 import { useCookies } from 'react-cookie'
+import useAbly from "../util/ably";
 import { createGame, joinGame } from "../util/Api.js"
 import "../styles/RoundType.css"
 import { ErrorContext } from "../App.js"
@@ -13,6 +14,7 @@ export default function RoundType() {
     const [roundInfo, setRoundInfo] = useState({numOfRounds: 10, roundTime: 60})
     const [isLoading, setLoading] = useState(false)
     const context = useContext(ErrorContext)
+    const { publish } = useAbly(userData.gameCode)
 
     function handleChange(event){
         if(event.target.name === "numOfRounds"){
@@ -47,6 +49,12 @@ export default function RoundType() {
             if (!validateRoundInfo())
                 return
             const gameInfo = await createGame(userData.playerUID, roundInfo.numOfRounds, roundInfo.roundTime, userData.scoreType)
+            if(userData.playAgain) {
+                await publish({data: {
+                    message: "Start Again",
+                    gameCode: gameInfo.game_code
+                }});
+            }
             const updatedUserData = {
                 ...userData,
                 deckSelected: false,

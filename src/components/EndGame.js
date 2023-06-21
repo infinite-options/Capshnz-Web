@@ -2,9 +2,9 @@ import { useState, useEffect, useContext } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useCookies } from 'react-cookie'
 import useAbly from "../util/ably";
-import { postCreateRounds, getGameScore } from "../util/Api"
+import { joinGame, getGameScore } from "../util/Api"
 import "../styles/EndGame.css"
-import { Container, Row, Col } from "react-bootstrap"
+import { Container, Row, Col, Spinner } from "react-bootstrap"
 import { handleApiError } from "../util/ApiHelper"
 import { ErrorContext } from "../App"
 
@@ -16,26 +16,19 @@ export default function EndGame(){
     const [loadingImg, setloadingImg] = useState(false)
     const { publish, subscribe, unSubscribe } = useAbly(userData.gameCode)
     const [isLoading, setLoading] = useState(false)
+    const [isHostStartingAgain, setHostStartingAgain] = useState(false)
     const context = useContext(ErrorContext)
 
     async function startGameButton() {
         try {
             setLoading(true)
-            let imageURL = ""
-            if(userData.isApi){
-                imageURL = await postCreateRounds(userData.gameCode, [], true)
-            }
-            await publish({data: {
-                    message: "Start Again",
-                    numOfPlayers: userData.numOfPlayers,
-                    isApi: userData.isApi,
-                    deckTitle: userData.deckTitle,
-                    deckUID: userData.deckUID,
-                    gameUID: userData.gameUID,
-                    numOfRounds: userData.numOfRounds,
-                    roundTime: userData.roundTime,
-                    imageURL: imageURL
-            }})
+            const updatedUserData = {
+                ...userData,
+                roundNumber: 1,
+                playAgain: true,
+            };
+            await publish({data: { message: "Play Again" }})
+            navigate("/ScoreType", { state: updatedUserData })
         } catch (error) {
             handleApiError(error, startGameButton, context)
         } finally {
@@ -45,22 +38,17 @@ export default function EndGame(){
 
     const subscribePlayAgain = async () => {
         await subscribe(async (event) => {
-          if (event.data.message === "Start Again") {
+            if (event.data.message === "Play Again") {
+                setHostStartingAgain(true)
+            } else if (event.data.message === "Start Again") {
                 const updatedUserData = {
-                ...userData,
-                numOfPlayers: event.data.numOfPlayers,
-                isApi: event.data.isApi,
-                deckTitle: event.data.deckTitle,
-                deckUID: event.data.deckUID,
-                gameUID: event.data.gameUID,
-                numOfRounds: event.data.numOfRounds,
-                roundTime: event.data.roundTime,
-                imageURL: event.data.imageURL,
-                roundNumber: 1,
+                    ...userData,
+                    gameCode: event.data.gameCode,
+                    roundNumber: 1,
+                    host: false,
                 };
-                setUserData(updatedUserData);
-                setCookie("userData", updatedUserData, { path: "/" });
-                navigate("/Caption", { state: updatedUserData });
+                await joinGame(updatedUserData)
+                navigate("/Waiting", { state: updatedUserData })
             }
         })
     }
@@ -128,6 +116,12 @@ export default function EndGame(){
                     {isLoading?"Starting...":"Start again"}
                 </button>
             }
+            {isHostStartingAgain && (
+                <div className="d-flex justify-content-center mb-5">
+                    <Spinner animation="border" role="status" />
+                    <span>&nbsp;&nbsp;{"Starting again..."}</span>
+                </div>
+            )}
             <button className="buttonRoundType" onClick={landingButton}>
                 Return to Landing Page
             </button>
