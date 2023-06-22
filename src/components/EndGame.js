@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useCookies } from 'react-cookie'
 import useAbly from "../util/ably";
-import { joinGame, getGameScore } from "../util/Api"
+import { joinGame, getGameScore, summary } from "../util/Api"
 import "../styles/EndGame.css"
 import { Container, Row, Col, Spinner } from "react-bootstrap"
 import { handleApiError } from "../util/ApiHelper"
@@ -13,6 +13,7 @@ export default function EndGame(){
     const [userData, setUserData] = useState(location.state)
     const [cookies, setCookie] = useCookies(["userData"])
     const [scoreBoard, setScoreBoard] = useState([])
+    const [captions, setCaptions] = useState([])
     const [loadingImg, setloadingImg] = useState(false)
     const { publish, subscribe, unSubscribe } = useAbly(userData.gameCode)
     const [isLoading, setLoading] = useState(false)
@@ -53,8 +54,14 @@ export default function EndGame(){
         })
     }
 
+    const fetchSummary = async () => {
+        const response = await summary(userData.gameUID)
+        setCaptions(response.data.captions)
+    }
+
     useEffect(() => {
         subscribePlayAgain()
+        fetchSummary()
         return () => unSubscribe()
     }, [])
 
@@ -122,10 +129,35 @@ export default function EndGame(){
                     <span>&nbsp;&nbsp;{"Starting again..."}</span>
                 </div>
             )}
-            <button className="buttonRoundType" onClick={landingButton}>
+            <button className="buttonRoundType" onClick={landingButton} style={{marginBottom: "20px"}}>
                 Return to Landing Page
             </button>
-            <br/>
+            <Container style={{backgroundImage: "none"}}>
+                <Row key="heading" className="text-center py-1">
+                    <Col><h3>{"Winning captions"}</h3></Col>
+                </Row>
+                {captions.map((caption, index) => {
+                    return(
+                        <>
+                            <Row key={index} className="text-center py-1">
+                                <Col>{`Round: ${caption.round_number}`}</Col>
+                            </Row>
+                            <Row key={index} className="text-center py-1">
+                                <Col><img className="imgCaption" src={caption.round_image_uid} alt="Loading Image...."/></Col>
+                            </Row>
+                            <Row key={index} className="text-center py-1">
+                                <Col>
+                                    <button
+                                        className="caption"
+                                    >
+                                        {caption.caption}
+                                    </button>
+                                </Col>
+                            </Row>
+                        </>
+                    )})
+                }
+            </Container>
         </div>
     )
 }
