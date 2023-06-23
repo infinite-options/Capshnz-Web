@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useCookies } from 'react-cookie'
 import useAbly from "../util/ably";
-import { joinGame, getGameScore, summary } from "../util/Api"
+import { joinGame, getGameScore, summary, summaryEmail } from "../util/Api"
 import "../styles/EndGame.css"
 import { Container, Row, Col, Spinner } from "react-bootstrap"
 import { handleApiError } from "../util/ApiHelper"
@@ -17,6 +17,7 @@ export default function EndGame(){
     const [loadingImg, setloadingImg] = useState(false)
     const { publish, subscribe, unSubscribe } = useAbly(userData.gameCode)
     const [isLoading, setLoading] = useState(false)
+    const [isSending, setSending] = useState(false)
     const [isHostStartingAgain, setHostStartingAgain] = useState(false)
     const context = useContext(ErrorContext)
 
@@ -57,6 +58,17 @@ export default function EndGame(){
     const fetchSummary = async () => {
         const response = await summary(userData.gameUID)
         setCaptions(response.data.captions)
+    }
+
+    const sendEmail = async () => {
+        try {
+            setSending(true)
+            summaryEmail(userData)
+        } catch (error) {
+            handleApiError(error, sendEmail, context)
+        } finally {
+            setSending(false)
+        }
     }
 
     useEffect(() => {
@@ -118,7 +130,7 @@ export default function EndGame(){
                 }
             </Container>
             <br/>
-            {userData.host && userData.deckSelected &&
+            {userData.host &&
                 <button className="buttonRoundType" onClick={startGameButton} disabled={isLoading} style={{marginBottom: "20px"}}>
                     {isLoading?"Starting...":"Start again"}
                 </button>
@@ -132,32 +144,37 @@ export default function EndGame(){
             <button className="buttonRoundType" onClick={landingButton} style={{marginBottom: "20px"}}>
                 Return to Landing Page
             </button>
-            <Container style={{backgroundImage: "none"}}>
+            <Container style={{ backgroundImage: "none", height: "100%"}}>
                 <Row key="heading" className="text-center py-1">
                     <Col><h3>{"Winning captions"}</h3></Col>
                 </Row>
                 {captions.map((caption, index) => {
                     return(
-                        <>
-                            <Row key={index} className="text-center py-1">
+                        <div key={index}>
+                            <Row className="text-center py-1">
                                 <Col>{`Round: ${caption.round_number}`}</Col>
                             </Row>
-                            <Row key={index} className="text-center py-1">
+                            <Row className="text-center py-1">
                                 <Col><img className="imgCaption" src={caption.round_image_uid} alt="Loading Image...."/></Col>
                             </Row>
-                            <Row key={index} className="text-center py-1">
+                            <Row className="text-center py-1">
                                 <Col>
                                     <button
-                                        className="caption"
+                                        className="winCaption"
                                     >
                                         {caption.caption}
                                     </button>
                                 </Col>
                             </Row>
-                        </>
+                        </div>
                     )})
                 }
             </Container>
+            {userData.host &&
+                <button className="buttonRoundType" onClick={sendEmail} disabled={isSending} >
+                    {isSending?"Sending...":"Send Email"}
+                </button>
+            }
         </div>
     )
 }

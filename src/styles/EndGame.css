@@ -50,7 +50,7 @@
     margin-right: 8rem !important;
 }
 
-.caption {
+.winCaption {
     background-color: white;
     width: 342px;
     min-height: 60px;
@@ -60,5 +60,5 @@
     font-size: 18px;
     font-weight: normal;
     line-height: 3;
-    cursor: not-allowed;
+    cursor: default !important;
 }
