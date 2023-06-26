@@ -144,19 +144,23 @@ export default function EndGame(){
             <button className="buttonRoundType" onClick={landingButton} style={{marginBottom: "20px"}}>
                 Return to Landing Page
             </button>
-            <Container style={{ backgroundImage: "none", height: "100%"}}>
+            <Container style={{ backgroundImage: "none", height: "100%", marginBottom: "20px"}}>
                 <Row key="heading" className="text-center py-1">
                     <Col><h3>{"Winning captions"}</h3></Col>
                 </Row>
                 {captions.map((caption, index) => {
                     return(
                         <div key={index}>
-                            <Row className="text-center py-1">
-                                <Col>{`Round: ${caption.round_number}`}</Col>
-                            </Row>
-                            <Row className="text-center py-1">
-                                <Col><img className="imgCaption" src={caption.round_image_uid} alt="Loading Image...."/></Col>
-                            </Row>
+                            {"round_number" in caption && (
+                                <Row className="text-center py-1">
+                                    <Col>{`Round: ${caption.round_number}`}</Col>
+                                </Row>
+                            )}
+                            {"round_image_uid" in caption && (
+                                <Row className="text-center py-1">
+                                    <Col><img className="imgCaption" src={caption.round_image_uid} alt="Loading Image...."/></Col>
+                                </Row>
+                            )}
                             <Row className="text-center py-1">
                                 <Col>
                                     <button
