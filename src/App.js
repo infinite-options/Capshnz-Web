@@ -15,6 +15,7 @@ import ScoreBoard from "./components/ScoreBoard"
 import EndGame from "./components/EndGame"
 import CnnDeck from "./components/CnnDeck"
 import ApiError from "./components/ApiError"
+import StartGame from "./components/StartGame"
 import { GoogleOAuthProvider } from "@react-oauth/google"
 import { CookiesProvider } from 'react-cookie'
 import { createContext, useState } from "react"
@@ -52,6 +53,7 @@ export default function App() {
                             <Route path="/ScoreBoard" element={<ScoreBoard />} />
                             <Route path="/EndGame" element={<EndGame />} />
                             <Route path="/CnnDeck" element={<CnnDeck />} />
+                            <Route path="/StartGame" element={<StartGame />} />
                         </Routes>
                     </Router>
                 </CookiesProvider>
