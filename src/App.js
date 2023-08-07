@@ -71,6 +71,16 @@ export default function App() {
                 <Route path="/EndGame" element={<EndGame />} />
                 <Route path="/CnnDeck" element={<CnnDeck />} />
                 <Route path="/StartGame" element={<StartGame />} />
+                <Route path="/ChooseScoring" element={<ChooseScoring />} />
+                <Route path="/ChooseRounds" element={<ChooseRounds />} />
+                <Route path="/SelectDeckPrev" element={<SelectDeckPrev />} />
+                <Route path="/SelectingDeck" element={<SelectingDeck />} />
+                <Route path="/FinalScore" element={<FinalScore />} />
+                <Route path="/Landing" element={<LandingNew />} />
+                <Route path="/verificationOtp" element={<VerificationOtp />} />
+                <Route path="/EnterName" element={<EnterName />} />
+                <Route path="/CaptionNew" element={<CaptionNew />} />
+                <Route path="/VoteImage" element={<VoteImage />} />
               </Routes>
             </Router>
           </CookiesProvider>
