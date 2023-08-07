@@ -31,12 +31,28 @@ const SelectingDeck = () => {
     };
     return (
         <div
-            style={{width: '100%', height: '100vh', background: '#C8DAD8',}}
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%', 
+                height: '100vh', 
+                background: '#C8DAD8',
+            }}
         >
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
             <Container fluid>
                 <Row className="text-center">
                     <Col style={{ position: "relative" }}>
-                        <Polygon style={{ position: "absolute", bottom: "-32px", right: "120px" }}/>
+                        <Polygon style={{ position: "absolute", bottom: "-32px", right: "80px" }}/>
                         <input
                             type="text"
                             style={{
@@ -106,6 +122,7 @@ const SelectingDeck = () => {
                     </Row>
                 </div>
             </Container>
+            </div>
         </div>
      );
 }

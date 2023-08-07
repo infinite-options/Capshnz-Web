@@ -36,8 +36,18 @@ const StartGame = () => {
     };
 
     return ( 
+
+  
         <div
-            style={{width: '100%', height: '100vh', background: 'rgba(241, 205, 92, 0.73)'}}
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+                height: '100vh',
+                background: 'rgba(241, 205, 92, 0.73)',
+          }}
         >
             <Form onSubmit={joinGameButton}>
                 <Container fluid>
@@ -120,6 +130,16 @@ const StartGame = () => {
                 </Row>
                 </Container>
             </Form>
+            <div 
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+          >
+
+          
             <Container style={{ paddingTop: "180px", marginLeft: "0px"}} fluid>
                 <Row className="text-center py-3" style={{width: 380, color: 'white', fontSize: 20, fontFamily: 'Grandstander', fontWeight: '600', wordWrap: 'break-word'}}>
                 <Col>Want to provide game feedback?</Col>
@@ -150,7 +170,7 @@ const StartGame = () => {
                 </Col>
                 </Row>
             </Container>
-            <Container style={{ paddingTop: "10px", marginTop:"80px", marginLeft: "-8px"}} fluid>
+            <Container style={{ paddingTop: "10px", marginTop:"80px", marginLeft: "auto", marginRight:"auto"}} fluid>
                 <Row className="text-center py-3" style={{width: 380, color: 'white', fontSize: 20, fontFamily: 'Grandstander', fontWeight: '600', wordWrap: 'break-word'}}>
                 <Col>Want to create your own game?</Col>
                 </Row>
@@ -182,7 +202,8 @@ const StartGame = () => {
                 </Col>
                 </Row>
             </Container>
-        </div>   
+            </div>
+        </div>
      );
 }
  

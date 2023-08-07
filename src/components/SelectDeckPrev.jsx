@@ -27,12 +27,28 @@ const SelectDeckPrev = () => {
     };
     return ( 
         <div
-            style={{width: '100%', height: '100vh', background: '#CBDFBD',}}
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%', 
+                height: '100vh', 
+                background: '#CBDFBD',
+            }}
         >
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
             <Container fluid>
                 <Row className="text-center" >
                     <Col style={{ position: "relative", width: 390,}}>
-                        <Polygon style={{ position: "absolute", bottom: "-32px", right: "120px" }}/>
+                        <Polygon style={{ position: "absolute", bottom: "-32px", right: "60px" }}/>
                         <input
                             type="text"
                             style={{
@@ -60,11 +76,12 @@ const SelectDeckPrev = () => {
                     </Col>
                 </Row>
             </Container>
-            <div style={{ marginLeft: "180px", marginTop: "64px", display: "flex", alignItems: "center" }}>
+            </div>
+            <div style={{ marginLeft: "80px", marginTop: "64px", display: "flex", alignItems: "center" }}>
                 <div style={{ width: 35, height: 35, background: '#8D3B9B', borderRadius: 9999 }} />
                 <div style={{ marginTop:"8px", marginLeft: "10px", color: 'white', fontSize: 25, fontFamily: 'Grandstander', fontWeight: '700', wordWrap: 'break-word' }}>Shruti</div>
             </div>
-            <Row className="text-center py-3" style={{ marginLeft: "-64px", marginTop: "300px", width: 390, color: 'white', fontSize: 32, fontFamily: 'Grandstander', fontWeight: '700', wordWrap: 'break-word', justifyContent: "flex-start" }}>
+            <Row className="text-center py-3" style={{ marginLeft: "-150px", marginTop: "300px", width: 390, color: 'white', fontSize: 32, fontFamily: 'Grandstander', fontWeight: '700', wordWrap: 'break-word', justifyContent: "flex-start" }}>
                 <Col>Game Code</Col>
             </Row>
             <Stack style={{ display: "flex", justifyContent: "center", alignItems:"center" }}>

@@ -26,15 +26,29 @@ const ChooseScoring = () => {
     };
     return ( 
         <div
-            style={{width: '100%', height: '100vh', background: 'rgba(183, 214, 225, 1)'}}
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%', 
+                height: '100vh', 
+                background: 'rgba(183, 214, 225, 1)'}}
         >
-            <Container style={{ paddingTop: "80px",}} fluid>
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+            <Container style={{ paddingTop: "60px",}} fluid>
                 <Row className="text-center py-3" style={{width: 390, color: 'white', fontSize: 30, fontFamily: 'Grandstander', fontWeight: '600', wordWrap: 'break-word'}}>
                 <Col>Choose a scoring system</Col>
                 </Row>
                 <Row className="text-center" style={{marginTop:"32px"}}>
-                <Col style={{ position: "relative" }}>
-                    <Polygon style={{ position: "absolute", bottom: "-30px", right: "64px" }}/>
+                <Col style={{ position: "relative", }}>
                     <Button variant="warning" onClick={handleVotes}
                         style={{
                             width: 330,
@@ -55,6 +69,7 @@ const ChooseScoring = () => {
                     >
                     Score by Votes
                     </Button>
+                    <Polygon style={{marginLeft:"200px", marginTop:"-2px"}}/>
                 </Col>
                 </Row>
                 <Row className="text-center py-3" style={{marginLeft:"0px", marginTop:"32px",width: 375, color: 'white', fontSize: 22, fontFamily: 'Grandstander', fontWeight: '600', wordWrap: 'break-word'}}>
@@ -114,6 +129,7 @@ const ChooseScoring = () => {
                     </Col>
                 </Row>
             </Container>
+            </div>
         </div>
     );
 }

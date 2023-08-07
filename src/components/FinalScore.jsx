@@ -44,12 +44,26 @@ const FinalScore = () => {
     };
     return ( 
         <div
-            style={{width: '100%', height: '1300px', background: '#E58D80',}}
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%', 
+                height: '1300px', 
+                background: '#E58D80',}}
         >
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
             <Container fluid>
                 <Row className="text-center" >
                     <Col style={{ position: "relative" }}>
-                        <Polygon style={{ position: "relative", bottom: "-110px", left: "-64px" }}/>
                         <input
                             type="text"
                             style={{
@@ -66,15 +80,20 @@ const FinalScore = () => {
                                 fontFamily: "Grandstander",
                                 fontWeight: "700",
                                 wordWrap: "break-word",
-                                marginLeft: "0px",
                                 marginTop: "8px",
                                 border: "none", 
                                 outline: "none", 
                                 textAlign: "center",
+                                marginRight:"auto",
+                                marginLeft: "auto",
                             }}
                             value="Game Over!" 
                             readOnly 
                         />
+                        <div style={{marginTop:'-10px', marginLeft:'120px'}}>
+                        <Polygon/>
+                        </div>
+                        
                     </Col>
                 </Row>
                 <Row className="text-center" style={{marginTop:"16px",}}>
@@ -96,11 +115,12 @@ const FinalScore = () => {
                                 fontFamily: "Grandstander",
                                 fontWeight: "700",
                                 wordWrap: "break-word",
-                                marginLeft: "0px",
                                 marginTop: "32px",
                                 border: "none", 
                                 outline: "none", 
                                 textAlign: "center",
+                                marginRight:"auto",
+                                marginLeft: "auto",
                             }}
                             value="Final Scores" 
                             readOnly 
@@ -255,6 +275,7 @@ const FinalScore = () => {
                     </Col>
                 </Row>
             </Container>
+            </div>
         </div>
     );
 }

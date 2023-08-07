@@ -25,7 +25,7 @@ const ChooseRounds = () => {
 
     return ( 
         <div
-            style={{width: '100%', height: '100vh', background: 'rgba(153, 90, 98, 0.70)'}}
+            style={{display: 'flex',flexDirection: 'column',justifyContent: 'center',alignItems: 'center',width: '100%', height: '100vh', background: 'rgba(153, 90, 98, 0.70)'}}
         >
             <Form onSubmit={continueButton} >
                 <Container fluid >
