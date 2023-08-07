@@ -20,6 +20,11 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { CookiesProvider } from "react-cookie";
 import { createContext, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ChooseScoring from "./components/ChooseScoring";
+import ChooseRounds from "./components/ChooseRounds";
+import SelectDeckPrev from "./components/SelectDeckPrev";
+import SelectingDeck from "./components/SelectingDeck";
+import FinalScore from "./components/FinalScore";
 import "./App.css";
 import LandingNew from "./components/LandingNew";
 import VerificationOtp from "./components/VerificationOtp";
@@ -66,11 +71,6 @@ export default function App() {
                 <Route path="/EndGame" element={<EndGame />} />
                 <Route path="/CnnDeck" element={<CnnDeck />} />
                 <Route path="/StartGame" element={<StartGame />} />
-                <Route path="/Landing" element={<LandingNew />} />
-                <Route path="/verificationOtp" element={<VerificationOtp />} />
-                <Route path="/EnterName" element={<EnterName />} />
-                <Route path="/CaptionNew" element={<CaptionNew />} />
-                <Route path="/VoteImage" element={<VoteImage />} />
               </Routes>
             </Router>
           </CookiesProvider>

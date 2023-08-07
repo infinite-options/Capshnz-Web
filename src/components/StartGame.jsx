@@ -28,7 +28,7 @@ const StartGame = () => {
     };
     
     const joinGameButton = async (event) => {
-        
+        navigate("/ChooseScoring", { state: userData });
     };
     
     const handleFeedback = () => {
@@ -36,8 +36,18 @@ const StartGame = () => {
     };
 
     return ( 
+
+  
         <div
-            style={{width: 430, height: 932, position: 'relative', background: 'rgba(241, 205, 92, 0.73)'}}
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%',
+                height: '100vh',
+                background: 'rgba(241, 205, 92, 0.73)',
+          }}
         >
             <Form onSubmit={joinGameButton}>
                 <Container fluid>
@@ -58,11 +68,11 @@ const StartGame = () => {
                     </div>
                     </Col>
                 </Row>
-                <Row className="d-flex justify-content-center">
-                    <Form.Group as={Col} md="10">
+                <Row style={{marginLeft:"8px"}}>
+                    <Form.Group as={Col} md="10" >
                     <Form.Label
                         style={{
-                            width: "383px",
+                            width: "330px",
                             color: "white",
                             fontSize: "32px",
                             fontFamily: "Grandstander",
@@ -74,12 +84,12 @@ const StartGame = () => {
                     </Form.Label>
                     <Form.Control
                         style={{
-                            width: 391,
-                            height: 62.38,
+                            width: 330,
+                            height: 50,
                             background: "white",
                             borderRadius: 40,
                             color: "black",
-                            fontSize: 26,
+                            fontSize: 23,
                             fontFamily: "Grandstander",
                             fontWeight: "500",
                             wordWrap: "break-word",
@@ -93,26 +103,25 @@ const StartGame = () => {
                     />
                     </Form.Group>
                 </Row>
-                <Row className="text-center py-3">
+                <Row className="text-center py-3" style={{marginLeft:"100px"}}>
                     <Col>
                     <Button
                         variant="success"
                         type="submit"
                         disabled={isJoinLoading}
                         style={{
-                            width: 218,
-                            height: 38,
+                            width: 180,
+                            height: 35,
                             background: "#46C3A6",
                             borderRadius: 30,
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
                             color: "white",
-                            fontSize: 31,
+                            fontSize: 23,
                             fontFamily: "Grandstander",
                             fontWeight: "600",
                             wordWrap: "break-word",
-                            marginLeft: "50px",
                         }}
                         >
                         {isJoinLoading ? "Joining..." : "Join Game"}
@@ -121,13 +130,23 @@ const StartGame = () => {
                 </Row>
                 </Container>
             </Form>
-            <Container style={{ paddingTop: "150px", marginLeft: "0px"}} fluid>
-                <Row className="text-center py-3" style={{width: 401, color: 'white', fontSize: 23, fontFamily: 'Grandstander', fontWeight: '600', wordWrap: 'break-word'}}>
+            <div 
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+          >
+
+          
+            <Container style={{ paddingTop: "180px", marginLeft: "0px"}} fluid>
+                <Row className="text-center py-3" style={{width: 380, color: 'white', fontSize: 20, fontFamily: 'Grandstander', fontWeight: '600', wordWrap: 'break-word'}}>
                 <Col>Want to provide game feedback?</Col>
                 </Row>
-                <Row className="text-center">
-                <Col>
-                    <Polygon style={{marginLeft:"-32px"}}/>
+                <Row className="text-center" style={{marginTop:"32px"}}>
+                <Col style={{ position: "relative" }}>
+                    <Polygon style={{ position: "absolute", top: "-30px", left: "160px" }}/>
                     <Button variant="warning" onClick={handleFeedback}
                         style={{
                             width: 218,
@@ -151,39 +170,40 @@ const StartGame = () => {
                 </Col>
                 </Row>
             </Container>
-            <Container style={{ paddingTop: "10px", marginTop:"80px", marginLeft: "-8px"}} fluid>
-                <Row className="text-center py-3" style={{width: 401, color: 'white', fontSize: 23, fontFamily: 'Grandstander', fontWeight: '600', wordWrap: 'break-word'}}>
+            <Container style={{ paddingTop: "10px", marginTop:"80px", marginLeft: "auto", marginRight:"auto"}} fluid>
+                <Row className="text-center py-3" style={{width: 380, color: 'white', fontSize: 20, fontFamily: 'Grandstander', fontWeight: '600', wordWrap: 'break-word'}}>
                 <Col>Want to create your own game?</Col>
                 </Row>
-                <Row className="text-center">
-                <Col>
-                    <Polygon style={{marginLeft:"-216px"}}/>
+                <Row className="text-center" style={{marginTop:"16px"}}>
+                <Col style={{ position: "relative" }}>
+                    <Polygon style={{ position: "absolute", top: "-30px", left: "80px" }} />
                     <Button
-                    variant="primary"
-                    onClick={createNewGameButton}
-                    disabled={isCreateLoading}
-                    style={{
-                        width: 218,
-                        height: 38,
+                        variant="primary"
+                        onClick={createNewGameButton}
+                        disabled={isCreateLoading}
+                        style={{
+                        width: 200,
+                        height: 35,
                         background: "#46C3A6",
                         borderRadius: 30,
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
                         color: "white",
-                        fontSize: 31,
+                        fontSize: 23,
                         fontFamily: "Grandstander",
                         fontWeight: "600",
                         wordWrap: "break-word",
                         marginLeft: "50px",
-                    }}
+                        }}
                     >
-                    {isCreateLoading ? "Creating..." : "Host a Game"}
+                        {isCreateLoading ? "Creating..." : "Host a Game"}
                     </Button>
                 </Col>
                 </Row>
             </Container>
-        </div>   
+            </div>
+        </div>
      );
 }
  
