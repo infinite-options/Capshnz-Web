@@ -29,23 +29,22 @@ const LandingNew = () => {
     else setInvalid(false);
   };
 
-  const handleSubmit = () => {
-    // event.preventDefault();
-    // if (!isInvalid) {
-    //   try {
-    //     const res = await addUserByEmail(email);
-    //     setCookie("email", email, { path: "/" });
-    //     const userData = {
-    //       ...res,
-    //       email: email,
-    //       playerUID: res.user_uid,
-    //     };
-    //     navigate("/UserInfo", { state: userData });
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
-    // }
-    navigate("/verificationOtp");
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!isInvalid) {
+      try {
+        const res = await addUserByEmail(email);
+        setCookie("email", email, { path: "/" });
+        const userData = {
+          ...res,
+          email: email,
+          playerUID: res.user_uid,
+        };
+        navigate("/EnterName", { state: userData });
+      } catch (err) {
+        console.error(err);
+      }
+    }
   };
 
   return (
@@ -118,7 +117,7 @@ const LandingNew = () => {
                 value={email}
                 type="text"
                 placeholder="Enter email here..."
-                onChange={() => {}}
+                onChange={handleEmailChange}
                 isInvalid={isInvalid}
               />
               <PolygonWhiteDownward
@@ -128,7 +127,7 @@ const LandingNew = () => {
               <Button
                 variant="success"
                 type="submit"
-                disabled={() => {}}
+                //disabled={() => {}}
                 style={{
                   width: 218,
                   height: 54,
@@ -147,26 +146,28 @@ const LandingNew = () => {
               >
                 Enter
               </Button>
-              {/* <Form.Control.Feedback type="invalid">
+              <Form.Control.Feedback type="invalid">
                 Please provide a valid email.
-              </Form.Control.Feedback> */}
+              </Form.Control.Feedback>
             </Form.Group>
           </Row>
-          <div
-            style={{
-              position: "absolute",
-              bottom: "20px",
-              color: "white",
-              fontSize: "24px",
-              fontFamily: "Grandstander",
-              fontWeight: "600",
-              //textAlign: "center",
-              wordWrap: "break-word",
-            }}
-          >
-            By pressing Enter you agree to let us use cookies to improve game
-            performance
-          </div>
+          <Row>
+            <div
+              style={{
+                position: "absolute",
+                bottom: "20px",
+                color: "white",
+                fontSize: "24px",
+                fontFamily: "Grandstander",
+                fontWeight: "600",
+                //textAlign: "center",
+                wordWrap: "break-word",
+              }}
+            >
+              By pressing Enter you agree to let us use cookies to improve game
+              performance
+            </div>
+          </Row>
         </Container>
       </Form>
     </div>

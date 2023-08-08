@@ -6,6 +6,8 @@ import ReactCodeInput from "react-code-input";
 import { useContext, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ErrorContext } from "../App.js";
+import { handleApiError } from "../util/ApiHelper.js";
+import { checkEmailCode } from "../util/Api.js";
 
 const codeInputStyle = {
   borderRadius: "6px",
@@ -31,8 +33,24 @@ const VerificationOtp = () => {
     setCode(code);
   }
 
-  function handleOnOTPSubmit() {
-    navigate("/EnterName");
+  async function handleSubmit() {
+    try {
+      const status = await checkEmailCode(userData.playerUID, code);
+      if (status.email_validated_status === "TRUE") {
+        navigate("/StartGame", { state: userData });
+      } else {
+        setValid(false);
+        setTimeout(() => {
+          setValid(true);
+        }, 2500);
+      }
+    } catch (error) {
+      handleApiError(error, handleSubmit, context);
+    }
+  }
+
+  function handleEmailChange() {
+    navigate("/");
   }
 
   return (
@@ -102,10 +120,15 @@ const VerificationOtp = () => {
             marginLeft="10px"
           />
         </div>
+        {!valid && (
+          <div className="validConfirmation">
+            Invalid Code. Please Try Again.
+          </div>
+        )}
         <Button
           variant="success"
           type="submit"
-          onClick={handleOnOTPSubmit}
+          onClick={handleSubmit}
           //disabled={() => {}}
           style={{
             width: 218,
