@@ -3,6 +3,8 @@ import { useNavigate, useLocation, Link } from "react-router-dom"
 import { useCookies } from 'react-cookie'
 import useAbly from "../util/ably.js"
 import { getDecks, selectDeck } from "../util/Api.js"
+import {ReactComponent as Polygon} from "../assets/Polygon 1.svg";
+import { Col, Row,} from "react-bootstrap";
 import "../styles/SelectDeck.css"
 import { ErrorContext } from "../App.js"
 import { handleApiError } from "../util/ApiHelper.js"
@@ -51,7 +53,7 @@ export default function SelectDeck(){
             if (deckTitle === "CNN Gallery") {
                 navigate("/CnnDeck", {state: updatedUserData})
             } else {
-                navigate("/Waiting", {state: updatedUserData})    
+                navigate("/WaitingRoom", {state: updatedUserData})    
             }
         } catch(error) {
             handleApiError(error, ()=>handleClick(deckTitle, deckUID,thumbnail_url), context)
@@ -59,15 +61,54 @@ export default function SelectDeck(){
     }
 
     return(
-        <div className="selectDeck">
-            <div>
+        <div 
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: '100%', 
+                height: '100vh', 
+                background: '#C8DAD8',
+            }}
+        >
+            {/* <div>
             <Link to="/GameRules" className="gameRulesSelectDeck">
                 <i className="fa fa-info-circle"></i>
                 Game Rules
             </Link>
-            </div>
+            </div> */}
 
-            <h4 className="oneSelectDeck">Select a deck</h4>
+            <Row className="text-center">
+                <Col style={{ position: "relative" }}>
+                    <Polygon style={{ position: "absolute", bottom: "-32px", right: "80px" }}/>
+                    <input
+                        type="text"
+                        style={{
+                            width: 350,
+                            height: 64,
+                            background: "#FFF",
+                            borderRadius: 30,
+                            paddingLeft: 24,
+                            paddingRight: 24,
+                            paddingTop: 6,
+                            paddingBottom: 6,
+                            color: "black",
+                            fontSize: 24,
+                            fontFamily: "Grandstander",
+                            fontWeight: "700",
+                            wordWrap: "break-word",
+                            marginLeft: "0px",
+                            marginTop: "32px",
+                            border: "none", 
+                            outline: "none", 
+                            textAlign: "center",
+                        }}
+                        value="Select a Deck" 
+                        readOnly 
+                    />
+                </Col>
+            </Row>
             <br/>
             <br/>
             <ul className="deck-container">
@@ -75,10 +116,10 @@ export default function SelectDeck(){
                     if(deck.user_uid !== "PRIVATE"){
                         return(
                             <div key={index} onClick={event => handleClick(deck.deck_title, deck.deck_uid,deck.deck_thumbnail_url)} className="deck">
-                                <div className="deck-background">
+                                <div >
                                     <img src={deck.deck_thumbnail_url} alt={deck.deck_title} className="deck-image"/>
                                     <div className="deckText">
-                                        {deck.deck_title} (Free)
+                                        {deck.deck_title}
                                     </div>
                                 </div>
                                 <br/>

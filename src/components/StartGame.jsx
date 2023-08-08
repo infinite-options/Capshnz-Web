@@ -60,7 +60,7 @@ const StartGame = () => {
             if (error.response && error.response.status === 409) console.error("Error:",error);
             else throw error;
         }
-        navigate("/Waiting", { state: updatedUserData });
+        navigate("/WaitingRoom", { state: updatedUserData });
         } catch (error) {
         handleApiError(error, joinGameButton, context);
         } finally {

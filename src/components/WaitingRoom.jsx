@@ -265,7 +265,7 @@ const WaitingRoom = () => {
                         style={{
                             width: 330,
                             height: 55,
-                            background: "#DC816A",
+                            background: "#71CAA3",
                             borderRadius: 40,
                             display: "flex",
                             justifyContent: "center",

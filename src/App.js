@@ -19,7 +19,6 @@ import StartGame from "./components/StartGame"
 import ChooseScoring from "./components/ChooseScoring"
 import ChooseRounds from "./components/ChooseRounds"
 import SelectingDeck from "./components/SelectingDeck"
-import AfterSelecting from "./components/AfterSelecting"
 import FinalScore from "./components/FinalScore"
 import { GoogleOAuthProvider } from "@react-oauth/google"
 import { CookiesProvider } from 'react-cookie'
@@ -65,7 +64,6 @@ export default function App() {
                             <Route path="/ChooseRounds" element={<ChooseRounds />} />
                             <Route path="/WaitingRoom" element={<WaitingRoom />} />
                             <Route path="/SelectingDeck" element={<SelectingDeck />} />
-                            <Route path="/AfterSelecting" element={<AfterSelecting />} />
                             <Route path="/FinalScore" element={<FinalScore />} />
                         </Routes>
                     </Router>
