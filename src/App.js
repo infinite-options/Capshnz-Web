@@ -18,7 +18,6 @@ import ApiError from "./components/ApiError"
 import StartGame from "./components/StartGame"
 import ChooseScoring from "./components/ChooseScoring"
 import ChooseRounds from "./components/ChooseRounds"
-import SelectDeckPrev from "./components/SelectDeckPrev"
 import SelectingDeck from "./components/SelectingDeck"
 import AfterSelecting from "./components/AfterSelecting"
 import FinalScore from "./components/FinalScore"
@@ -27,6 +26,7 @@ import { CookiesProvider } from 'react-cookie'
 import { createContext, useState } from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import './App.css'
+import WaitingRoom from "./components/WaitingRoom"
 
 
 export const ErrorContext = createContext()
@@ -63,7 +63,7 @@ export default function App() {
                             <Route path="/StartGame" element={<StartGame />} />
                             <Route path="/ChooseScoring" element={<ChooseScoring />} />
                             <Route path="/ChooseRounds" element={<ChooseRounds />} />
-                            <Route path="/SelectDeckPrev" element={<SelectDeckPrev />} />
+                            <Route path="/WaitingRoom" element={<WaitingRoom />} />
                             <Route path="/SelectingDeck" element={<SelectingDeck />} />
                             <Route path="/AfterSelecting" element={<AfterSelecting />} />
                             <Route path="/FinalScore" element={<FinalScore />} />

@@ -77,7 +77,7 @@ const ChooseRounds = () => {
             setUserData(updatedUserData)
             setCookie("userData", updatedUserData, {path: '/'})
             await joinGame(updatedUserData)
-            navigate("/Waiting", { state: updatedUserData })
+            navigate("/WaitingRoom", { state: updatedUserData })
         } catch(error) {
             handleApiError(error, continueButton, context)
         } finally {
