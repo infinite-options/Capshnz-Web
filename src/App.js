@@ -31,6 +31,7 @@ import VerificationOtp from "./components/VerificationOtp";
 import EnterName from "./components/EnterName";
 import CaptionNew from "./components/CaptionNew";
 import VoteImage from "./components/VoteImage";
+import ScoreboardNew from "./components/ScoreboardNew";
 
 export const ErrorContext = createContext();
 
@@ -77,10 +78,11 @@ export default function App() {
                 <Route path="/SelectingDeck" element={<SelectingDeck />} />
                 <Route path="/FinalScore" element={<FinalScore />} />
                 <Route path="/Landing" element={<LandingNew />} />
-                <Route path="/verificationOtp" element={<VerificationOtp />} />
+                <Route path="/VerificationOtp" element={<VerificationOtp />} />
                 <Route path="/EnterName" element={<EnterName />} />
                 <Route path="/CaptionNew" element={<CaptionNew />} />
                 <Route path="/VoteImage" element={<VoteImage />} />
+                <Route path="/ScoreboardNew" element={<ScoreboardNew />} />
               </Routes>
             </Router>
           </CookiesProvider>

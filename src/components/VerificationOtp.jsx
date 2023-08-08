@@ -31,6 +31,10 @@ const VerificationOtp = () => {
     setCode(code);
   }
 
+  function handleOnOTPSubmit() {
+    navigate("/EnterName");
+  }
+
   return (
     <div
       style={{
@@ -101,7 +105,8 @@ const VerificationOtp = () => {
         <Button
           variant="success"
           type="submit"
-          disabled={() => {}}
+          onClick={handleOnOTPSubmit}
+          //disabled={() => {}}
           style={{
             width: 218,
             height: 54,

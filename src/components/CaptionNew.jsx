@@ -4,9 +4,15 @@ import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import { ReactComponent as PolygonWhiteUpward } from "../assets/polygon-upward-white.svg";
 import "../styles/CaptionNew.css";
+import { useNavigate, useLocation } from "react-router-dom";
+
 const CaptionNew = () => {
   const [isInvalid, setInvalid] = useState(false);
-
+  const navigate = useNavigate(),
+    location = useLocation();
+  function handleSubmit() {
+    navigate("/VoteImage");
+  }
   return (
     <div
       style={{
@@ -70,7 +76,7 @@ const CaptionNew = () => {
           60
         </div>
       </div>
-      <Form noValidate onSubmit={() => {}}>
+      <Form noValidate onSubmit={handleSubmit}>
         <Form.Group as={Col} md="10">
           <Form.Label
             style={{
@@ -142,7 +148,7 @@ const CaptionNew = () => {
 
         <div
           style={{
-            width: 415,
+            width: "95%",
             height: 65,
             background: "white",
             borderRadius: 40,

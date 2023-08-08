@@ -29,22 +29,23 @@ const LandingNew = () => {
     else setInvalid(false);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!isInvalid) {
-      try {
-        const res = await addUserByEmail(email);
-        setCookie("email", email, { path: "/" });
-        const userData = {
-          ...res,
-          email: email,
-          playerUID: res.user_uid,
-        };
-        navigate("/UserInfo", { state: userData });
-      } catch (err) {
-        console.error(err);
-      }
-    }
+  const handleSubmit = () => {
+    // event.preventDefault();
+    // if (!isInvalid) {
+    //   try {
+    //     const res = await addUserByEmail(email);
+    //     setCookie("email", email, { path: "/" });
+    //     const userData = {
+    //       ...res,
+    //       email: email,
+    //       playerUID: res.user_uid,
+    //     };
+    //     navigate("/UserInfo", { state: userData });
+    //   } catch (err) {
+    //     console.error(err);
+    //   }
+    // }
+    navigate("/verificationOtp");
   };
 
   return (
@@ -56,7 +57,7 @@ const LandingNew = () => {
         position: "relative",
       }}
     >
-      <Form noValidate onSubmit={() => {}}>
+      <Form noValidate onSubmit={handleSubmit}>
         <Container className="container" fluid>
           <Row className="text-center py-5">
             <Col

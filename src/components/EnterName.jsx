@@ -8,9 +8,13 @@ const EnterName = () => {
   const [isInvalid, setInvalid] = useState(false);
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+
+  function handleClick() {
+    navigate("/StartGame");
+  }
   return (
     <div>
-      <Form noValidate onSubmit={() => {}}>
+      <Form noValidate onSubmit={handleClick}>
         <Container className="container" fluid>
           <Form.Group as={Col} md="10">
             <Form.Label
