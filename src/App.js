@@ -20,12 +20,14 @@ import ChooseScoring from "./components/ChooseScoring"
 import ChooseRounds from "./components/ChooseRounds"
 import SelectDeckPrev from "./components/SelectDeckPrev"
 import SelectingDeck from "./components/SelectingDeck"
+import AfterSelecting from "./components/AfterSelecting"
 import FinalScore from "./components/FinalScore"
 import { GoogleOAuthProvider } from "@react-oauth/google"
 import { CookiesProvider } from 'react-cookie'
 import { createContext, useState } from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import './App.css'
+
 
 export const ErrorContext = createContext()
 
@@ -63,6 +65,7 @@ export default function App() {
                             <Route path="/ChooseRounds" element={<ChooseRounds />} />
                             <Route path="/SelectDeckPrev" element={<SelectDeckPrev />} />
                             <Route path="/SelectingDeck" element={<SelectingDeck />} />
+                            <Route path="/AfterSelecting" element={<AfterSelecting />} />
                             <Route path="/FinalScore" element={<FinalScore />} />
                         </Routes>
                     </Router>

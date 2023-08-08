@@ -27,7 +27,7 @@ const SelectingDeck = () => {
     const context = useContext(ErrorContext);
 
     const handleClick = () => {
-        navigate("/FinalScore", { state: userData });
+        navigate("/AfterSelecting", { state: userData });
     };
     return (
         <div

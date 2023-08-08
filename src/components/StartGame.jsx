@@ -13,7 +13,7 @@ import "../styles/Landing.css";
 const StartGame = () => {
     const [gameCode, setGameCode] = useState("");
     const navigate = useNavigate(),
-        location = useLocation();
+    location = useLocation();
     const userData = location.state;
     const [isCreateLoading, setCreateLoading] = useState(false);
     const [isJoinLoading, setJoinLoading] = useState(false);
@@ -24,11 +24,48 @@ const StartGame = () => {
       };
     
     const createNewGameButton = async (event) => {
-        
+        try {
+            setCreateLoading(true);
+            const playerInfo = await addUser(userData);
+            const updatedUserData = {
+                ...userData,
+                roundNumber: 1,
+                host: true,
+                playerUID: playerInfo.user_uid,
+        };
+        navigate("/ChooseScoring", { state: updatedUserData });
+        } catch (error) {
+        handleApiError(error, createNewGameButton, context);
+        } finally {
+        setCreateLoading(false);
+        }
+        //   navigate("/ChooseScoring");
     };
     
     const joinGameButton = async (event) => {
-        navigate("/ChooseScoring", { state: userData });
+        event.preventDefault();
+        try {
+        setJoinLoading(true);
+        if (!(await checkGameCode(gameCode))) return;
+        const updatedUserData = {
+            ...userData,
+            gameCode,
+            roundNumber: 1,
+            host: false,
+        };
+        try {
+            console.log(updatedUserData);
+            await joinGame(updatedUserData);
+        } catch (error) {
+            if (error.response && error.response.status === 409) console.error("Error:",error);
+            else throw error;
+        }
+        navigate("/Waiting", { state: updatedUserData });
+        } catch (error) {
+        handleApiError(error, joinGameButton, context);
+        } finally {
+        setJoinLoading(false);
+        }
     };
     
     const handleFeedback = () => {
@@ -55,16 +92,16 @@ const StartGame = () => {
                     <Col>
                     <div
                         style={{
-                        width: "374px",
+                        width: "365px",
                         height: "29px",
                         color: "white",
-                        fontSize: "47px",
+                        fontSize: "40px",
                         fontFamily: "Grandstander",
                         fontWeight: "800",
                         wordWrap: "break-word",
                         }}
                     >
-                        Welcome Name!
+                        Welcome {userData.name}!
                     </div>
                     </Col>
                 </Row>
@@ -74,7 +111,7 @@ const StartGame = () => {
                         style={{
                             width: "330px",
                             color: "white",
-                            fontSize: "32px",
+                            fontSize: "30px",
                             fontFamily: "Grandstander",
                             fontWeight: "600",
                             wordWrap: "break-word",

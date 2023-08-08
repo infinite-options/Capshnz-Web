@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useCookies } from 'react-cookie'
 import { handleApiError } from "../util/ApiHelper";
 import { ErrorContext } from "../App";
 import { addUser, checkGameCode, joinGame } from "../util/Api";
@@ -12,18 +13,23 @@ import "../styles/fonts.css";
 import "../styles/Landing.css";
 
 const ChooseScoring = () => {
-    const navigate = useNavigate(),
-        location = useLocation();
-    const userData = location.state;
-    const handleVotes = () => {
+    const navigate = useNavigate(), location = useLocation()
+    const [userData, setUserData] = useState(location.state)
+    const [cookies, setCookie] = useCookies(["userData"])
+    const [scoreType, setScoreType] = useState("")
 
-    };
-    const handleRanking = () => {
-
-    };
-    const handleContinue = () => {
-        navigate("/ChooseRounds", { state: userData });
-    };
+    function continueButton(){
+        if (scoreType === ""){
+            alert("Please select a scoring system.")
+            return
+        }
+        const updatedUserData = {
+            ...userData,
+            scoreType: scoreType
+        }
+        // navigate("/RoundType", { state: updatedUserData })
+        navigate("/ChooseRounds", { state: updatedUserData })
+    }
     return ( 
         <div
             style={{
@@ -49,7 +55,9 @@ const ChooseScoring = () => {
                 </Row>
                 <Row className="text-center" style={{marginTop:"32px"}}>
                 <Col style={{ position: "relative", }}>
-                    <Button variant="warning" onClick={handleVotes}
+                    <Button 
+                        variant="warning" 
+                        onClick={() => setScoreType("V")}
                         style={{
                             width: 330,
                             height: 55,
@@ -81,7 +89,9 @@ const ChooseScoring = () => {
                 <Row className="text-center" style={{marginTop:"32px"}}>
                     <Col style={{ position: "relative" }}>
                         <Polygon style={{ position: "absolute", bottom: "-30px", left: "80px" }}/>
-                        <Button variant="warning" onClick={handleVotes}
+                        <Button 
+                            variant="warning" 
+                            onClick={() => setScoreType("R")}
                             style={{
                                 width: 330,
                                 height: 55,
@@ -108,7 +118,7 @@ const ChooseScoring = () => {
                 </Row>
                 <Row className="text-center" style={{marginTop:"80px", marginLeft:"0px"}}>
                     <Col style={{ position: "relative" }}>
-                        <Button variant="warning" onClick={handleContinue}
+                        <Button variant="warning" onClick={continueButton}
                             style={{
                                 width: 350,
                                 height: 55,
