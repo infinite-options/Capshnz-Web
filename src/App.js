@@ -18,24 +18,29 @@ import ApiError from "./components/ApiError"
 import StartGame from "./components/StartGame"
 import ChooseScoring from "./components/ChooseScoring"
 import ChooseRounds from "./components/ChooseRounds"
-import SelectingDeck from "./components/SelectingDeck"
+import WaitingRoom from "./components/WaitingRoom"
 import FinalScore from "./components/FinalScore"
 import { GoogleOAuthProvider } from "@react-oauth/google"
 import { CookiesProvider } from 'react-cookie'
 import { createContext, useState } from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import LandingNew from "./components/LandingNew";
+import VerificationOtp from "./components/VerificationOtp";
+import EnterName from "./components/EnterName";
+import CaptionNew from "./components/CaptionNew";
+import VoteImage from "./components/VoteImage";
+import ScoreboardNew from "./components/ScoreboardNew";
 import './App.css'
-import WaitingRoom from "./components/WaitingRoom"
 
 
-export const ErrorContext = createContext()
+export const ErrorContext = createContext();
 
 export default function App() {
-    const [show, setShow] = useState(false)
-    const [onRetry, setOnRetry] = useState(()=>{})
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    return (
+  const [show, setShow] = useState(false);
+  const [onRetry, setOnRetry] = useState(() => {});
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  return (
     <div className="app">
         <ErrorContext.Provider value={{setShow, setOnRetry, setTitle, setDescription}}>
             <ApiError show={show} onRetry={onRetry} title={title} description={description} />
@@ -63,13 +68,18 @@ export default function App() {
                             <Route path="/ChooseScoring" element={<ChooseScoring />} />
                             <Route path="/ChooseRounds" element={<ChooseRounds />} />
                             <Route path="/WaitingRoom" element={<WaitingRoom />} />
-                            <Route path="/SelectingDeck" element={<SelectingDeck />} />
                             <Route path="/FinalScore" element={<FinalScore />} />
+                            <Route path="/Landing" element={<LandingNew />} />
+                            <Route path="/VerificationOtp" element={<VerificationOtp />} />
+                            <Route path="/EnterName" element={<EnterName />} />
+                            <Route path="/CaptionNew" element={<CaptionNew />} />
+                            <Route path="/VoteImage" element={<VoteImage />} />
+                            <Route path="/ScoreboardNew" element={<ScoreboardNew />} />
                         </Routes>
                     </Router>
                 </CookiesProvider>
             </GoogleOAuthProvider>
         </ErrorContext.Provider>
     </div>
-    )
+  );
 }

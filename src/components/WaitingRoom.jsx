@@ -97,7 +97,8 @@ const WaitingRoom = () => {
                 };
                 setUserData(updatedUserData);
                 setCookie("userData", updatedUserData, { path: "/" });
-                navigate("/Caption", { state: updatedUserData });
+                // navigate("/Caption", { state: updatedUserData });
+                navigate("/CaptionNew", { state: updatedUserData });
             }
         })
     }

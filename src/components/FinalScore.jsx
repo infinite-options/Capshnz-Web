@@ -116,7 +116,8 @@ const FinalScore = () => {
                 alignItems: 'center',
                 maxWidth: "100%",
                 minHeight: "100vh",
-                background: '#E58D80',}}
+                background: '#E58D80',
+            }}
         >
             <div
                 style={{
