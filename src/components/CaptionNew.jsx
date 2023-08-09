@@ -1,18 +1,165 @@
 import Form from "react-bootstrap/Form";
 import { Col } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import Button from "react-bootstrap/Button";
+import * as ReactBootStrap from "react-bootstrap";
+import { useCookies } from "react-cookie";
+import useAbly from "../util/ably";
 import { ReactComponent as PolygonWhiteUpward } from "../assets/polygon-upward-white.svg";
 import "../styles/CaptionNew.css";
 import { useNavigate, useLocation } from "react-router-dom";
+import { handleApiError } from "../util/ApiHelper";
+import { ErrorContext } from "../App";
+import {
+  submitCaption,
+  sendError,
+  getScoreBoard,
+  getSubmittedCaptions,
+  getGameImageForRound,
+} from "../util/Api";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
 
 const CaptionNew = () => {
-  const [isInvalid, setInvalid] = useState(false);
   const navigate = useNavigate(),
     location = useLocation();
-  function handleSubmit() {
-    navigate("/VoteImage");
+  const [userData, setUserData] = useState(location.state);
+  const [cookies, setCookie] = useCookies(["userData"]);
+  const { publish, subscribe, unSubscribe, detach } = useAbly(
+    `${userData.gameCode}/${userData.roundNumber}`
+  );
+  const [caption, setCaption] = useState("");
+  const [captionSubmitted, setCaptionSubmitted] = useState(false);
+  const isCaptionDisplayed = useRef(false);
+  const context = useContext(ErrorContext);
+
+  async function sendingError() {
+    let code1 = "Caption Page";
+    let code2 = "userData.imageURL does not match cookies.userData.imageURL";
+    // console.log("caption:err")
+    await sendError(code1, code2);
+    // console.log(cookies.userData.imageURL)
+    // console.log("user")
+    // console.log(userData.imageURL)
   }
+  useEffect(() => {
+    async function getCaptionsForUser() {
+      const image_URL = await getGameImageForRound(
+        userData.gameCode,
+        userData.roundNumber
+      );
+      if (image_URL != userData.imageURL) {
+        sendingError();
+        const updatedUserData = {
+          ...userData,
+          imageURL: image_URL,
+        };
+        setUserData(updatedUserData);
+        setCookie("userData", updatedUserData, { path: "/" });
+      } else {
+        setCookie("userData", userData, { path: "/" });
+      }
+    }
+    const interval = setInterval(() => {
+      if (
+        !isCaptionDisplayed.current &&
+        cookies.userData.imageURL !== userData.imageURL
+      ) {
+        getCaptionsForUser();
+        isCaptionDisplayed.current = true;
+      }
+    }, 5000);
+
+    return () => {
+      clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+      unSubscribe();
+    };
+  }, []);
+  async function scoreBoard() {
+    const scoreboard = await getScoreBoard(userData);
+    scoreboard.sort((a, b) => b.game_score - a.game_score);
+    return scoreboard;
+  }
+  function handleChange(event) {
+    setCaption(event.target.value);
+  }
+  async function closeButton() {
+    try {
+      let scoreboard = userData.scoreBoardEnd;
+      if (scoreboard === undefined) {
+        scoreboard = await scoreBoard();
+        for (let i = 0; i < scoreboard.length; i++) {
+          scoreboard[i].game_score = 0;
+        }
+      }
+      await publish({
+        data: {
+          message: "EndGame caption",
+          scoreBoard: scoreboard,
+        },
+      });
+    } catch (error) {
+      handleApiError(error, closeButton, context);
+    }
+  }
+  async function submitButton(timerComplete) {
+    try {
+      let numOfPlayersSubmitting = -1;
+      if (caption === "" && !timerComplete) {
+        alert("Please enter a valid caption.");
+        return;
+      }
+      setCaptionSubmitted(true);
+      if (caption !== "" && !timerComplete) {
+        numOfPlayersSubmitting = await submitCaption(caption, userData);
+      } else if (timerComplete) {
+        numOfPlayersSubmitting = await submitCaption(caption, userData);
+      }
+      if (numOfPlayersSubmitting === 0) {
+        // const submittedCaptions = await getCaptions()
+
+        await publish({
+          data: {
+            message: "Start Vote",
+            // ,submittedCaptions: submittedCaptions,
+          },
+        });
+      }
+    } catch (error) {
+      handleApiError(error, submitButton, context);
+    }
+  }
+  async function getCaptions() {
+    const submittedCaptions = await getSubmittedCaptions(userData);
+    // console.log("get from service:Caption")
+    // console.log(submittedCaptions)
+    return submittedCaptions;
+  }
+  useEffect(() => {
+    subscribe((event) => {
+      if (event.data.message === "Start Vote") {
+        // const updatedUserData = {
+        //     ...userData,
+        //     captions: event.data.submittedCaptions
+        // }
+        // setCookie("userData", updatedUserData, { path: '/' })
+        // console.log(cookies)
+        navigate("/Vote", { state: userData });
+      } else if (event.data.message === "EndGame caption") {
+        detach();
+        if (!userData.host) {
+          alert("Host has Ended the game");
+        }
+        const updatedUserData = {
+          ...userData,
+          scoreBoard: event.data.scoreBoard,
+        };
+        setUserData(updatedUserData);
+        setCookie("userData", updatedUserData, { path: "/" });
+        navigate("/EndGame", { state: updatedUserData });
+      }
+    });
+  }, [userData]);
+
   return (
     <div
       style={{
@@ -40,7 +187,7 @@ const CaptionNew = () => {
           //marginBottom: 20,
         }}
       >
-        <p
+        {/* <p
           style={{
             fontFamily: "Grandstander",
             fontSize: 60,
@@ -53,7 +200,12 @@ const CaptionNew = () => {
           }}
         >
           IMAGE
-        </p>
+        </p> */}
+        <img
+          className="imgCaption"
+          src={userData.imageURL}
+          alt="Loading Image...."
+        />
         <div
           style={{
             width: 76,
@@ -73,12 +225,33 @@ const CaptionNew = () => {
             wordWrap: "break-word",
           }}
         >
-          60
+          <CountdownCircleTimer
+            size={60}
+            strokeWidth={5}
+            top="280"
+            left="290"
+            isPlaying
+            duration={userData.roundTime}
+            colors="#000000"
+            background="#566176"
+            fontFamily="Grandstander"
+            fontWeight="700"
+            fontSize="30"
+            onComplete={() => {
+              if (!captionSubmitted) {
+                submitButton(true);
+              }
+            }}
+          >
+            {({ remainingTime }) => {
+              return <div className="countdownCaption">{remainingTime}</div>;
+            }}
+          </CountdownCircleTimer>
         </div>
       </div>
-      <Form noValidate onSubmit={handleSubmit}>
+      <Form noValidate onSubmit={submitButton}>
         <Form.Group as={Col} md="10">
-          <Form.Label
+          {/* <Form.Label
             style={{
               width: "383px",
               color: "white",
@@ -87,7 +260,7 @@ const CaptionNew = () => {
               fontWeight: "600",
               wordWrap: "break-word",
             }}
-          ></Form.Label>
+          ></Form.Label> */}
           <Form.Control
             style={{
               width: 391,
@@ -103,18 +276,17 @@ const CaptionNew = () => {
               borderColor: "white",
               marginTop: "160px",
             }}
-            required
             //value={email}
             type="text"
             placeholder="Enter caption here..."
-            onChange={() => {}}
-            isInvalid={isInvalid}
+            onChange={handleChange}
+            disabled={!captionSubmitted}
           />
 
           <Button
             variant="success"
             type="submit"
-            disabled={() => {}}
+            disabled={!captionSubmitted}
             style={{
               width: 218,
               height: 54,

@@ -1,16 +1,251 @@
 import { ReactComponent as PolygonWhiteUpward } from "../assets/polygon-upward-white.svg";
 import Form from "react-bootstrap/Form";
 import { Row, Col, Button, Container } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import {
+  getSubmittedCaptions,
+  postVote,
+  sendError,
+  getScoreBoard,
+} from "../util/Api";
+import * as ReactBootStrap from "react-bootstrap";
+import { handleApiError } from "../util/ApiHelper";
+import { ErrorContext } from "../App";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useCookies } from "react-cookie";
+import useAbly from "../util/ably";
+import React, { useContext } from "react";
 
 const VoteImage = () => {
-  const [isInvalid, setInvalid] = useState(false);
   const navigate = useNavigate(),
     location = useLocation();
-  function handleSubmit() {
-    navigate("/ScoreboardNew");
+  const [userData, setUserData] = useState(location.state);
+  const [cookies, setCookie] = useCookies(["userData"]);
+  const { publish, subscribe, unSubscribe, detach } = useAbly(
+    `${userData.gameCode}/${userData.roundNumber}`
+  );
+  const [captions, setCaptions] = useState([]);
+  const [toggles, setToggles] = useState([]);
+  const [isMyCaption, setIsMyCaption] = useState("");
+  const [voteSubmitted, setVoteSubmitted] = useState(false);
+  const [votedCaption, setvotedCaption] = useState(-1);
+  const backgroundColors = {
+    default: "white",
+    selected: "#f9dd25",
+    myCaption: "gray",
+  };
+  const isGameEnded = useRef(false);
+  const isCaptionSubmitted = useRef(false);
+  const [loadingImg, setloadingImg] = useState(true);
+  const context = useContext(ErrorContext);
+
+  if (
+    cookies.userData != undefined &&
+    cookies.userData.imageURL !== userData.imageURL
+  ) {
+    async function sendingError() {
+      let code1 = "Vote Page";
+      let code2 = "userData.imageURL does not match cookies.userData.imageURL";
+      // console.log("vote:err")
+      await sendError(code1, code2);
+    }
+    // sendingError()
   }
+  async function scoreBoard() {
+    const scoreboard = await getScoreBoard(userData);
+    scoreboard.sort((a, b) => b.game_score - a.game_score);
+    return scoreboard;
+  }
+  async function setSubmittedCaptions(submittedCaptions) {
+    // setisCaptionSubmitted(true)
+    let tempCaptions = [];
+    let tempToggles = [];
+    let myCaption = "";
+    let onlyCaptionSubmitted = "";
+    for (let i = 0; i < submittedCaptions.length; i++) {
+      if (submittedCaptions[i].caption === "") continue;
+      if (submittedCaptions[i].round_user_uid === userData.playerUID)
+        myCaption = submittedCaptions[i].caption;
+      if (submittedCaptions[i].caption !== "")
+        onlyCaptionSubmitted = submittedCaptions[i].caption;
+      tempCaptions.push(submittedCaptions[i].caption);
+    }
+    for (let i = 0; i < tempCaptions.length; i++) {
+      tempToggles.push(false);
+    }
+    setCaptions(tempCaptions);
+    setToggles(tempToggles);
+    // console.log("tempCaptions")
+    // console.log(tempCaptions)
+    setIsMyCaption(myCaption);
+    const updatedUserData = {
+      ...userData,
+      captions: submittedCaptions,
+    };
+    setCookie("userData", updatedUserData, { path: "/" });
+    if (tempCaptions.length <= 1) {
+      await skipVote(tempCaptions, onlyCaptionSubmitted, myCaption);
+      // console.log("skipVote")
+      // console.log(tempCaptions)
+    }
+  }
+  async function skipVote(tempCaptions, onlyCaptionSubmitted, myCaption) {
+    if (tempCaptions.length === 1 && onlyCaptionSubmitted === myCaption) {
+      await postVote(null, userData);
+    } else if (
+      tempCaptions.length === 1 &&
+      onlyCaptionSubmitted !== myCaption
+    ) {
+      await postVote(onlyCaptionSubmitted, userData);
+    } else if (tempCaptions.length === 0) {
+      await postVote(null, userData);
+    }
+    setCookie("userData", userData, { path: "/" });
+    navigate("/ScoreBoard", { state: userData });
+  }
+
+  useEffect(() => {
+    // console.log("Start")
+    // console.log(captions)
+    // console.log(cookies.userData)
+    if (captions.length === 0 && cookies.userData.captions != undefined) {
+      setloadingImg(false);
+      setSubmittedCaptions(cookies.userData.captions);
+      isCaptionSubmitted.current = true;
+      // console.log("get from cookie")
+      // console.log(cookies.userData.captions)
+    }
+
+    if (userData.host && cookies.userData.captions === undefined) {
+      async function getCaptions() {
+        const submittedCaptions = await getSubmittedCaptions(userData);
+        // console.log("get from service")
+        // console.log(submittedCaptions)
+        await publish({
+          data: {
+            message: "Set Vote",
+            submittedCaptions: submittedCaptions,
+          },
+        });
+      }
+      getCaptions();
+    }
+
+    subscribe((event) => {
+      if (event.data.message === "Set Vote") {
+        // console.log("get from ably")
+        // console.log(event.data.submittedCaptions)
+        isCaptionSubmitted.current = true;
+        setloadingImg(false);
+        setSubmittedCaptions(event.data.submittedCaptions);
+      } else if (event.data.message === "Start ScoreBoard") {
+        setCookie("userData", userData, { path: "/" });
+        navigate("/ScoreBoard", { state: userData });
+      }
+    });
+  }, [userData]);
+
+  useEffect(() => {
+    subscribe((event) => {
+      if (event.data.message === "EndGame vote") {
+        detach();
+        if (!userData.host && !isGameEnded.current) {
+          isGameEnded.current = true;
+          alert("Host has Ended the game");
+        }
+        const updatedUserData = {
+          ...userData,
+          scoreBoard: event.data.scoreBoard,
+        };
+        setUserData(updatedUserData);
+        setCookie("userData", updatedUserData, { path: "/" });
+        navigate("/EndGame", { state: updatedUserData });
+      }
+    });
+  }, []);
+  async function getCaptionsForUser() {
+    const submittedCaptions = await getSubmittedCaptions(userData);
+    // console.log("get from service:user")
+    // console.log(submittedCaptions)
+    setloadingImg(false);
+    setSubmittedCaptions(submittedCaptions);
+  }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!isCaptionSubmitted.current) {
+        getCaptionsForUser();
+        // console.log(isCaptionSubmitted)
+        isCaptionSubmitted.current = true;
+      }
+    }, 5000);
+
+    return () => {
+      clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+      unSubscribe();
+    };
+  }, []);
+  async function closeButton() {
+    try {
+      let scoreboard = userData.scoreBoardEnd;
+      if (scoreboard === undefined) {
+        scoreboard = await scoreBoard();
+        for (let i = 0; i < scoreboard.length; i++) {
+          scoreboard[i].game_score = 0;
+        }
+      }
+      await publish({
+        data: {
+          message: "EndGame vote",
+          scoreBoard: scoreboard,
+        },
+      });
+    } catch (error) {
+      handleApiError(error, closeButton, context);
+    }
+  }
+  function updateToggles(index) {
+    if (captions[index] === isMyCaption) return;
+    let tempToggles = [];
+    for (let i = 0; i < toggles.length; i++) {
+      if (index === i) {
+        tempToggles.push(true);
+        setvotedCaption(i);
+      } else tempToggles.push(false);
+    }
+    setToggles(tempToggles);
+  }
+
+  async function voteButton(timerComplete) {
+    try {
+      let numOfPlayersVoting = -1;
+      // for(let i = 0; i < toggles.length; i++){
+      //     if(toggles[i] === true){
+      //         votedCaption = captions[i]
+      //     }
+      // }
+      if (votedCaption === -1 && !timerComplete) {
+        alert("Please vote for a caption.");
+        return;
+      }
+      setVoteSubmitted(true);
+      if (votedCaption === -1 && timerComplete) {
+        numOfPlayersVoting = await postVote(null, userData);
+      } else if (votedCaption !== -1) {
+        numOfPlayersVoting = await postVote(captions[votedCaption], userData);
+      }
+      if (numOfPlayersVoting === 0) {
+        await publish({ data: { message: "Start ScoreBoard" } });
+      }
+    } catch (error) {
+      handleApiError(error, voteButton, context);
+    }
+  }
+
+  function getBackgroundColor(status) {
+    return backgroundColors[status];
+  }
+
   return (
     <div
       style={{
@@ -41,24 +276,11 @@ const VoteImage = () => {
               //marginBottom: 20,
             }}
           >
-            <p
-              style={{
-                fontFamily: "Grandstander",
-                fontSize: 60,
-                fontWeight: 500,
-                lineHeight: "60px",
-                letterSpacing: "0em",
-                textAlign: "left",
-                margin: 0,
-                padding: 20,
-              }}
-            >
-              IMAGE
-            </p>
+            <img className="imgVote" src={userData.imageURL} />
           </div>
         </Row>
 
-        <Form noValidate onSubmit={handleSubmit}>
+        <Form noValidate onSubmit={voteButton}>
           <Form.Group>
             <Row className="text-center">
               <Button
@@ -114,84 +336,57 @@ const VoteImage = () => {
                   marginTop: "17rem",
                 }}
               >
-                60
+                <CountdownCircleTimer
+                  size={76}
+                  strokeWidth={5}
+                  isPlaying
+                  duration={userData.roundTime}
+                  colors="#000000"
+                  backgroundColors="#ADC3EC"
+                  onComplete={() => {
+                    if (!voteSubmitted) {
+                      voteButton(true);
+                    }
+                  }}
+                >
+                  {({ remainingTime }) => {
+                    return <div className="countdownVote">{remainingTime}</div>;
+                  }}
+                </CountdownCircleTimer>
               </div>
             </Row>
-            <Row className="text-center">
-              <Button
-                variant="success"
-                //type="submit"
-                disabled={() => {}}
-                style={{
-                  width: "80%",
-                  height: 54,
-                  background: "#D4B551",
-                  borderRadius: 30,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "white",
-                  fontSize: 35,
-                  fontFamily: "Grandstander",
-                  fontWeight: "600",
-                  wordWrap: "break-word",
-                  marginLeft: "2.5rem",
-                  marginTop: "7rem",
-                }}
-              >
-                A
-              </Button>
-            </Row>
-            <Row className="text-center">
-              <Button
-                variant="success"
-                //type="submit"
-                disabled={() => {}}
-                style={{
-                  width: "80%",
-                  height: 54,
-                  background: "#D4B551",
-                  borderRadius: 30,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "white",
-                  fontSize: 35,
-                  fontFamily: "Grandstander",
-                  fontWeight: "600",
-                  wordWrap: "break-word",
-                  marginLeft: "2.5rem",
-                  marginTop: "1rem",
-                }}
-              >
-                B
-              </Button>
-            </Row>
-            <Row className="text-center">
-              <Button
-                variant="success"
-                //type="submit"
-                disabled={() => {}}
-                style={{
-                  width: "80%",
-                  height: 54,
-                  background: "#FD8B76",
-                  borderRadius: 30,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "white",
-                  fontSize: 35,
-                  fontFamily: "Grandstander",
-                  fontWeight: "600",
-                  wordWrap: "break-word",
-                  marginLeft: "2.5rem",
-                  marginTop: "1rem",
-                }}
-              >
-                C
-              </Button>
-            </Row>
+            {captions.map((caption, index) => {
+              let status = "";
+              if (caption === isMyCaption) status = "myCaption";
+              else if (toggles[index] === true) status = "selected";
+              else status = "default";
+              return (
+                <Row className="text-center">
+                  <Button
+                    variant="success"
+                    onClick={(event) => updateToggles(index)}
+                    style={{
+                      width: "80%",
+                      height: 54,
+                      background: "#D4B551",
+                      borderRadius: 30,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "white",
+                      fontSize: 35,
+                      fontFamily: "Grandstander",
+                      fontWeight: "600",
+                      wordWrap: "break-word",
+                      marginLeft: "2.5rem",
+                      marginTop: "7rem",
+                    }}
+                  >
+                    A
+                  </Button>
+                </Row>
+              );
+            })}
           </Form.Group>
         </Form>
         <Row className="text-center">
