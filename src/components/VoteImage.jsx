@@ -102,7 +102,7 @@ const VoteImage = () => {
       await postVote(null, userData);
     }
     setCookie("userData", userData, { path: "/" });
-    navigate("/ScoreBoard", { state: userData });
+    navigate("/ScoreboardNew", { state: userData });
   }
 
   useEffect(() => {
@@ -141,7 +141,7 @@ const VoteImage = () => {
         setSubmittedCaptions(event.data.submittedCaptions);
       } else if (event.data.message === "Start ScoreBoard") {
         setCookie("userData", userData, { path: "/" });
-        navigate("/ScoreBoard", { state: userData });
+        navigate("/ScoreboardNew", { state: userData });
       }
     });
   }, [userData]);
@@ -160,7 +160,7 @@ const VoteImage = () => {
         };
         setUserData(updatedUserData);
         setCookie("userData", updatedUserData, { path: "/" });
-        navigate("/EndGame", { state: updatedUserData });
+        navigate("/FinalScore", { state: updatedUserData });
       }
     });
   }, []);
@@ -382,7 +382,7 @@ const VoteImage = () => {
                       marginTop: "7rem",
                     }}
                   >
-                    A
+                    {caption}
                   </Button>
                 </Row>
               );

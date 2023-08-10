@@ -45,7 +45,7 @@ const EnterName = () => {
   return (
     <div>
       <Form noValidate onSubmit={handleSubmit}>
-        <Container className="container" fluid>
+        <Container className="container-main" fluid>
           <Form.Group as={Col} md="10">
             <Form.Label
               style={{

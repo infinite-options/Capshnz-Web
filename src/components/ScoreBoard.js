@@ -113,7 +113,7 @@ export default function ScoreBoard(){
                 navigate("/Caption", {state: updatedUserData})
             }
             else if(event.data.message === "Start EndGame"){
-                navigate("/EndGame", {state: userData})
+                navigate("/FinalScore", {state: userData})
             }
         })
         return () => unSubscribe()
@@ -132,7 +132,7 @@ export default function ScoreBoard(){
                     isGameEnded.current = true
                     alert("Host has Ended the game")
                 }
-                navigate("/EndGame", { state: updatedUserData })
+                navigate("/FinalScore", { state: updatedUserData })
             }
         })
     }, [scoreBoard])

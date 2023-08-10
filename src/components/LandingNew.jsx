@@ -57,7 +57,7 @@ const LandingNew = () => {
       }}
     >
       <Form noValidate onSubmit={handleSubmit}>
-        <Container className="container" fluid>
+        <Container className="container-main" fluid>
           <Row className="text-center py-5">
             <Col
               style={{

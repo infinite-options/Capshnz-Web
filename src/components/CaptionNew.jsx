@@ -7,7 +7,7 @@ import { useCookies } from "react-cookie";
 import useAbly from "../util/ably";
 import { ReactComponent as PolygonWhiteUpward } from "../assets/polygon-upward-white.svg";
 import "../styles/CaptionNew.css";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { handleApiError } from "../util/ApiHelper";
 import { ErrorContext } from "../App";
 import {
@@ -31,6 +31,7 @@ const CaptionNew = () => {
   const [captionSubmitted, setCaptionSubmitted] = useState(false);
   const isCaptionDisplayed = useRef(false);
   const context = useContext(ErrorContext);
+  const [inputCaption, setInputCaption] = useState("");
 
   async function sendingError() {
     let code1 = "Caption Page";
@@ -81,6 +82,7 @@ const CaptionNew = () => {
   }
   function handleChange(event) {
     setCaption(event.target.value);
+    setInputCaption(event.target.value);
   }
   async function closeButton() {
     try {
@@ -143,7 +145,7 @@ const CaptionNew = () => {
         // }
         // setCookie("userData", updatedUserData, { path: '/' })
         // console.log(cookies)
-        navigate("/Vote", { state: userData });
+        navigate("/VoteImage", { state: userData });
       } else if (event.data.message === "EndGame caption") {
         detach();
         if (!userData.host) {
@@ -155,7 +157,7 @@ const CaptionNew = () => {
         };
         setUserData(updatedUserData);
         setCookie("userData", updatedUserData, { path: "/" });
-        navigate("/EndGame", { state: updatedUserData });
+        navigate("/FinalScore", { state: updatedUserData });
       }
     });
   }, [userData]);
@@ -249,7 +251,7 @@ const CaptionNew = () => {
           </CountdownCircleTimer>
         </div>
       </div>
-      <Form noValidate onSubmit={submitButton}>
+      <Form noValidate onSubmit={(event) => submitButton(false)}>
         <Form.Group as={Col} md="10">
           {/* <Form.Label
             style={{
@@ -280,13 +282,15 @@ const CaptionNew = () => {
             type="text"
             placeholder="Enter caption here..."
             onChange={handleChange}
-            disabled={!captionSubmitted}
+            disabled={captionSubmitted}
+            value={inputCaption}
           />
 
           <Button
             variant="success"
-            type="submit"
-            disabled={!captionSubmitted}
+            //type="submit"
+            onClick={(event) => submitButton(false)}
+            disabled={captionSubmitted}
             style={{
               width: 218,
               height: 54,

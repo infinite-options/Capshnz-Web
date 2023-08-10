@@ -3,26 +3,165 @@ import { ReactComponent as Polygon } from "../assets/Polygon 1.svg";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ReactComponent as PolygonWhiteUpward } from "../assets/polygon-upward-white.svg";
 import { ReactComponent as PolygonYelloUpward } from "../assets/polygon-upward-yellow.svg";
+import { handleApiError } from "../util/ApiHelper";
+import { ErrorContext } from "../App";
+import { useState, useEffect, useRef, useContext } from "react";
+import { useCookies } from "react-cookie";
+import useAbly from "../util/ably";
+import { getScoreBoard, getNextImage, getGameScore } from "../util/Api";
 
 const ScoreboardNew = () => {
   const navigate = useNavigate(),
     location = useLocation();
-  const userData = location.state;
+  const [userData, setUserData] = useState(location.state);
+  const [cookies, setCookie] = useCookies(["userData"]);
+  const { publish, subscribe, unSubscribe, detach } = useAbly(
+    `${userData.gameCode}/${userData.roundNumber}`
+  );
+  const [scoreBoard, setScoreBoard] = useState([]);
+  const isGameEnded = useRef(false);
+  const [isScoreBoard, setisScoreBoard] = useState(false);
+  const isScoreBoardDisplayed = useRef(false);
+  const [loadingImg, setloadingImg] = useState(true);
+  const context = useContext(ErrorContext);
 
-  const handlePlayAgain = () => {
-    navigate("/FinalScore", { state: userData });
-  };
+  if (scoreBoard.length === 0 && cookies.userData.scoreBoard != undefined) {
+    setloadingImg(false);
+    setScoreBoard(cookies.userData.scoreBoard);
+  }
+
+  useEffect(() => {
+    if (
+      !isScoreBoard &&
+      userData.host &&
+      cookies.userData.scoreBoard === undefined
+    ) {
+      async function setScoreBoard() {
+        const scoreBoard = await getScoreBoard(userData);
+        setloadingImg(false);
+        scoreBoard.sort((a, b) => b.votes - a.votes);
+        // console.log(scoreBoard)
+        setisScoreBoard(true);
+        publish({
+          data: {
+            message: "Set ScoreBoard",
+            scoreBoard: scoreBoard,
+          },
+        });
+      }
+      setScoreBoard();
+    }
+  }, [userData, isScoreBoard]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // console.log("score interval")
+      if (!isScoreBoardDisplayed.current && scoreBoard.length == 0) {
+        async function getScoreBoard() {
+          const scoreboard = await getGameScore(
+            userData.gameCode,
+            userData.roundNumber
+          );
+          setloadingImg(false);
+          scoreboard.sort((a, b) => b.game_score - a.game_score);
+          setScoreBoard(scoreboard);
+          return scoreBoard;
+        }
+        // console.log("score from service")
+        getScoreBoard();
+        isScoreBoardDisplayed.current = true;
+      }
+    }, 5000);
+
+    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+  }, [scoreBoard]);
+  async function closeButton() {
+    await publish({
+      data: {
+        message: "EndGame scoreboard",
+      },
+    });
+  }
+  async function nextRoundButton() {
+    try {
+      const nextRound = userData.roundNumber + 1;
+      const imageURL = await getNextImage(userData.gameCode, nextRound);
+      await publish({
+        data: {
+          message: "Start Next Round",
+          roundNumber: nextRound,
+          imageURL: imageURL,
+        },
+      });
+    } catch (error) {
+      handleApiError(error, nextRoundButton, context);
+    }
+  }
+
+  async function finalScoresButton() {
+    await publish({ data: { message: "Start EndGame" } });
+  }
+
+  useEffect(() => {
+    subscribe(async (event) => {
+      if (event.data.message === "Set ScoreBoard") {
+        const updatedUserData = {
+          ...userData,
+          scoreBoard: event.data.scoreBoard,
+        };
+        const updatedEndUserData = {
+          ...userData,
+          scoreBoardEnd: event.data.scoreBoard,
+        };
+        setloadingImg(false);
+        setUserData(updatedEndUserData);
+        setCookie("userData", updatedUserData, { path: "/" });
+        setScoreBoard(event.data.scoreBoard);
+      } else if (event.data.message === "Start Next Round") {
+        const updatedUserData = {
+          ...userData,
+          roundNumber: event.data.roundNumber,
+          imageURL: event.data.imageURL,
+        };
+        setUserData(updatedUserData);
+        setCookie("userData", updatedUserData, { path: "/" });
+        navigate("/CaptionNew", { state: updatedUserData });
+      } else if (event.data.message === "Start EndGame") {
+        navigate("/FinalScore", { state: userData });
+      }
+    });
+    return () => unSubscribe();
+  }, []);
+
+  useEffect(() => {
+    subscribe(async (event) => {
+      if (event.data.message === "EndGame scoreboard") {
+        detach();
+        const updatedUserData = {
+          ...userData,
+          scoreBoard: scoreBoard,
+        };
+        setCookie("userData", updatedUserData, { path: "/" });
+        if (!userData.host && !isGameEnded.current) {
+          isGameEnded.current = true;
+          alert("Host has Ended the game");
+        }
+        navigate("/FinalScore", { state: updatedUserData });
+      }
+    });
+  }, [scoreBoard]);
+
   return (
     <div
       style={{
-        display: "flex",
+        //display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
         width: "100%",
         height: "100vh",
         background: "#E58D80",
-        overflow: "hidden",
+        overflow: "scroll",
       }}
     >
       {/* <div
@@ -33,10 +172,10 @@ const ScoreboardNew = () => {
           alignItems: "center",
           maxWidth: "100%",
           overflowY: "scroll",
-          //maxHeight: `${remainingHeight}px`,
+          maxHeight: "100vh",
         }}
       > */}
-      <Container fluid>
+      <Container>
         <Row className="text-center">
           <Col style={{}}>
             <input
@@ -106,36 +245,89 @@ const ScoreboardNew = () => {
               marginLeft: "auto",
               marginRight: "auto",
             }}
-          ></div>
+          >
+            {" "}
+            <div className="headerScoreBoard">
+              <div>Alias</div>
+              <div>Votes</div>
+              <div>Points</div>
+              <div>Total</div>
+            </div>
+            {scoreBoard.map((player, index) => {
+              return (
+                <div key={index}>
+                  <div className="valuesScoreBoard">
+                    <div>{player.user_alias}</div>
+                    <div>{player.votes}</div>
+                    <div>{player.score}</div>
+                    <div>{player.game_score}</div>
+                  </div>
+                  {/* {player.caption !== "" && (
+                    <div className="captionScoreBoard">{player.caption}</div>
+                  )}
+                  {player.caption === "" && (
+                    <div className="captionScoreBoard">&nbsp;</div>
+                  )} */}
+                </div>
+              );
+            })}
+          </div>
         </Row>
         <Row
           className="text-center"
           style={{ marginTop: "32px", marginLeft: "0px" }}
         >
           <Col style={{ position: "relative" }}>
-            <Button
-              variant="warning"
-              onClick={handlePlayAgain}
-              style={{
-                width: 350,
-                height: 55,
-                background: "#5E9E94",
-                borderRadius: 30,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                color: "white",
-                fontSize: 30,
-                fontFamily: "Grandstander",
-                fontWeight: "600",
-                wordWrap: "break-word",
-                marginLeft: "auto",
-                marginRight: "auto",
-                marginBottom: "2rem",
-              }}
-            >
-              Next Round
-            </Button>
+            {userData.host && userData.roundNumber !== userData.numOfRounds && (
+              <Button
+                variant="warning"
+                onClick={nextRoundButton}
+                style={{
+                  width: 350,
+                  height: 55,
+                  background: "#5E9E94",
+                  borderRadius: 30,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "white",
+                  fontSize: 30,
+                  fontFamily: "Grandstander",
+                  fontWeight: "600",
+                  wordWrap: "break-word",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  marginBottom: "2rem",
+                }}
+              >
+                Next Round
+              </Button>
+            )}
+            {userData.host && userData.roundNumber === userData.numOfRounds && (
+              <Button
+                variant="warning"
+                onClick={finalScoresButton}
+                style={{
+                  width: 350,
+                  height: 55,
+                  background: "#5E9E94",
+                  borderRadius: 30,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "white",
+                  fontSize: 30,
+                  fontFamily: "Grandstander",
+                  fontWeight: "600",
+                  wordWrap: "break-word",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  marginBottom: "2rem",
+                }}
+              >
+                Final Score
+              </Button>
+            )}
           </Col>
         </Row>
         <Row className="text-center">

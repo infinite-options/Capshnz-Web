@@ -45,7 +45,8 @@ export default function Confirmation(){
                 //     publish({data: {message: "New Player Joined Lobby"}})
                 //     navigate("/Waiting", {state: userData})
                 // }
-                navigate("/JoinGame", { state: userData });
+                // navigate("/JoinGame", { state: userData });
+                navigate("/StartGame", { state: userData });
             }
             else{
                 setValid(false)

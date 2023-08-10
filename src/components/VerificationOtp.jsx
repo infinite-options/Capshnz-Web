@@ -61,7 +61,7 @@ const VerificationOtp = () => {
         position: "relative",
       }}
     >
-      <Container className="container" fluid>
+      <Container className="container-main" fluid>
         <Row className="text-center py-5">
           <Col>
             <div

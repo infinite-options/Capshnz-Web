@@ -48,6 +48,7 @@ export default function RoundType() {
             setLoading(true)
             if (!validateRoundInfo())
                 return
+            console.log(userData)
             const gameInfo = await createGame(userData.playerUID, roundInfo.numOfRounds, roundInfo.roundTime, userData.scoreType)
             if(userData.playAgain) {
                 await publish({data: {

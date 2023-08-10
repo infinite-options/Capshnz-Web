@@ -48,7 +48,7 @@ const Landing = () => {
 
   return (
     <Form noValidate onSubmit={handleSubmit}>
-      <Container className="container" fluid>
+      <Container className="container-main" fluid>
         <Row className="text-center py-5">
           <Col>
             <h2>Welcome to Capshnz!</h2>
