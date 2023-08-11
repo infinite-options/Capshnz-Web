@@ -276,7 +276,7 @@ const CaptionNew = () => {
             disabled={captionSubmitted}
             value={inputCaption}
           />
-          {!captionSubmitted &&
+          {!captionSubmitted && (
             <Button
               onClick={(event) => submitButton(false)}
               style={{
@@ -298,41 +298,41 @@ const CaptionNew = () => {
             >
               Submit
             </Button>
-          }
-          {captionSubmitted && 
+          )}
+          {captionSubmitted && (
             <div
               style={{
-                fontFamily: 'Grandstander',
-                fontSize: '18px',
-                fontWeight: '600',
-            }}
+                fontFamily: "Grandstander",
+                fontSize: "18px",
+                fontWeight: "600",
+              }}
             >
-                <Button
-                  style={{
-                    width: 218,
-                    height: 54,
-                    background: "#5E9E94",
-                    borderRadius: 30,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "white",
-                    fontSize: 31,
-                    fontFamily: "Grandstander",
-                    fontWeight: "600",
-                    wordWrap: "break-word",
-                    marginLeft: "90px",
-                    marginTop: "100px",
-                  }}
+              <Button
+                style={{
+                  width: 218,
+                  height: 54,
+                  background: "#5E9E94",
+                  borderRadius: 30,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "white",
+                  fontSize: 31,
+                  fontFamily: "Grandstander",
+                  fontWeight: "600",
+                  wordWrap: "break-word",
+                  marginLeft: "90px",
+                  marginTop: "100px",
+                }}
               >
                 Submitted
               </Button>
-              <br/>
+              <br />
               Waiting for other players to submit captions...
-              <br/>
-              <ReactBootStrap.Spinner animation="border" role="status"/>
-            </div>  
-          }
+              <br />
+              <ReactBootStrap.Spinner animation="border" role="status" />
+            </div>
+          )}
         </Form.Group>
       </Form>
       <div

@@ -282,10 +282,10 @@ const VoteImage = () => {
 
         <Form>
           {/* <Form.Group> */}
-            <Row className="text-center">
-            {!voteSubmitted &&
+          <Row className="text-center">
+            {!voteSubmitted && (
               <Button
-                onClick={event => voteButton(false)}
+                onClick={(event) => voteButton(false)}
                 style={{
                   width: "90%",
                   height: 54,
@@ -305,104 +305,104 @@ const VoteImage = () => {
               >
                 Press to Submit
               </Button>
-            }
-            {voteSubmitted && 
-              <div 
+            )}
+            {voteSubmitted && (
+              <div
                 className="submittedVote"
                 style={{
-                  fontFamily: 'Grandstander',
-                  fontSize: '18px',
-                  fontWeight: '600',
+                  fontFamily: "Grandstander",
+                  fontSize: "18px",
+                  fontWeight: "600",
                 }}
               >
-                <br/>
+                <br />
                 <b>Vote submitted.</b>
-                <br/>
+                <br />
                 Waiting for other players to submit votes...
-                <br/>
-                <ReactBootStrap.Spinner animation="border" role="status"/>
+                <br />
+                <ReactBootStrap.Spinner animation="border" role="status" />
               </div>
-            }
-            </Row>
-            <Row
-              className="text-center"
+            )}
+          </Row>
+          <Row
+            className="text-center"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div
               style={{
+                width: 76,
+                height: 76,
+                background: "#ADC3EC",
+                borderRadius: "50%",
+                position: "absolute",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "white",
+                fontSize: 30,
+                fontFamily: "Grandstander",
+                fontWeight: "700",
+                wordWrap: "break-word",
+                marginBottom: "10rem",
+                marginTop: "17rem",
               }}
             >
-              <div
-                style={{
-                  width: 76,
-                  height: 76,
-                  background: "#ADC3EC",
-                  borderRadius: "50%",
-                  position: "absolute",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "white",
-                  fontSize: 30,
-                  fontFamily: "Grandstander",
-                  fontWeight: "700",
-                  wordWrap: "break-word",
-                  marginBottom: "10rem",
-                  marginTop: "17rem",
+              <CountdownCircleTimer
+                size={76}
+                strokeWidth={5}
+                isPlaying
+                duration={userData.roundTime}
+                colors="#000000"
+                backgroundColors="#ADC3EC"
+                onComplete={() => {
+                  if (!voteSubmitted) {
+                    voteButton(true);
+                  }
                 }}
               >
-                <CountdownCircleTimer
-                  size={76}
-                  strokeWidth={5}
-                  isPlaying
-                  duration={userData.roundTime}
-                  colors="#000000"
-                  backgroundColors="#ADC3EC"
-                  onComplete={() => {
-                    if (!voteSubmitted) {
-                      voteButton(true);
-                    }
+                {({ remainingTime }) => {
+                  return <div className="countdownVote">{remainingTime}</div>;
+                }}
+              </CountdownCircleTimer>
+            </div>
+          </Row>
+          {captions.map((caption, index) => {
+            let status = "";
+            if (caption === isMyCaption) status = "myCaption";
+            else if (toggles[index] === true) status = "selected";
+            else status = "default";
+            return (
+              <Row className="text-center">
+                <Button
+                  onClick={(event) => updateToggles(index)}
+                  style={{
+                    width: "80%",
+                    height: 54,
+                    background: getBackgroundColor(status),
+                    borderRadius: 30,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    color: "white",
+                    fontSize: 35,
+                    fontFamily: "Grandstander",
+                    fontWeight: "600",
+                    wordWrap: "break-word",
+                    marginLeft: "2.5rem",
+                    marginTop: "7rem",
                   }}
                 >
-                  {({ remainingTime }) => {
-                    return <div className="countdownVote">{remainingTime}</div>;
-                  }}
-                </CountdownCircleTimer>
-              </div>
-            </Row>
-            {captions.map((caption, index) => {
-              let status = "";
-              if (caption === isMyCaption) status = "myCaption";
-              else if (toggles[index] === true) status = "selected";
-              else status = "default";
-              return (
-                <Row className="text-center">
-                  <Button
-                    onClick={(event) => updateToggles(index)}
-                    style={{
-                      width: "80%",
-                      height: 54,
-                      background: getBackgroundColor(status),
-                      borderRadius: 30,
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      color: "white",
-                      fontSize: 35,
-                      fontFamily: "Grandstander",
-                      fontWeight: "600",
-                      wordWrap: "break-word",
-                      marginLeft: "2.5rem",
-                      marginTop: "7rem",
-                    }}
-                  >
-                    {caption}
-                  </Button>
-                </Row>
-              );
-            })}
+                  {caption}
+                </Button>
+              </Row>
+            );
+          })}
           {/* </Form.Group> */}
         </Form>
         <Row className="text-center">
