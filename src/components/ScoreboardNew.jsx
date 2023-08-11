@@ -225,7 +225,9 @@ const ScoreboardNew = () => {
               marginRight: "auto",
               marginBottom: "2rem",
             }}
-          ></div>
+          >
+            <img className="imgVote" src={userData.imageURL} />
+          </div>
         </Row>
         <Row className="text-center">
           <div style={{ marginLeft: "-110px" }}>

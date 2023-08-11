@@ -48,128 +48,146 @@ const LandingNew = () => {
   };
 
   return (
-    <div
-      className="mainDiv"
-      style={{
-        width: 430,
-        height: 932,
-        position: "relative",
-      }}
-    >
-      <Form noValidate onSubmit={handleSubmit}>
-        <Container className="container-main" fluid>
-          <Row className="text-center py-5">
-            <Col
-              style={{
-                position: "relative",
-                //display: "flex",
-                //alignItems: "center",
-              }}
-            >
-              <div
+    <div className="div-main">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Form noValidate onSubmit={handleSubmit}>
+          <Container className="container-main" fluid>
+            <Row className="text-center" style={{ marginTop: "36px" }}>
+              <Col
                 style={{
-                  width: "374px",
-                  height: "29px",
-                  backgroundColor: "white",
-                  borderRadius: "40px",
-                  height: "70px",
-                  fontSize: "33px",
-                  fontFamily: "Grandstander",
-                  fontWeight: "800",
-                  wordWrap: "break-word",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  position: "relative",
                 }}
               >
-                Welcome to Capshnz
-              </div>
-              <PolygonWhiteDownward style={{ marginLeft: "-163px" }} />
-            </Col>
-          </Row>
-          <Row className="d-flex justify-content-center">
-            <Form.Group as={Col} md="10">
-              <Form.Label
-                style={{
-                  width: "383px",
-                  color: "white",
-                  fontSize: "32px",
-                  fontFamily: "Grandstander",
-                  fontWeight: "600",
-                  wordWrap: "break-word",
-                }}
-              ></Form.Label>
-              <Form.Control
-                style={{
-                  width: 391,
-                  height: 62.38,
-                  background: "white",
-                  borderRadius: 40,
-                  color: "black",
-                  fontSize: 26,
-                  fontFamily: "Grandstander",
-                  fontWeight: "500",
-                  wordWrap: "break-word",
-                  border: "none",
-                  borderColor: "white",
-                }}
-                required
-                value={email}
-                type="text"
-                placeholder="Enter email here..."
-                onChange={handleEmailChange}
-                isInvalid={isInvalid}
-              />
-              <PolygonWhiteDownward
-                style={{ marginLeft: "260px", marginBottom: "60px" }}
-              />
+                <input
+                  style={{
+                    width: "90%",
+                    height: "70px",
+                    backgroundColor: "white",
+                    borderRadius: "40px",
+                    flexShrink: 0,
+                    fontSize: "33px",
+                    fontFamily: "Grandstander",
+                    fontWeight: "700",
+                    wordWrap: "break-word",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    border: "none",
+                    textAlign: "center",
+                  }}
+                  value="Welcome to Capshnz"
+                  readOnly
+                />
 
-              <Button
-                variant="success"
-                type="submit"
-                //disabled={() => {}}
-                style={{
-                  width: 218,
-                  height: 54,
-                  background: "#5E9E94",
-                  borderRadius: 30,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "white",
-                  fontSize: 31,
-                  fontFamily: "Grandstander",
-                  fontWeight: "600",
-                  wordWrap: "break-word",
-                  marginLeft: "50px",
-                }}
-              >
-                Enter
-              </Button>
+                <PolygonWhiteDownward
+                  style={{
+                    marginLeft: "-223px",
+                    marginTop: "-10px",
+                  }}
+                />
+              </Col>
+            </Row>
+
+            <Form.Group>
+              <Row className="text-center">
+                <Col>
+                  <Form.Control
+                    style={{
+                      width: "90%",
+                      height: 62.38,
+                      background: "white",
+                      borderRadius: 40,
+                      color: "black",
+                      fontSize: 26,
+                      fontFamily: "Grandstander",
+                      fontWeight: "400",
+                      wordWrap: "break-word",
+                      border: "none",
+                      borderColor: "white",
+                      paddingLeft: "20px",
+                      paddingRight: "20px",
+                      marginLeft: "30px",
+                      marginTop: "60px",
+                    }}
+                    required
+                    value={email}
+                    type="text"
+                    placeholder="Enter email here..."
+                    onChange={handleEmailChange}
+                    isInvalid={isInvalid}
+                  />
+                  <PolygonWhiteDownward
+                    style={{
+                      marginRight: "-150px",
+                      marginTop: "-10px",
+                    }}
+                  />
+                </Col>
+              </Row>
+
+              <Row className="text-center" style={{ marginTop: "100px" }}>
+                <Col>
+                  <Button
+                    variant="success"
+                    type="submit"
+                    //disabled={() => {}}
+                    style={{
+                      width: "60%",
+                      height: 54,
+                      background: "#5E9E94",
+                      borderRadius: 30,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "white",
+                      fontSize: 31,
+                      fontFamily: "Grandstander",
+                      fontWeight: "600",
+                      wordWrap: "break-word",
+                      marginLeft: "50px",
+                    }}
+                  >
+                    Enter
+                  </Button>
+                </Col>
+              </Row>
               <Form.Control.Feedback type="invalid">
                 Please provide a valid email.
               </Form.Control.Feedback>
             </Form.Group>
-          </Row>
-          <Row>
-            <div
-              style={{
-                position: "absolute",
-                bottom: "20px",
-                color: "white",
-                fontSize: "24px",
-                fontFamily: "Grandstander",
-                fontWeight: "600",
-                //textAlign: "center",
-                wordWrap: "break-word",
-              }}
-            >
-              By pressing Enter you agree to let us use cookies to improve game
-              performance
-            </div>
-          </Row>
-        </Container>
-      </Form>
+            <Row>
+              <Col>
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    //paddingBottom: "20px",
+                    color: "white",
+                    fontSize: "24px",
+                    fontFamily: "Grandstander",
+                    fontWeight: "900",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    //textAlign: "center",
+                    wordWrap: "break-word",
+                  }}
+                >
+                  By pressing Enter you agree to let us use cookies to improve
+                  game performance
+                </div>
+              </Col>
+            </Row>
+          </Container>
+        </Form>
+      </div>
     </div>
   );
 };
