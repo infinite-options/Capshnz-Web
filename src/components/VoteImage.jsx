@@ -12,7 +12,7 @@ import {
 import * as ReactBootStrap from "react-bootstrap";
 import { handleApiError } from "../util/ApiHelper";
 import { ErrorContext } from "../App";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import useAbly from "../util/ably";
 import React, { useContext } from "react";
@@ -31,9 +31,9 @@ const VoteImage = () => {
   const [voteSubmitted, setVoteSubmitted] = useState(false);
   const [votedCaption, setvotedCaption] = useState(-1);
   const backgroundColors = {
-    default: "white",
-    selected: "#f9dd25",
-    myCaption: "gray",
+    default: "#D4B551",
+    selected: "FD8B76",
+    myCaption: "black",
   };
   const isGameEnded = useRef(false);
   const isCaptionSubmitted = useRef(false);
@@ -280,13 +280,12 @@ const VoteImage = () => {
           </div>
         </Row>
 
-        <Form noValidate onSubmit={voteButton}>
-          <Form.Group>
+        <Form>
+          {/* <Form.Group> */}
             <Row className="text-center">
+            {!voteSubmitted &&
               <Button
-                variant="success"
-                type="submit"
-                disabled={() => {}}
+                onClick={event => voteButton(false)}
                 style={{
                   width: "90%",
                   height: 54,
@@ -306,6 +305,24 @@ const VoteImage = () => {
               >
                 Press to Submit
               </Button>
+            }
+            {voteSubmitted && 
+              <div 
+                className="submittedVote"
+                style={{
+                  fontFamily: 'Grandstander',
+                  fontSize: '18px',
+                  fontWeight: '600',
+                }}
+              >
+                <br/>
+                <b>Vote submitted.</b>
+                <br/>
+                Waiting for other players to submit votes...
+                <br/>
+                <ReactBootStrap.Spinner animation="border" role="status"/>
+              </div>
+            }
             </Row>
             <Row
               className="text-center"
@@ -363,12 +380,11 @@ const VoteImage = () => {
               return (
                 <Row className="text-center">
                   <Button
-                    variant="success"
                     onClick={(event) => updateToggles(index)}
                     style={{
                       width: "80%",
                       height: 54,
-                      background: "#D4B551",
+                      background: getBackgroundColor(status),
                       borderRadius: 30,
                       display: "flex",
                       justifyContent: "center",
@@ -387,7 +403,7 @@ const VoteImage = () => {
                 </Row>
               );
             })}
-          </Form.Group>
+          {/* </Form.Group> */}
         </Form>
         <Row className="text-center">
           <Col style={{ position: "relative" }}>

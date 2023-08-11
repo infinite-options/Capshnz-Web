@@ -38,8 +38,8 @@ const UserInfo = () => {
       };
       if (hasAnyNameChanged()) await addUser(updatedUserData);
       if (userData.user_code === "TRUE")
-        // navigate("/JoinGame", { state: updatedUserData });
-        navigate("/StartGame", { state: updatedUserData });
+        navigate("/JoinGame", { state: updatedUserData });
+        // navigate("/StartGame", { state: updatedUserData });
       else navigate("/Confirmation", { state: updatedUserData });
     } catch (err) {
       console.error(err);

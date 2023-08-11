@@ -115,26 +115,26 @@ const FinalScore = () => {
   return (
     <div
       style={{
-        //display: "flex",
+        display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
         maxWidth: "100%",
         minHeight: "100vh",
         background: "#E58D80",
-        overflow: "scroll",
+        // overflow: "scroll",
       }}
     >
       <div
         style={{
-          //display: "flex",
+          // display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          overflow: "scroll",
+          // overflow: "scroll",
         }}
       >
-        <Container>
+        <Container fluid>
           <Row className="text-center">
             <Col style={{ position: "relative" }}>
               <input
