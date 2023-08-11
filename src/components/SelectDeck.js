@@ -53,7 +53,8 @@ export default function SelectDeck(){
             if (deckTitle === "CNN Gallery") {
                 navigate("/CnnDeck", {state: updatedUserData})
             } else {
-                navigate("/WaitingRoom", {state: updatedUserData})    
+                navigate("/WaitingRoom", {state: updatedUserData})  
+                // navigate("/Waiting", {state: updatedUserData})   
             }
         } catch(error) {
             handleApiError(error, ()=>handleClick(deckTitle, deckUID,thumbnail_url), context)

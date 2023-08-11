@@ -308,7 +308,14 @@ export default function Vote(){
                 </button>
             }
             {voteSubmitted &&
-                <div className="submittedVote">
+                <div 
+                    className="submittedVote"
+                    style={{
+                        fontFamily: 'Grandstander',
+                        fontSize: '20px',
+                        fontWeight: '600',
+                    }}
+                >
                     <br/>
                     <b>Vote submitted.</b>
                     <br/>

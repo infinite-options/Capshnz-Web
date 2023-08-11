@@ -145,6 +145,7 @@ const CaptionNew = () => {
         // }
         // setCookie("userData", updatedUserData, { path: '/' })
         // console.log(cookies)
+        console.log(userData);
         navigate("/VoteImage", { state: userData });
       } else if (event.data.message === "EndGame caption") {
         detach();
@@ -251,18 +252,8 @@ const CaptionNew = () => {
           </CountdownCircleTimer>
         </div>
       </div>
-      <Form noValidate onSubmit={(event) => submitButton(false)}>
+      <Form noValidate>
         <Form.Group as={Col} md="10">
-          {/* <Form.Label
-            style={{
-              width: "383px",
-              color: "white",
-              fontSize: "32px",
-              fontFamily: "Grandstander",
-              fontWeight: "600",
-              wordWrap: "break-word",
-            }}
-          ></Form.Label> */}
           <Form.Control
             style={{
               width: 391,
@@ -285,31 +276,63 @@ const CaptionNew = () => {
             disabled={captionSubmitted}
             value={inputCaption}
           />
-
-          <Button
-            variant="success"
-            //type="submit"
-            onClick={(event) => submitButton(false)}
-            disabled={captionSubmitted}
-            style={{
-              width: 218,
-              height: 54,
-              background: "#5E9E94",
-              borderRadius: 30,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              color: "white",
-              fontSize: 31,
-              fontFamily: "Grandstander",
-              fontWeight: "600",
-              wordWrap: "break-word",
-              marginLeft: "90px",
-              marginTop: "100px",
-            }}
-          >
-            Submit
-          </Button>
+          {!captionSubmitted && (
+            <Button
+              onClick={(event) => submitButton(false)}
+              style={{
+                width: 218,
+                height: 54,
+                background: "#5E9E94",
+                borderRadius: 30,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "white",
+                fontSize: 31,
+                fontFamily: "Grandstander",
+                fontWeight: "600",
+                wordWrap: "break-word",
+                marginLeft: "90px",
+                marginTop: "100px",
+              }}
+            >
+              Submit
+            </Button>
+          )}
+          {captionSubmitted && (
+            <div
+              style={{
+                fontFamily: "Grandstander",
+                fontSize: "18px",
+                fontWeight: "600",
+              }}
+            >
+              <Button
+                style={{
+                  width: 218,
+                  height: 54,
+                  background: "#5E9E94",
+                  borderRadius: 30,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "white",
+                  fontSize: 31,
+                  fontFamily: "Grandstander",
+                  fontWeight: "600",
+                  wordWrap: "break-word",
+                  marginLeft: "90px",
+                  marginTop: "100px",
+                }}
+              >
+                Submitted
+              </Button>
+              <br />
+              Waiting for other players to submit captions...
+              <br />
+              <ReactBootStrap.Spinner animation="border" role="status" />
+            </div>
+          )}
         </Form.Group>
       </Form>
       <div

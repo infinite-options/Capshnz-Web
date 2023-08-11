@@ -18,7 +18,6 @@ import ApiError from "./components/ApiError";
 import StartGame from "./components/StartGame";
 import ChooseScoring from "./components/ChooseScoring";
 import ChooseRounds from "./components/ChooseRounds";
-// import SelectDeckPrev from "./components/SelectDeckPrev";
 import FinalScore from "./components/FinalScore";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { CookiesProvider } from "react-cookie";
