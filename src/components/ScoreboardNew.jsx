@@ -230,7 +230,7 @@ const ScoreboardNew = () => {
           </div>
         </Row>
         <Row className="text-center">
-          <div style={{ marginLeft: "-110px" }}>
+          <div style={{ marginLeft: "-110px", marginBottom: "-8px" }}>
             <PolygonYelloUpward />
           </div>
           <div
@@ -264,12 +264,8 @@ const ScoreboardNew = () => {
                     <div>{player.score}</div>
                     <div>{player.game_score}</div>
                   </div>
-                  {/* {player.caption !== "" && (
-                    <div className="captionScoreBoard">{player.caption}</div>
-                  )}
-                  {player.caption === "" && (
-                    <div className="captionScoreBoard">&nbsp;</div>
-                  )} */}
+                  {player.caption !== "" && <div>{player.caption}</div>}
+                  {player.caption === "" && <div>&nbsp;</div>}
                 </div>
               );
             })}

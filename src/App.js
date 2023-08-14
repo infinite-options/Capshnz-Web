@@ -73,7 +73,6 @@ export default function App() {
                 <Route path="/StartGame" element={<StartGame />} />
                 <Route path="/ChooseScoring" element={<ChooseScoring />} />
                 <Route path="/ChooseRounds" element={<ChooseRounds />} />
-                {/* <Route path="/SelectDeckPrev" element={<SelectDeckPrev />} /> */}
                 <Route path="/FinalScore" element={<FinalScore />} />
                 <Route path="/WaitingRoom" element={<WaitingRoom />} />
                 <Route path="/Landing" element={<LandingNew />} />

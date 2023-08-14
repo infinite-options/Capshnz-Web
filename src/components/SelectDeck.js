@@ -71,6 +71,7 @@ export default function SelectDeck(){
                 width: '100%', 
                 height: '100vh', 
                 background: '#C8DAD8',
+                overflow: 'scroll',
             }}
         >
             {/* <div>
