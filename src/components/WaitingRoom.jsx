@@ -132,7 +132,7 @@ const WaitingRoom = () => {
       >
         <Container fluid>
           <Row className="text-center">
-            <Col style={{ position: "relative", width: 390 }}>
+            <Col style={{ position: "relative", width: 370 }}>
               <Polygon
                 style={{ position: "absolute", bottom: "-32px", right: "60px" }}
               />
@@ -193,7 +193,7 @@ const WaitingRoom = () => {
       <div
         style={{
           marginRight: "142px",
-          marginBottom: "-128px",
+          // marginBottom: "-128px",
           color: "white",
           fontSize: 32,
           fontFamily: "Grandstander",

@@ -41,6 +41,7 @@ const ChooseScoring = () => {
         width: "100%",
         height: "100vh",
         background: "rgba(183, 214, 225, 1)",
+        overflow: "scroll",
       }}
     >
       <div
