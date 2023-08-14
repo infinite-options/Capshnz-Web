@@ -413,7 +413,7 @@ const VoteImage = () => {
             <input
               type="text"
               style={{
-                width: "90%",
+                width: "415px",
                 height: 56,
                 background: "#FFF",
                 borderRadius: 30,
@@ -433,7 +433,7 @@ const VoteImage = () => {
                 marginRight: "auto",
                 marginLeft: "auto",
               }}
-              value="Selected Gallery"
+              value={userData.deckTitle}
               readOnly
             />
           </Col>

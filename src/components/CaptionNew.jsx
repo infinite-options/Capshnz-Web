@@ -347,7 +347,7 @@ const CaptionNew = () => {
 
         <div
           style={{
-            width: "95%",
+            width: "415px",
             height: 65,
             background: "white",
             borderRadius: 40,
@@ -364,7 +364,7 @@ const CaptionNew = () => {
             wordWrap: "break-word",
           }}
         >
-          Selected Gallery
+          {userData.deckTitle}
         </div>
       </div>
     </div>

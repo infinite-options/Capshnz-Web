@@ -340,7 +340,7 @@ const ScoreboardNew = () => {
             <input
               type="text"
               style={{
-                width: "90%",
+                width: "405px",
                 height: 56,
                 background: "#FFF",
                 borderRadius: 30,
@@ -360,7 +360,7 @@ const ScoreboardNew = () => {
                 marginRight: "auto",
                 marginLeft: "auto",
               }}
-              value="Selected Gallery"
+              value={userData.deckTitle}
               readOnly
             />
           </Col>
