@@ -271,7 +271,12 @@ const ScoreboardNew = () => {
                     <div>{player.game_score}</div>
                   </div>
                   {player.caption !== "" && (
-                    <div className="captionScoreBoard">{player.caption}</div>
+                    <div
+                      className="captionScoreBoard"
+                      style={{ fontSize: "10" }}
+                    >
+                      {player.caption}
+                    </div>
                   )}
                   {player.caption === "" && (
                     <div className="captionScoreBoard">&nbsp;</div>

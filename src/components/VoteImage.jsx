@@ -221,6 +221,7 @@ const VoteImage = () => {
       // If the selected index is true (selected), update votedCaption
       if (newToggles[index]) {
         setvotedCaption(index);
+        voteButton(true);
       }
 
       return newToggles; // Update the state with the new toggles array
