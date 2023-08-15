@@ -36,11 +36,13 @@
 }
 .captionScoreBoard {
     text-align: center;
+    min-height: 50px;
     margin-left: 7%;
     margin-right: 7%;
-    background-color: yellow;
+    background-color: white;
     border-radius: 25px;
     margin-bottom: 10px;
+    color: black;
 }
 .buttonScoreBoard {
     display:block;

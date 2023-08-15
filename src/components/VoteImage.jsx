@@ -32,7 +32,7 @@ const VoteImage = () => {
   const [votedCaption, setvotedCaption] = useState(-1);
   const backgroundColors = {
     default: "#D4B551",
-    selected: "FD8B76",
+    selected: "Green",
     myCaption: "black",
   };
   const isGameEnded = useRef(false);
@@ -206,14 +206,25 @@ const VoteImage = () => {
   }
   function updateToggles(index) {
     if (captions[index] === isMyCaption) return;
-    let tempToggles = [];
-    for (let i = 0; i < toggles.length; i++) {
-      if (index === i) {
-        tempToggles.push(true);
-        setvotedCaption(i);
-      } else tempToggles.push(false);
-    }
-    setToggles(tempToggles);
+    // let tempToggles = [];
+    // for (let i = 0; i < toggles.length; i++) {
+    //   if (index === i) {
+    //     tempToggles.push(true);
+    //     setvotedCaption(i);
+    //   } else tempToggles.push(false);
+    // }
+    // setToggles(tempToggles);
+    setToggles((prevToggles) => {
+      const newToggles = [...prevToggles]; // Create a copy of the toggles array
+      newToggles[index] = !newToggles[index]; // Toggle the selected index
+
+      // If the selected index is true (selected), update votedCaption
+      if (newToggles[index]) {
+        setvotedCaption(index);
+      }
+
+      return newToggles; // Update the state with the new toggles array
+    });
   }
 
   async function voteButton(timerComplete) {
@@ -378,29 +389,29 @@ const VoteImage = () => {
             else if (toggles[index] === true) status = "selected";
             else status = "default";
             return (
-              <Row className="text-center">
-                <Button
-                  onClick={(event) => updateToggles(index)}
-                  style={{
-                    width: "80%",
-                    height: 54,
-                    background: getBackgroundColor(status),
-                    borderRadius: 30,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "white",
-                    fontSize: 35,
-                    fontFamily: "Grandstander",
-                    fontWeight: "600",
-                    wordWrap: "break-word",
-                    marginLeft: "2.5rem",
-                    marginTop: "7rem",
-                  }}
-                >
-                  {caption}
-                </Button>
-              </Row>
+              // <Row className="text-center">
+              <Button
+                onClick={(event) => updateToggles(index)}
+                style={{
+                  width: "80%",
+                  // height: 54,
+                  background: getBackgroundColor(status),
+                  borderRadius: 30,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "white",
+                  fontSize: 35,
+                  fontFamily: "Grandstander",
+                  fontWeight: "600",
+                  wordWrap: "break-word",
+                  marginLeft: "2.5rem",
+                  marginTop: "7rem",
+                }}
+              >
+                {caption}
+              </Button>
+              // </Row>
             );
           })}
           {/* </Form.Group> */}

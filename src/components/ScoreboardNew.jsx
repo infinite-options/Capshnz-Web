@@ -235,21 +235,25 @@ const ScoreboardNew = () => {
           </div>
           <div
             style={{
-              width: "400px",
-              height: "223px",
+              minWidth: "340px",
               padding: "20px",
               borderRadius: "40px",
               background: "#F2BF7D",
               color: "#FFF",
               fontSize: "26px",
               fontFamily: "Grandstander",
-              //marginTop: "64px",
               marginLeft: "auto",
               marginRight: "auto",
             }}
           >
             {" "}
-            <div className="headerScoreBoard">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-around",
+                marginBottom: "20px",
+              }}
+            >
               <div>Alias</div>
               <div>Votes</div>
               <div>Points</div>
@@ -258,14 +262,20 @@ const ScoreboardNew = () => {
             {scoreBoard.map((player, index) => {
               return (
                 <div key={index}>
-                  <div className="valuesScoreBoard">
+                  <div
+                    style={{ display: "flex", justifyContent: "space-around" }}
+                  >
                     <div>{player.user_alias}</div>
                     <div>{player.votes}</div>
                     <div>{player.score}</div>
                     <div>{player.game_score}</div>
                   </div>
-                  {player.caption !== "" && <div>{player.caption}</div>}
-                  {player.caption === "" && <div>&nbsp;</div>}
+                  {player.caption !== "" && (
+                    <div className="captionScoreBoard">{player.caption}</div>
+                  )}
+                  {player.caption === "" && (
+                    <div className="captionScoreBoard">&nbsp;</div>
+                  )}
                 </div>
               );
             })}

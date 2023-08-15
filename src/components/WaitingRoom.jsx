@@ -190,7 +190,7 @@ const WaitingRoom = () => {
           );
         })}
       </ul>
-      <div
+      {/* <div
         style={{
           marginRight: "142px",
           // marginBottom: "-128px",
@@ -202,62 +202,46 @@ const WaitingRoom = () => {
         }}
       >
         Game Code
-      </div>
-      <Stack
+      </div> */}
+      <div
         style={{
-          display: "flex",
           justifyContent: "center",
           alignItems: "center",
         }}
       >
-        <input
-          type="text"
+        <Container
           style={{
-            width: 330,
-            height: 55,
-            background: "#DC816A",
-            borderRadius: 40,
-            paddingLeft: 24,
-            paddingRight: 24,
-            paddingTop: 6,
-            paddingBottom: 6,
-            color: "#FFF",
-            fontSize: 24,
-            fontFamily: "Grandstander",
-            fontWeight: "700",
-            wordWrap: "break-word",
-            border: "none",
-            outline: "none",
-            textAlign: "center",
-          }}
-          value={userData.gameCode}
-          readOnly
-        />
-        <Button
-          variant="warning"
-          onClick={copyGameCodeButton}
-          style={{
-            width: 330,
-            height: 55,
-            background: "#DC816A",
-            borderRadius: 40,
-            display: "flex",
+            // display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            color: "white",
-            fontSize: 24,
-            fontFamily: "Grandstander",
-            fontWeight: "700",
-            wordWrap: "break-word",
-            marginTop: "10px",
           }}
         >
-          {buttonText}
-        </Button>
-        {userData.host && !userData.deckSelected && (
+          <input
+            type="text"
+            style={{
+              width: 330,
+              height: 55,
+              background: "#DC816A",
+              borderRadius: 40,
+              paddingLeft: 24,
+              paddingRight: 24,
+              paddingTop: 6,
+              paddingBottom: 6,
+              color: "#FFF",
+              fontSize: 24,
+              fontFamily: "Grandstander",
+              fontWeight: "700",
+              wordWrap: "break-word",
+              border: "none",
+              outline: "none",
+              textAlign: "center",
+            }}
+            value={`Game Code: ${userData.gameCode}`}
+            readOnly
+          />
           <Button
             variant="warning"
-            onClick={selectDeckButton}
+            onClick={copyGameCodeButton}
             style={{
               width: 330,
               height: 55,
@@ -274,34 +258,57 @@ const WaitingRoom = () => {
               marginTop: "10px",
             }}
           >
-            Select Deck
+            {buttonText}
           </Button>
-        )}
-        {userData.host && userData.deckSelected && (
-          <Button
-            variant="warning"
-            onClick={startGameButton}
-            disabled={isLoading}
-            style={{
-              width: 330,
-              height: 55,
-              background: "#71CAA3",
-              borderRadius: 40,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              color: "white",
-              fontSize: 24,
-              fontFamily: "Grandstander",
-              fontWeight: "700",
-              wordWrap: "break-word",
-              marginTop: "10px",
-            }}
-          >
-            {isLoading ? "Starting..." : "Start Game"}
-          </Button>
-        )}
-      </Stack>
+          {userData.host && !userData.deckSelected && (
+            <Button
+              variant="warning"
+              onClick={selectDeckButton}
+              style={{
+                width: 330,
+                height: 55,
+                background: "#DC816A",
+                borderRadius: 40,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "white",
+                fontSize: 24,
+                fontFamily: "Grandstander",
+                fontWeight: "700",
+                wordWrap: "break-word",
+                marginTop: "10px",
+              }}
+            >
+              Select Deck
+            </Button>
+          )}
+          {userData.host && userData.deckSelected && (
+            <Button
+              variant="warning"
+              onClick={startGameButton}
+              disabled={isLoading}
+              style={{
+                width: 330,
+                height: 55,
+                background: "#71CAA3",
+                borderRadius: 40,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "white",
+                fontSize: 24,
+                fontFamily: "Grandstander",
+                fontWeight: "700",
+                wordWrap: "break-word",
+                marginTop: "10px",
+              }}
+            >
+              {isLoading ? "Starting..." : `Start ${userData.deckTitle} Game`}
+            </Button>
+          )}
+        </Container>
+      </div>
     </div>
   );
 };

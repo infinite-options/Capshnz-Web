@@ -51,14 +51,16 @@
 }
 
 .winCaption {
-    background-color: white;
+    background-color: #F5F5F5;
     width: 342px;
     min-height: 60px;
-    border-radius: 25px;
+    border-radius: 30px;
     border-color: black;
     border-width: 1px;
-    font-size: 18px;
+    font-size: 20px;
+    font-weight: 600;
     font-weight: normal;
+    font-family: Grandstander;
     line-height: 3;
     cursor: default !important;
 }

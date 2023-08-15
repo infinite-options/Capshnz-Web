@@ -364,11 +364,11 @@ const FinalScore = () => {
               )}
               <Row className="text-center py-1">
                 <Col>
-                  <Button
+                  {/* <Button
                     variant="warning"
                     style={{
                       width: 350,
-                      height: 55,
+                      // height: 60,
                       background: "#F5F5F5",
                       borderRadius: 30,
                       display: "flex",
@@ -381,11 +381,33 @@ const FinalScore = () => {
                       wordWrap: "break-word",
                       marginLeft: "auto",
                       marginRight: "auto",
-                      marginTop: "16px",
+                      marginTop: "10px",
                     }}
                   >
                     {caption.caption}
-                  </Button>
+                  </Button> */}
+                  <button
+                    variant="warning"
+                    style={{
+                      minWidth: 350,
+                      minHeight: 60,
+                      background: "#F5F5F5",
+                      borderRadius: 30,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "#000",
+                      fontSize: 30,
+                      fontFamily: "Grandstander",
+                      fontWeight: "600",
+                      wordWrap: "break-word",
+                      marginLeft: "auto",
+                      marginRight: "auto",
+                      marginTop: "10px",
+                    }}
+                  >
+                    {caption.caption}
+                  </button>
                 </Col>
               </Row>
             </div>
