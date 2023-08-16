@@ -9,7 +9,7 @@ import { ReactComponent as Polygon } from "../assets/Polygon 1.svg";
 import { Col, Container, Row, Stack } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import "../styles/fonts.css";
-
+import { getDecks, selectDeck } from "../util/Api.js";
 import "../styles/Landing.css";
 
 const WaitingRoom = () => {
@@ -30,6 +30,15 @@ const WaitingRoom = () => {
   const [lobby, setLobby] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const context = useContext(ErrorContext);
+  const [decksInfo, setDecksInfo] = useState([]);
+
+  useEffect(() => {
+    async function getDecksInfo() {
+      const decksInfo = await getDecks(userData.playerUID);
+      setDecksInfo(decksInfo);
+    }
+    getDecksInfo();
+  }, [userData.playerUID]);
 
   function copyGameCodeButton() {
     navigator.clipboard.writeText(userData.gameCode);
@@ -190,19 +199,6 @@ const WaitingRoom = () => {
           );
         })}
       </ul>
-      {/* <div
-        style={{
-          marginRight: "142px",
-          // marginBottom: "-128px",
-          color: "white",
-          fontSize: 32,
-          fontFamily: "Grandstander",
-          fontWeight: "700",
-          wordWrap: "break-word",
-        }}
-      >
-        Game Code
-      </div> */}
       <div
         style={{
           justifyContent: "center",
@@ -216,6 +212,31 @@ const WaitingRoom = () => {
             alignItems: "center",
           }}
         >
+          {userData.host && userData.deckSelected && (
+            <div
+              onClick={(event) => selectDeckButton()}
+              className="deck"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
+                marginRight: "40px",
+                marginBottom: "0px",
+              }}
+            >
+              <div>
+                <img
+                  src={userData.deckThumbnail_url}
+                  alt={userData.deckTitle}
+                  className="deck-image"
+                />
+                <div className="deckText">{userData.deckTitle}</div>
+              </div>
+              <br />
+            </div>
+          )}
+
           <input
             type="text"
             style={{
@@ -304,7 +325,7 @@ const WaitingRoom = () => {
                 marginTop: "10px",
               }}
             >
-              {isLoading ? "Starting..." : `Start ${userData.deckTitle} Game`}
+              {isLoading ? "Starting..." : `Start Game`}
             </Button>
           )}
         </Container>

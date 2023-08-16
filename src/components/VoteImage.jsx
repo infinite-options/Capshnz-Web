@@ -204,48 +204,72 @@ const VoteImage = () => {
       handleApiError(error, closeButton, context);
     }
   }
+
+  // function updateToggles(index) {
+  //   if (captions[index] === isMyCaption) return;
+  //   let tempToggles = [];
+  //   for (let i = 0; i < toggles.length; i++) {
+  //     if (index === i) {
+  //       tempToggles.push(true);
+  //       setvotedCaption(i);
+  //     } else tempToggles.push(false);
+  //   }
+  //   setToggles(tempToggles);
+  // }
+
+  // async function voteButton(timerComplete) {
+  //   try {
+  //     let numOfPlayersVoting = -1;
+  //     // for(let i = 0; i < toggles.length; i++){
+  //     //     if(toggles[i] === true){
+  //     //         votedCaption = captions[i]
+  //     //     }
+  //     // }
+  //     if (votedCaption === -1 && !timerComplete) {
+  //       alert("Please vote for a caption.");
+  //       return;
+  //     }
+  //     setVoteSubmitted(true);
+  //     if (votedCaption === -1 && timerComplete) {
+  //       numOfPlayersVoting = await postVote(null, userData);
+  //     } else if (votedCaption !== -1) {
+  //       numOfPlayersVoting = await postVote(captions[votedCaption], userData);
+  //     }
+  //     if (numOfPlayersVoting === 0) {
+  //       await publish({ data: { message: "Start ScoreBoard" } });
+  //     }
+  //   } catch (error) {
+  //     handleApiError(error, voteButton, context);
+  //   }
+  // }
+
   function updateToggles(index) {
     if (captions[index] === isMyCaption) return;
-    // let tempToggles = [];
-    // for (let i = 0; i < toggles.length; i++) {
-    //   if (index === i) {
-    //     tempToggles.push(true);
-    //     setvotedCaption(i);
-    //   } else tempToggles.push(false);
-    // }
-    // setToggles(tempToggles);
-    setToggles((prevToggles) => {
-      const newToggles = [...prevToggles]; // Create a copy of the toggles array
-      newToggles[index] = !newToggles[index]; // Toggle the selected index
 
-      // If the selected index is true (selected), update votedCaption
-      if (newToggles[index]) {
-        setvotedCaption(index);
-        voteButton(true);
-      }
+    // Update toggles state
+    let tempToggles = toggles.map((toggle, i) => i === index);
+    setToggles(tempToggles);
 
-      return newToggles; // Update the state with the new toggles array
-    });
+    // Call voteButton with the selected caption
+    voteButton(index);
   }
 
-  async function voteButton(timerComplete) {
+  async function voteButton(selectedCaptionIndex) {
     try {
       let numOfPlayersVoting = -1;
-      // for(let i = 0; i < toggles.length; i++){
-      //     if(toggles[i] === true){
-      //         votedCaption = captions[i]
-      //     }
-      // }
-      if (votedCaption === -1 && !timerComplete) {
+
+      if (selectedCaptionIndex === -1) {
         alert("Please vote for a caption.");
         return;
       }
+
       setVoteSubmitted(true);
-      if (votedCaption === -1 && timerComplete) {
-        numOfPlayersVoting = await postVote(null, userData);
-      } else if (votedCaption !== -1) {
-        numOfPlayersVoting = await postVote(captions[votedCaption], userData);
-      }
+
+      // Determine the caption to vote for
+      const selectedCaption = captions[selectedCaptionIndex];
+
+      numOfPlayersVoting = await postVote(selectedCaption, userData);
+
       if (numOfPlayersVoting === 0) {
         await publish({ data: { message: "Start ScoreBoard" } });
       }
@@ -301,7 +325,7 @@ const VoteImage = () => {
           {/* <Form.Group> */}
           <Row className="text-center">
             <Col>
-              {!voteSubmitted && (
+              {/* {!voteSubmitted && (
                 <Button
                   onClick={(event) => voteButton(false)}
                   style={{
@@ -325,7 +349,7 @@ const VoteImage = () => {
                 >
                   Press to Submit
                 </Button>
-              )}
+              )} */}
               {voteSubmitted && (
                 <div
                   className="submittedVote"
