@@ -183,7 +183,7 @@ const CaptionNew = () => {
                 width: 375,
                 height: 365,
                 background: "#D9D9D9",
-                borderRadius: 30,
+                borderRadius: 50,
                 top: 32,
                 display: "flex",
                 justifyContent: "center",
@@ -193,57 +193,63 @@ const CaptionNew = () => {
                 marginTop: 30,
                 marginRight: "auto",
                 marginLeft: "auto",
+                //position: "relative",
               }}
             >
               <img
                 className="imgCaption"
                 src={userData.imageURL}
                 alt="Loading Image...."
+                style={{ width: "96%", height: "96%" }}
               />
-              <div
-                style={{
-                  width: 76,
-                  height: 76,
-                  background: "#566176",
-                  borderRadius: "50%",
-                  position: "relative",
-                  //top: 280,
-                  //left: 290,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "white",
-                  fontSize: 30,
-                  fontFamily: "Grandstander",
-                  fontWeight: "700",
-                  wordWrap: "break-word",
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <div
+              style={{
+                width: 76,
+                height: 76,
+                background: "#566176",
+                borderRadius: "50%",
+                position: "relative",
+                //top: 130,
+                //right: 10,
+                justifyContent: "center",
+                alignItems: "center",
+                color: "white",
+                fontSize: 30,
+                fontFamily: "Grandstander",
+                fontWeight: "700",
+                wordWrap: "break-word",
+                marginLeft: "auto",
+                marginRight: "auto",
+                marginBottom: "2rem",
+              }}
+            >
+              <CountdownCircleTimer
+                size={76}
+                strokeWidth={5}
+                isPlaying
+                duration={userData.roundTime}
+                colors="#000000"
+                background="#566176"
+                fontFamily="Grandstander"
+                fontWeight="700"
+                fontSize="30"
+                onComplete={() => {
+                  if (!captionSubmitted) {
+                    submitButton(true);
+                  }
                 }}
               >
-                <CountdownCircleTimer
-                  size={76}
-                  strokeWidth={5}
-                  top="280"
-                  left="290"
-                  isPlaying
-                  duration={userData.roundTime}
-                  colors="#000000"
-                  background="#566176"
-                  fontFamily="Grandstander"
-                  fontWeight="700"
-                  fontSize="30"
-                  onComplete={() => {
-                    if (!captionSubmitted) {
-                      submitButton(true);
-                    }
-                  }}
-                >
-                  {({ remainingTime }) => {
-                    return (
-                      <div className="countdownCaption">{remainingTime}</div>
-                    );
-                  }}
-                </CountdownCircleTimer>
-              </div>
+                {({ remainingTime }) => {
+                  return (
+                    <div className="countdownCaption">{remainingTime}</div>
+                  );
+                }}
+              </CountdownCircleTimer>
             </div>
           </Col>
         </Row>

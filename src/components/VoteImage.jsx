@@ -264,77 +264,88 @@ const VoteImage = () => {
         background: "#878787",
         width: "100%",
         height: "100vh",
-        display: "flex",
+        //display: "flex",
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
-        overflow: "hidden",
+        overflow: "scroll",
       }}
     >
       <Container fluid>
         <Row className="text-center">
-          <div
-            style={{
-              width: 375,
-              height: 365,
-              background: "#D9D9D9",
-              borderRadius: 30,
-              position: "absolute",
-              top: 32,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginLeft: "1rem",
-              //marginBottom: 20,
-            }}
-          >
-            <img className="imgVote" src={userData.imageURL} />
-          </div>
+          <Col>
+            <div
+              style={{
+                width: 375,
+                height: 365,
+                background: "#D9D9D9",
+                borderRadius: 30,
+                //position: "absolute",
+                top: 32,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                //marginLeft: "1rem",
+                //marginBottom: 20,
+                marginLeft: "auto",
+                marginRight: "auto",
+                marginTop: "2rem",
+              }}
+            >
+              <img className="imgVote" src={userData.imageURL} />
+            </div>
+          </Col>
         </Row>
 
         <Form>
           {/* <Form.Group> */}
           <Row className="text-center">
-            {!voteSubmitted && (
-              <Button
-                onClick={(event) => voteButton(false)}
-                style={{
-                  width: "90%",
-                  height: 54,
-                  background: "#5E9E94",
-                  borderRadius: 30,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "white",
-                  fontSize: 35,
-                  fontFamily: "Grandstander",
-                  fontWeight: "600",
-                  wordWrap: "break-word",
-                  marginLeft: "1rem",
-                  marginTop: "23rem",
-                }}
-              >
-                Press to Submit
-              </Button>
-            )}
-            {voteSubmitted && (
-              <div
-                className="submittedVote"
-                style={{
-                  fontFamily: "Grandstander",
-                  fontSize: "18px",
-                  fontWeight: "600",
-                }}
-              >
-                <br />
-                <b>Vote submitted.</b>
-                <br />
-                Waiting for other players to submit votes...
-                <br />
-                <ReactBootStrap.Spinner animation="border" role="status" />
-              </div>
-            )}
+            <Col>
+              {!voteSubmitted && (
+                <Button
+                  onClick={(event) => voteButton(false)}
+                  style={{
+                    width: "400px",
+                    height: 54,
+                    background: "#5E9E94",
+                    borderRadius: 30,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    color: "white",
+                    fontSize: 35,
+                    fontFamily: "Grandstander",
+                    fontWeight: "600",
+                    wordWrap: "break-word",
+                    //marginLeft: "1rem",
+                    marginTop: "2rem",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  Press to Submit
+                </Button>
+              )}
+              {voteSubmitted && (
+                <div
+                  className="submittedVote"
+                  style={{
+                    fontFamily: "Grandstander",
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  <br />
+                  <b>Vote submitted.</b>
+                  <br />
+                  Waiting for other players to submit votes...
+                  <br />
+                  <ReactBootStrap.Spinner animation="border" role="status" />
+                </div>
+              )}
+            </Col>
           </Row>
           <Row
             className="text-center"
@@ -344,77 +355,87 @@ const VoteImage = () => {
               alignItems: "center",
             }}
           >
-            <div
-              style={{
-                width: 76,
-                height: 76,
-                background: "#ADC3EC",
-                borderRadius: "50%",
-                position: "absolute",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                justifyContent: "center",
-                alignItems: "center",
-                color: "white",
-                fontSize: 30,
-                fontFamily: "Grandstander",
-                fontWeight: "700",
-                wordWrap: "break-word",
-                marginBottom: "10rem",
-                marginTop: "17rem",
-              }}
-            >
-              <CountdownCircleTimer
-                size={76}
-                strokeWidth={5}
-                isPlaying
-                duration={userData.roundTime}
-                colors="#000000"
-                backgroundColors="#ADC3EC"
-                onComplete={() => {
-                  if (!voteSubmitted) {
-                    voteButton(true);
-                  }
-                }}
-              >
-                {({ remainingTime }) => {
-                  return <div className="countdownVote">{remainingTime}</div>;
-                }}
-              </CountdownCircleTimer>
-            </div>
-          </Row>
-          {captions.map((caption, index) => {
-            let status = "";
-            if (caption === isMyCaption) status = "myCaption";
-            else if (toggles[index] === true) status = "selected";
-            else status = "default";
-            return (
-              // <Row className="text-center">
-              <Button
-                onClick={(event) => updateToggles(index)}
+            <Col>
+              <div
                 style={{
-                  width: "80%",
-                  // height: 54,
-                  background: getBackgroundColor(status),
-                  borderRadius: 30,
+                  width: 76,
+                  height: 76,
+                  background: "#ADC3EC",
+                  borderRadius: "50%",
+                  position: "relative",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
+                  justifyContent: "center",
+                  alignItems: "center",
                   color: "white",
-                  fontSize: 35,
+                  fontSize: 30,
                   fontFamily: "Grandstander",
-                  fontWeight: "600",
+                  fontWeight: "700",
                   wordWrap: "break-word",
-                  marginLeft: "2.5rem",
-                  marginTop: "7rem",
+                  //marginBottom: "10rem",
+                  marginTop: "2rem",
+                  marginLeft: "auto",
+                  marginRight: "auto",
                 }}
               >
-                {caption}
-              </Button>
-              // </Row>
-            );
-          })}
+                <CountdownCircleTimer
+                  size={76}
+                  strokeWidth={5}
+                  isPlaying
+                  duration={userData.roundTime}
+                  colors="#000000"
+                  backgroundColors="#ADC3EC"
+                  onComplete={() => {
+                    if (!voteSubmitted) {
+                      voteButton(true);
+                    }
+                  }}
+                >
+                  {({ remainingTime }) => {
+                    return <div className="countdownVote">{remainingTime}</div>;
+                  }}
+                </CountdownCircleTimer>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              {captions.map((caption, index) => {
+                let status = "";
+                if (caption === isMyCaption) status = "myCaption";
+                else if (toggles[index] === true) status = "selected";
+                else status = "default";
+                return (
+                  // <Row className="text-center">
+                  <Button
+                    onClick={(event) => updateToggles(index)}
+                    style={{
+                      width: "357px",
+                      // height: 54,
+                      background: getBackgroundColor(status),
+                      borderRadius: 30,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      color: "white",
+                      fontSize: 35,
+                      fontFamily: "Grandstander",
+                      fontWeight: "600",
+                      wordWrap: "break-word",
+                      //marginLeft: "2.5rem",
+                      marginTop: "4rem",
+                      marginLeft: "auto",
+                      marginRight: "auto",
+                    }}
+                  >
+                    {caption}
+                  </Button>
+                  // </Row>
+                );
+              })}
+            </Col>
+          </Row>
           {/* </Form.Group> */}
         </Form>
         <Row className="text-center">
