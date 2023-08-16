@@ -16,6 +16,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import useAbly from "../util/ably";
 import React, { useContext } from "react";
+import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 
 const VoteImage = () => {
   const navigate = useNavigate(),
@@ -298,25 +299,35 @@ const VoteImage = () => {
       <Container fluid>
         <Row className="text-center">
           <Col>
+            <CloseButton
+              onClick={() => navigate("/StartGame", { state: userData })}
+              style={{ position: "absolute", right: 5, top: 5 }}
+            />
+          </Col>
+        </Row>
+        <Row className="text-center">
+          <Col>
             <div
               style={{
                 width: 375,
                 height: 365,
                 background: "#D9D9D9",
-                borderRadius: 30,
+                borderRadius: 50,
                 //position: "absolute",
                 top: 32,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                //marginLeft: "1rem",
-                //marginBottom: 20,
                 marginLeft: "auto",
                 marginRight: "auto",
                 marginTop: "2rem",
               }}
             >
-              <img className="imgVote" src={userData.imageURL} />
+              <img
+                className="imgVote"
+                src={userData.imageURL}
+                style={{ width: "96%", height: "96%" }}
+              />
             </div>
           </Col>
         </Row>

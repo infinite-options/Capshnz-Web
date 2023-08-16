@@ -5,6 +5,7 @@ import { handleApiError } from "../util/ApiHelper";
 import { ErrorContext } from "../App";
 import { addUser, checkGameCode, joinGame } from "../util/Api";
 import { ReactComponent as Polygon } from "../assets/Polygon 4.svg";
+import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 import { Col, Container, Row } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -53,6 +54,14 @@ const ChooseScoring = () => {
         }}
       >
         <Container fluid>
+          <Row className="text-center">
+            <Col>
+              <CloseButton
+                onClick={() => navigate("/StartGame", { state: userData })}
+                style={{ position: "absolute", right: 5, top: 5 }}
+              />
+            </Col>
+          </Row>
           <Row
             className="text-center pb-4"
             style={{

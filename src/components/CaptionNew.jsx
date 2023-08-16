@@ -17,6 +17,7 @@ import {
   getGameImageForRound,
 } from "../util/Api";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
+import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 
 const CaptionNew = () => {
   const navigate = useNavigate(),
@@ -176,6 +177,14 @@ const CaptionNew = () => {
       }}
     >
       <Container fliud>
+        <Row className="text-center">
+          <Col>
+            <CloseButton
+              onClick={() => navigate("/StartGame", { state: userData })}
+              style={{ position: "absolute", right: 5, top: 5 }}
+            />
+          </Col>
+        </Row>
         <Row className="text-center">
           <Col>
             <div
@@ -357,6 +366,7 @@ const CaptionNew = () => {
             <div
               style={{
                 //paddingTop: "200px",
+                position: "absolute",
                 bottom: 20,
                 //left: 0,
                 //right: 0,

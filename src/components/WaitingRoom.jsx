@@ -6,11 +6,12 @@ import { ErrorContext } from "../App";
 import useAbly from "../util/ably";
 import { getApiImages, postCreateRounds } from "../util/Api";
 import { ReactComponent as Polygon } from "../assets/Polygon 1.svg";
-import { Col, Container, Row, Stack } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import "../styles/fonts.css";
 import { getDecks, selectDeck } from "../util/Api.js";
 import "../styles/Landing.css";
+import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 
 const WaitingRoom = () => {
   const navigate = useNavigate(),
@@ -140,6 +141,14 @@ const WaitingRoom = () => {
         }}
       >
         <Container fluid>
+          <Row className="text-center">
+            <Col>
+              <CloseButton
+                onClick={() => navigate("/StartGame", { state: userData })}
+                style={{ position: "absolute", right: 5, top: 5 }}
+              />
+            </Col>
+          </Row>
           <Row className="text-center">
             <Col style={{ position: "relative", width: 370 }}>
               <Polygon

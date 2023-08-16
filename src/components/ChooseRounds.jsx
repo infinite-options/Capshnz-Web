@@ -6,6 +6,7 @@ import { createGame, joinGame } from "../util/Api.js";
 import { ErrorContext } from "../App.js";
 import { handleApiError } from "../util/ApiHelper.js";
 import { ReactComponent as Polygon } from "../assets/Polygon 4.svg";
+import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 import { Col, Container, Row } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -113,6 +114,14 @@ const ChooseRounds = () => {
     >
       <Form>
         <Container fluid>
+          <Row className="text-center">
+            <Col>
+              <CloseButton
+                onClick={() => navigate("/StartGame", { state: userData })}
+                style={{ position: "absolute", right: 5, top: 5 }}
+              />
+            </Col>
+          </Row>
           <Row style={{ marginLeft: "8px" }}>
             <Form.Group as={Col} md="10">
               <Form.Label

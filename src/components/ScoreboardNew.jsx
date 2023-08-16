@@ -9,6 +9,7 @@ import { useState, useEffect, useRef, useContext } from "react";
 import { useCookies } from "react-cookie";
 import useAbly from "../util/ably";
 import { getScoreBoard, getNextImage, getGameScore } from "../util/Api";
+import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 
 const ScoreboardNew = () => {
   const navigate = useNavigate(),
@@ -164,18 +165,15 @@ const ScoreboardNew = () => {
         overflow: "scroll",
       }}
     >
-      {/* <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          maxWidth: "100%",
-          overflowY: "scroll",
-          maxHeight: "100vh",
-        }}
-      > */}
       <Container>
+        <Row className="text-center">
+          <Col>
+            <CloseButton
+              onClick={() => navigate("/StartGame", { state: userData })}
+              style={{ position: "absolute", right: 5, top: 5 }}
+            />
+          </Col>
+        </Row>
         <Row className="text-center">
           <Col style={{}}>
             <input
@@ -210,24 +208,34 @@ const ScoreboardNew = () => {
           </Col>
         </Row>
         <Row className="text-center">
-          <div
-            style={{
-              width: "374px",
-              height: "365px",
-              padding: "20px",
-              borderRadius: "40px",
-              background: "#D9D9D9",
-              color: "#FFF",
-              fontSize: "26px",
-              fontFamily: "Grandstander",
-              marginTop: "64px",
-              marginLeft: "auto",
-              marginRight: "auto",
-              marginBottom: "2rem",
-            }}
-          >
-            <img className="imgVote" src={userData.imageURL} />
-          </div>
+          <Col>
+            <div
+              style={{
+                width: 375,
+                height: 365,
+                //padding: "20px",
+                borderRadius: "50px",
+                background: "#D9D9D9",
+                color: "#FFF",
+                fontSize: "26px",
+                fontFamily: "Grandstander",
+                marginTop: "64px",
+                marginLeft: "auto",
+                marginRight: "auto",
+                marginBottom: "2rem",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <img
+                className="imgVote"
+                src={userData.imageURL}
+                style={{ width: "96%", height: "96%" }}
+              />
+            </div>
+          </Col>
         </Row>
         <Row className="text-center">
           <div style={{ marginLeft: "-110px", marginBottom: "-8px" }}>
@@ -344,7 +352,7 @@ const ScoreboardNew = () => {
           </Col>
         </Row>
         <Row className="text-center">
-          <Col style={{ position: "relative" }}>
+          <Col style={{ position: "relative", bottom: 20 }}>
             <div style={{ marginLeft: "-110px" }}>
               <PolygonWhiteUpward />
             </div>

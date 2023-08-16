@@ -10,6 +10,7 @@ import { Col, Container, Row, Spinner } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import "../styles/fonts.css";
 import axios from "axios";
+import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 
 const FinalScore = () => {
   const navigate = useNavigate(),
@@ -133,6 +134,14 @@ const FinalScore = () => {
       }}
     >
       <Container>
+        <Row className="text-center">
+          <Col>
+            <CloseButton
+              onClick={() => navigate("/StartGame", { state: userData })}
+              style={{ position: "absolute", right: 5, top: 5 }}
+            />
+          </Col>
+        </Row>
         <Row className="text-center">
           <Col style={{ position: "relative" }}>
             <input
