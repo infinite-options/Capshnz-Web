@@ -16,6 +16,7 @@ export default function SelectDeck(){
     const [decksInfo, setDecksInfo] = useState([])
     const { publish } = useAbly(userData.gameCode)
     const context = useContext(ErrorContext)
+    
 
     useEffect( () => {
         async function getDecksInfo(){

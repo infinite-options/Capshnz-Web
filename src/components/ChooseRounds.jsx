@@ -25,9 +25,6 @@ const ChooseRounds = () => {
   const [isLoading, setLoading] = useState(false);
   const context = useContext(ErrorContext);
   const { publish } = useAbly(userData.gameCode);
-  // const continueButton = async (event) => {
-  //     navigate("/SelectDeckPrev", { state: userData });
-  // };
 
   function handleChange(event) {
     if (event.target.name === "numOfRounds") {

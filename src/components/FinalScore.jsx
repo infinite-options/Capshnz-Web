@@ -6,9 +6,10 @@ import { useCookies } from "react-cookie";
 import { joinGame, getGameScore, summary, summaryEmail } from "../util/Api";
 import useAbly from "../util/ably";
 import { ReactComponent as Polygon } from "../assets/Polygon 1.svg";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Spinner } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import "../styles/fonts.css";
+import axios from "axios";
 
 const FinalScore = () => {
   const navigate = useNavigate(),
@@ -23,6 +24,9 @@ const FinalScore = () => {
   const [isSending, setSending] = useState(false);
   const [isHostStartingAgain, setHostStartingAgain] = useState(false);
   const context = useContext(ErrorContext);
+  const axiosConfig = {
+    timeout: 1800000, // 设置为30秒超时
+  };
 
   async function startGameButton() {
     try {
@@ -35,7 +39,13 @@ const FinalScore = () => {
       await publish({ data: { message: "Play Again" } });
       navigate("/ChooseScoring", { state: updatedUserData });
     } catch (error) {
-      handleApiError(error, startGameButton, context);
+      if (axios.isTimeoutError(error)) {
+        alert(
+          "The operation time of Play Again is too long, please try again!"
+        );
+      } else {
+        handleApiError(error, startGameButton, context);
+      }
     } finally {
       setLoading(false);
     }
@@ -263,6 +273,15 @@ const FinalScore = () => {
               >
                 {isLoading ? "Starting..." : "Play again"}
               </Button>
+            )}
+            {isHostStartingAgain && (
+              <div
+                className="d-flex justify-content-center mb-5"
+                style={{ fontFamily: "Grandstander" }}
+              >
+                <Spinner animation="border" role="status" />
+                <span>&nbsp;&nbsp;{"Starting again..."}</span>
+              </div>
             )}
           </Col>
         </Row>
