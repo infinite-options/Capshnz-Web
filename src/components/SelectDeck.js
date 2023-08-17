@@ -146,7 +146,7 @@ export default function SelectDeck() {
                 }
                 className="deck"
               >
-                <div>
+                <div style={{cursor: 'pointer',}}>
                   <img
                     src={deck.deck_thumbnail_url}
                     alt={deck.deck_title}

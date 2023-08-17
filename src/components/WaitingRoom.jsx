@@ -234,7 +234,7 @@ const WaitingRoom = () => {
                 marginBottom: "0px",
               }}
             >
-              <div>
+              <div style={{ cursor: "pointer" }}>
                 <img
                   src={userData.deckThumbnail_url}
                   alt={userData.deckTitle}
