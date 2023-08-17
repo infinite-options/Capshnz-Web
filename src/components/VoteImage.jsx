@@ -312,7 +312,7 @@ const VoteImage = () => {
                 width: 375,
                 height: 365,
                 background: "#D9D9D9",
-                borderRadius: 50,
+                borderRadius: 0,
                 //position: "absolute",
                 top: 32,
                 display: "flex",
@@ -326,7 +326,7 @@ const VoteImage = () => {
               <img
                 className="imgVote"
                 src={userData.imageURL}
-                style={{ width: "96%", height: "96%" }}
+                style={{ width: "96%", height: "96%", borderRadius: "0px" }}
               />
             </div>
           </Col>

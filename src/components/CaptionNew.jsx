@@ -192,7 +192,7 @@ const CaptionNew = () => {
                 width: 375,
                 height: 365,
                 background: "#D9D9D9",
-                borderRadius: 50,
+                borderRadius: 0,
                 top: 32,
                 display: "flex",
                 justifyContent: "center",
@@ -209,7 +209,7 @@ const CaptionNew = () => {
                 className="imgCaption"
                 src={userData.imageURL}
                 alt="Loading Image...."
-                style={{ width: "96%", height: "96%" }}
+                style={{ width: "96%", height: "96%", borderRadius: "0" }}
               />
             </div>
           </Col>
@@ -366,8 +366,9 @@ const CaptionNew = () => {
             <div
               style={{
                 //paddingTop: "200px",
-                position: "absolute",
+                //position: "absolute",
                 bottom: 20,
+                marginTop: 20,
                 //left: 0,
                 //right: 0,
                 marginLeft: "auto",
