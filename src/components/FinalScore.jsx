@@ -367,6 +367,7 @@ const FinalScore = () => {
                       className="imgCaption"
                       src={caption.round_image_uid}
                       alt="Loading Image...."
+                      style={{ borderRadius: 0 }}
                     />
                   </Col>
                 </Row>

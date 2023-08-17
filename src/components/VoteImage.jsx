@@ -312,7 +312,7 @@ const VoteImage = () => {
                 width: 375,
                 height: 365,
                 background: "#D9D9D9",
-                borderRadius: 50,
+                borderRadius: 0,
                 //position: "absolute",
                 top: 32,
                 display: "flex",
@@ -326,14 +326,13 @@ const VoteImage = () => {
               <img
                 className="imgVote"
                 src={userData.imageURL}
-                style={{ width: "96%", height: "96%" }}
+                style={{ width: "96%", height: "96%", borderRadius: "0px" }}
               />
             </div>
           </Col>
         </Row>
 
         <Form>
-          {/* <Form.Group> */}
           <Row className="text-center">
             <Col>
               {/* {!voteSubmitted && (
@@ -366,7 +365,7 @@ const VoteImage = () => {
                   className="submittedVote"
                   style={{
                     fontFamily: "Grandstander",
-                    fontSize: "18px",
+                    fontSize: "25px",
                     fontWeight: "600",
                     marginLeft: "auto",
                     marginRight: "auto",
@@ -434,44 +433,45 @@ const VoteImage = () => {
               </div>
             </Col>
           </Row>
-          <Row>
-            <Col>
-              {captions.map((caption, index) => {
-                let status = "";
-                if (caption === isMyCaption) status = "myCaption";
-                else if (toggles[index] === true) status = "selected";
-                else status = "default";
-                return (
-                  // <Row className="text-center">
-                  <Button
-                    onClick={(event) => updateToggles(index)}
-                    style={{
-                      width: "357px",
-                      // height: 54,
-                      background: getBackgroundColor(status),
-                      borderRadius: 30,
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      color: "white",
-                      fontSize: 35,
-                      fontFamily: "Grandstander",
-                      fontWeight: "600",
-                      wordWrap: "break-word",
-                      //marginLeft: "2.5rem",
-                      marginTop: "4rem",
-                      marginLeft: "auto",
-                      marginRight: "auto",
-                    }}
-                  >
-                    {caption}
-                  </Button>
-                  // </Row>
-                );
-              })}
-            </Col>
-          </Row>
-          {/* </Form.Group> */}
+          {!voteSubmitted && (
+            <Row>
+              <Col>
+                {captions.map((caption, index) => {
+                  let status = "";
+                  if (caption === isMyCaption) status = "myCaption";
+                  else if (toggles[index] === true) status = "selected";
+                  else status = "default";
+                  return (
+                    // <Row className="text-center">
+                    <Button
+                      onClick={(event) => updateToggles(index)}
+                      style={{
+                        width: "357px",
+                        // height: 54,
+                        background: getBackgroundColor(status),
+                        borderRadius: 30,
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        color: "white",
+                        fontSize: 35,
+                        fontFamily: "Grandstander",
+                        fontWeight: "600",
+                        wordWrap: "break-word",
+                        //marginLeft: "2.5rem",
+                        marginTop: "4rem",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                      }}
+                    >
+                      {caption}
+                    </Button>
+                    // </Row>
+                  );
+                })}
+              </Col>
+            </Row>
+          )}
         </Form>
         <Row className="text-center">
           <Col style={{ position: "relative" }}>
