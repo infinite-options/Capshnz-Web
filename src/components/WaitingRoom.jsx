@@ -60,7 +60,9 @@ const WaitingRoom = () => {
       let imageURL = "";
       if (userData.isApi) {
         const imageURLs = await getApiImages(userData);
-        imageURL = await postCreateRounds(userData.gameCode, imageURLs);
+        imageURL = await postCreateRounds(userData.gameCode, imageURLs, {
+          timeout: 30000, // 调整超时时间为30秒
+        });
       }
       await publish({
         data: {
@@ -74,8 +76,10 @@ const WaitingRoom = () => {
           roundTime: userData.roundTime,
           imageURL: imageURL,
         },
+        timeout: 30000,
       });
     } catch (error) {
+      console.log(error);
       handleApiError(error, startGameButton, context);
     } finally {
       setLoading(false);

@@ -33,6 +33,8 @@ const CaptionNew = () => {
   const context = useContext(ErrorContext);
   const [inputCaption, setInputCaption] = useState("");
 
+  const captionInputRef = useRef(null);
+
   async function sendingError() {
     let code1 = "Caption Page";
     let code2 = "userData.imageURL does not match cookies.userData.imageURL";
@@ -82,6 +84,7 @@ const CaptionNew = () => {
   }
   function handleChange(event) {
     setCaption(event.target.value);
+    console.log("===", caption);
     setInputCaption(event.target.value);
   }
   async function closeButton() {
@@ -106,10 +109,12 @@ const CaptionNew = () => {
   async function submitButton(timerComplete) {
     try {
       let numOfPlayersSubmitting = -1;
+      //const modifiedCaption = caption.replace(/'/g, "\\\\'");
       if (caption === "" && !timerComplete) {
         alert("Please enter a valid caption.");
         return;
       }
+      //console.log("mod cap =", modifiedCaption);
       setCaptionSubmitted(true);
       if (caption !== "" && !timerComplete) {
         numOfPlayersSubmitting = await submitCaption(caption, userData);
@@ -130,6 +135,13 @@ const CaptionNew = () => {
       handleApiError(error, submitButton, context);
     }
   }
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      submitButton(false);
+      captionInputRef.current.blur();
+    }
+  };
   async function getCaptions() {
     const submittedCaptions = await getSubmittedCaptions(userData);
     // console.log("get from service:Caption")
@@ -145,7 +157,6 @@ const CaptionNew = () => {
         // }
         // setCookie("userData", updatedUserData, { path: '/' })
         // console.log(cookies)
-        console.log(userData);
         navigate("/VoteImage", { state: userData });
       } else if (event.data.message === "EndGame caption") {
         detach();
@@ -169,11 +180,11 @@ const CaptionNew = () => {
         background: "#7580B5D9",
         width: "100%",
         height: "100vh",
-        //display: "flex",
+        // display: "flex",
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
-        //overflow: "hidden",
+        overflow: "scroll",
       }}
     >
       <Container fliud>
@@ -202,7 +213,7 @@ const CaptionNew = () => {
                 marginTop: 30,
                 marginRight: "auto",
                 marginLeft: "auto",
-                //position: "relative",
+                // position: "relative",
               }}
             >
               <img
@@ -262,105 +273,107 @@ const CaptionNew = () => {
             </div>
           </Col>
         </Row>
-        <Form>
-          <Form.Group>
-            <Row className="text-center">
-              <Col>
-                <Form.Control
+        {/* <Form>
+          <Form.Group> */}
+        <Row className="text-center">
+          <Col>
+            <input
+              ref={captionInputRef}
+              onKeyDown={handleKeyDown}
+              style={{
+                width: 391,
+                height: 62.38,
+                background: "white",
+                borderRadius: 40,
+                color: "black",
+                fontSize: 26,
+                fontFamily: "Grandstander",
+                fontWeight: "500",
+                wordWrap: "break-word",
+                border: "none",
+                borderColor: "white",
+                marginLeft: "auto",
+                marginRight: "auto",
+                //marginTop: "160px",
+              }}
+              //value={email}
+              type="text"
+              placeholder="Enter caption here..."
+              onChange={handleChange}
+              disabled={captionSubmitted}
+              value={inputCaption}
+            />
+          </Col>
+        </Row>
+        <Row className="text-center">
+          <Col>
+            {!captionSubmitted && (
+              <Button
+                onClick={(event) => submitButton(false)}
+                style={{
+                  width: 218,
+                  height: 54,
+                  background: "#5E9E94",
+                  borderRadius: 30,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "white",
+                  fontSize: 31,
+                  fontFamily: "Grandstander",
+                  fontWeight: "600",
+                  wordWrap: "break-word",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  marginTop: "100px",
+                }}
+              >
+                Submit
+              </Button>
+            )}
+          </Col>
+        </Row>
+        <Row className="text-center">
+          <Col>
+            {captionSubmitted && (
+              <div
+                style={{
+                  fontFamily: "Grandstander",
+                  fontSize: "18px",
+                  fontWeight: "600",
+                }}
+              >
+                <Button
                   style={{
-                    width: 391,
-                    height: 62.38,
-                    background: "white",
-                    borderRadius: 40,
-                    color: "black",
-                    fontSize: 26,
+                    width: 218,
+                    height: 54,
+                    background: "#5E9E94",
+                    borderRadius: 30,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    color: "white",
+                    fontSize: 31,
                     fontFamily: "Grandstander",
-                    fontWeight: "500",
+                    fontWeight: "600",
                     wordWrap: "break-word",
-                    border: "none",
-                    borderColor: "white",
                     marginLeft: "auto",
                     marginRight: "auto",
-                    //marginTop: "160px",
+                    marginTop: "100px",
                   }}
-                  //value={email}
-                  type="text"
-                  placeholder="Enter caption here..."
-                  onChange={handleChange}
-                  disabled={captionSubmitted}
-                  value={inputCaption}
-                />
-              </Col>
-            </Row>
-            <Row className="text-center">
-              <Col>
-                {!captionSubmitted && (
-                  <Button
-                    onClick={(event) => submitButton(false)}
-                    style={{
-                      width: 218,
-                      height: 54,
-                      background: "#5E9E94",
-                      borderRadius: 30,
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      color: "white",
-                      fontSize: 31,
-                      fontFamily: "Grandstander",
-                      fontWeight: "600",
-                      wordWrap: "break-word",
-                      marginLeft: "auto",
-                      marginRight: "auto",
-                      marginTop: "100px",
-                    }}
-                  >
-                    Submit
-                  </Button>
-                )}
-              </Col>
-            </Row>
-            <Row className="text-center">
-              <Col>
-                {captionSubmitted && (
-                  <div
-                    style={{
-                      fontFamily: "Grandstander",
-                      fontSize: "18px",
-                      fontWeight: "600",
-                    }}
-                  >
-                    <Button
-                      style={{
-                        width: 218,
-                        height: 54,
-                        background: "#5E9E94",
-                        borderRadius: 30,
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        color: "white",
-                        fontSize: 31,
-                        fontFamily: "Grandstander",
-                        fontWeight: "600",
-                        wordWrap: "break-word",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                        marginTop: "100px",
-                      }}
-                    >
-                      Submitted
-                    </Button>
-                    <br />
-                    Waiting for other players to submit captions...
-                    <br />
-                    <ReactBootStrap.Spinner animation="border" role="status" />
-                  </div>
-                )}
-              </Col>
-            </Row>
-          </Form.Group>
-        </Form>
+                >
+                  Submitted
+                </Button>
+                <br />
+                Waiting for other players to submit captions...
+                <br />
+                <ReactBootStrap.Spinner animation="border" role="status" />
+              </div>
+            )}
+          </Col>
+        </Row>
+        {/* </Form.Group>
+        </Form> */}
         <Row className="text-center">
           <Col>
             <div
