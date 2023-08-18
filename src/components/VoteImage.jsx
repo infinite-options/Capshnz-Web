@@ -70,6 +70,8 @@ const VoteImage = () => {
         myCaption = submittedCaptions[i].caption;
       if (submittedCaptions[i].caption !== "")
         onlyCaptionSubmitted = submittedCaptions[i].caption;
+
+      //const modifiedCaption = submittedCaptions[i].caption.replace(/"/g, "'");
       tempCaptions.push(submittedCaptions[i].caption);
     }
     for (let i = 0; i < tempCaptions.length; i++) {
@@ -140,6 +142,7 @@ const VoteImage = () => {
         isCaptionSubmitted.current = true;
         setloadingImg(false);
         setSubmittedCaptions(event.data.submittedCaptions);
+        console.log("Captions received:", event.data.submittedCaptions);
       } else if (event.data.message === "Start ScoreBoard") {
         setCookie("userData", userData, { path: "/" });
         navigate("/ScoreboardNew", { state: userData });
