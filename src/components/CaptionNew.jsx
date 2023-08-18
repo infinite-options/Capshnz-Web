@@ -157,10 +157,7 @@ const CaptionNew = () => {
         // }
         // setCookie("userData", updatedUserData, { path: '/' })
         // console.log(cookies)
-        console.log(userData);
-        navigate("/VoteImage", {
-          state: userData,
-        });
+        navigate("/VoteImage", { state: userData });
       } else if (event.data.message === "EndGame caption") {
         detach();
         if (!userData.host) {
@@ -183,11 +180,11 @@ const CaptionNew = () => {
         background: "#7580B5D9",
         width: "100%",
         height: "100vh",
-        //display: "flex",
+        // display: "flex",
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
-        //overflow: "hidden",
+        overflow: "scroll",
       }}
     >
       <Container fliud>
@@ -216,7 +213,7 @@ const CaptionNew = () => {
                 marginTop: 30,
                 marginRight: "auto",
                 marginLeft: "auto",
-                //position: "relative",
+                // position: "relative",
               }}
             >
               <img
