@@ -25,9 +25,6 @@ const FinalScore = () => {
   const [isSending, setSending] = useState(false);
   const [isHostStartingAgain, setHostStartingAgain] = useState(false);
   const context = useContext(ErrorContext);
-  const axiosConfig = {
-    timeout: 1800000, // 设置为30秒超时
-  };
 
   async function startGameButton() {
     try {
@@ -77,6 +74,7 @@ const FinalScore = () => {
   const sendEmail = async () => {
     try {
       setSending(true);
+      await new Promise((resolve) => setTimeout(resolve, 500));
       summaryEmail(userData);
     } catch (error) {
       handleApiError(error, sendEmail, context);
