@@ -132,7 +132,7 @@ const LandingNew = () => {
                 </Col>
               </Row>
 
-              <Row className="text-center" style={{ marginTop: "100px" }}>
+              <Row className="text-center" style={{ marginTop: "10px" }}>
                 <Col>
                   <Button
                     variant="success"
