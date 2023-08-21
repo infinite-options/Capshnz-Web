@@ -83,7 +83,7 @@ async function addUserByEmail(email) {
 
 async function getCnnImageURLS() {
     const CnnImageURLS = await axios.get(getCNNDeckURLS, {
-        timeout: 30000
+        timeout: 60000
     }).then(response => {
         if (response.status != 200) {
             return []

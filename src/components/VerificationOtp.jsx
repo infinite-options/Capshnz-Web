@@ -43,7 +43,7 @@ const VerificationOtp = () => {
         setValid(false);
         setTimeout(() => {
           setValid(true);
-        }, 2500);
+        }, 5000);
       }
     } catch (error) {
       handleApiError(error, handleSubmit, context);

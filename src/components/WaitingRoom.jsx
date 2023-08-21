@@ -46,7 +46,7 @@ const WaitingRoom = () => {
     setButtonText("Copied!");
     setTimeout(() => {
       setButtonText("Share with other players");
-    }, 2000);
+    }, 4000);
   }
 
   function selectDeckButton() {
@@ -61,7 +61,7 @@ const WaitingRoom = () => {
       if (userData.isApi) {
         const imageURLs = await getApiImages(userData);
         imageURL = await postCreateRounds(userData.gameCode, imageURLs, {
-          timeout: 30000, // 调整超时时间为30秒
+          timeout: 60000,
         });
       }
       await publish({
@@ -76,7 +76,7 @@ const WaitingRoom = () => {
           roundTime: userData.roundTime,
           imageURL: imageURL,
         },
-        timeout: 30000,
+        timeout: 60000,
       });
     } catch (error) {
       console.log(error);
@@ -240,7 +240,11 @@ const WaitingRoom = () => {
             >
               <div style={{ cursor: "pointer" }}>
                 <img
-                  src={userData.deckThumbnail_url}
+                  src={
+                    userData.deckTitle === "Google Photos"
+                      ? "https://upload.wikimedia.org/wikipedia/commons/f/fb/Google-Photos_icon_logo_%28May-September_2015%29.png"
+                      : userData.deckThumbnail_url
+                  }
                   alt={userData.deckTitle}
                   className="deck-image"
                 />
