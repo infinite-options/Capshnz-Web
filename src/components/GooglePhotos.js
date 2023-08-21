@@ -4,6 +4,7 @@ import { useCookies } from 'react-cookie'
 import { useGoogleLogin } from "@react-oauth/google"
 import axios from "../util/config"
 import "../styles/GooglePhotos.css"
+import { Button } from "react-bootstrap"
 
 export default function GooglePhotos(){
     const navigate = useNavigate(), location = useLocation()
@@ -37,7 +38,7 @@ export default function GooglePhotos(){
                         Accept: 'application/json',
                         Authorization: 'Bearer ' + res.data.access_token ,
                     }
-
+                    console.log(headers);
                     axios.get('https://photoslibrary.googleapis.com/v1/sharedAlbums', { headers: headers })
                         .then(res => {
                             setAlbums(res.data.sharedAlbums)
@@ -111,7 +112,7 @@ export default function GooglePhotos(){
             deckUID: "500-000005",
             googlePhotos: albumImages
         }
-        navigate("/Waiting", {state: updatedUserData})
+        navigate("/WaitingRoom", {state: updatedUserData})
     }
 
     return (
@@ -126,7 +127,7 @@ export default function GooglePhotos(){
                     <div>
                         <h4>Sign in to play with an album</h4>
                         <br/>
-                        <button className="selectedGooglePhotos" onClick={() => login()}>Log In to Google Photos</button>
+                        <Button className="selectedGooglePhotos" onClick={() => login()}>Log In to Google Photos</Button>
                     </div>
                 }
             </div>
