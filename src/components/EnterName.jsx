@@ -173,7 +173,7 @@ const EnterName = () => {
                       fontWeight: "600",
                       wordWrap: "break-word",
                       marginLeft: "50px",
-                      marginTop: "160px",
+                      marginTop: "10px",
                     }}
                   >
                     Enter
