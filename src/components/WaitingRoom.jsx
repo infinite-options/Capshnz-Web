@@ -137,10 +137,9 @@ const WaitingRoom = () => {
     >
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
+          display: "grid",
+          placeItems: "center",
+          marginTop: "100px",
         }}
       >
         <Container fluid>
@@ -281,7 +280,7 @@ const WaitingRoom = () => {
             onClick={copyGameCodeButton}
             style={{
               width: 330,
-              height: 55,
+              minHeight: 55,
               background: "#DC816A",
               borderRadius: 40,
               display: "flex",
