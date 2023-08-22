@@ -54,12 +54,12 @@ export default function GooglePhotos(){
             return albums.map((entry, index) => {
                 return (
                     <div key={index}>
-                        <button className={selectedAlbum === entry.title ? "selectedGooglePhotos" : "buttonGooglePhotos"} onClick={() => {
+                        <Button className={selectedAlbum === entry.title ? "selectedGooglePhotos" : "buttonGooglePhotos"} onClick={() => {
                             setSelectedAlbum(entry.title)
                             getPhotos(entry)
                         }}>
                             {entry.title}
-                        </button>
+                        </Button>
                         <br/>
                     </div>
 
@@ -143,7 +143,7 @@ export default function GooglePhotos(){
             { selectedAlbum === "" ?
                 "" :
                 <div>
-                    <button className="selectedGooglePhotos" onClick={submitAlbum}>Continue</button>
+                    <Button className="selectedGooglePhotos" onClick={submitAlbum}>Continue</Button>
                     <br/>
                 </div>
             }

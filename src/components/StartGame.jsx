@@ -76,10 +76,8 @@ const StartGame = () => {
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
+        display: "grid",
+        placeItems: "center",
         width: "100%",
         height: "100vh",
         background: "rgba(241, 205, 92, 0.73)",
@@ -99,10 +97,10 @@ const StartGame = () => {
                   fontFamily: "Grandstander",
                   fontWeight: "800",
                   wordWrap: "break-word",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  // display: "flex",
+                  // flexDirection: "column",
+                  // justifyContent: "center",
+                  // alignItems: "center",
                 }}
               >
                 Welcome
@@ -111,7 +109,7 @@ const StartGame = () => {
               </div>
             </Col>
           </Row>
-          <Row style={{ marginLeft: "8px" }}>
+          <Row style={{ marginLeft: "auto", marginRight: "auto" }}>
             <Form.Group as={Col} md="10">
               <Form.Label
                 style={{
@@ -153,8 +151,8 @@ const StartGame = () => {
                 type="submit"
                 disabled={isJoinLoading}
                 style={{
-                  width: 180,
-                  height: 35,
+                  minWidth: 180,
+                  minHeight: 35,
                   background: "#46C3A6",
                   borderRadius: 30,
                   display: "flex",
@@ -175,10 +173,8 @@ const StartGame = () => {
       </Form>
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
+          display: "grid",
+          placeItems: "center",
         }}
       >
         <Container style={{ paddingTop: "150px", marginLeft: "0px" }} fluid>
@@ -204,8 +200,8 @@ const StartGame = () => {
                 variant="warning"
                 onClick={handleFeedback}
                 style={{
-                  width: 218,
-                  height: 38,
+                  minWidth: 218,
+                  minHeight: 38,
                   background: "#46C3A6",
                   borderRadius: 30,
                   display: "flex",
@@ -257,8 +253,8 @@ const StartGame = () => {
                 onClick={createNewGameButton}
                 disabled={isCreateLoading}
                 style={{
-                  width: 200,
-                  height: 35,
+                  minWidth: 200,
+                  minHeight: 35,
                   background: "#46C3A6",
                   borderRadius: 30,
                   display: "flex",
