@@ -72,7 +72,7 @@ const LandingNew = () => {
                     backgroundColor: "white",
                     borderRadius: "40px",
                     flexShrink: 0,
-                    fontSize: "33px",
+                    fontSize: "1.5rem",
                     fontFamily: "Grandstander",
                     fontWeight: "700",
                     wordWrap: "break-word",
@@ -132,7 +132,7 @@ const LandingNew = () => {
                 </Col>
               </Row>
 
-              <Row className="text-center" style={{ marginTop: "10px" }}>
+              <Row className="text-center" style={{ marginTop: "5rem" }}>
                 <Col>
                   <Button
                     variant="success"

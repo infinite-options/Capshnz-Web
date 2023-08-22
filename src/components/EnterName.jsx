@@ -69,7 +69,7 @@ const EnterName = () => {
                     backgroundColor: "white",
                     borderRadius: "40px",
                     flexShrink: 0,
-                    fontSize: "33px",
+                    fontSize: "1.5rem",
                     fontFamily: "Grandstander",
                     fontWeight: "700",
                     wordWrap: "break-word",
@@ -173,7 +173,7 @@ const EnterName = () => {
                       fontWeight: "600",
                       wordWrap: "break-word",
                       marginLeft: "50px",
-                      marginTop: "10px",
+                      marginTop: "5rem",
                     }}
                   >
                     Enter
@@ -181,7 +181,7 @@ const EnterName = () => {
                 </Col>
               </Row>
             </Form.Group>
-            <Row>
+            {/* <Row>
               <Col>
                 <div
                   style={{
@@ -203,7 +203,7 @@ const EnterName = () => {
                   game performance
                 </div>
               </Col>
-            </Row>
+            </Row> */}
           </Container>
         </Form>
       </div>
