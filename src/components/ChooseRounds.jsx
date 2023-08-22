@@ -102,10 +102,8 @@ const ChooseRounds = () => {
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
+        display: "grid",
+        placeItems: "center",
         width: "100%",
         height: "100vh",
         background: "rgba(153, 90, 98, 0.70)",
