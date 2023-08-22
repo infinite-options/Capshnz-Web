@@ -175,9 +175,10 @@ const StartGame = () => {
         style={{
           display: "grid",
           placeItems: "center",
+          overflow: "scroll",
         }}
       >
-        <Container style={{ paddingTop: "10px", marginLeft: "0px" }} fluid>
+        <Container style={{ marginTop: "300px", marginLeft: "0px" }} fluid>
           <Row
             className="text-center py-3"
             style={{
