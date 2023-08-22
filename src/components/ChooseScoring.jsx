@@ -35,10 +35,8 @@ const ChooseScoring = () => {
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
+        display: "grid",
+        placeItems: "center",
         width: "100%",
         height: "100vh",
         background: "rgba(183, 214, 225, 1)",
@@ -47,10 +45,8 @@ const ChooseScoring = () => {
     >
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
+          display: "grid",
+          placeItems: "center",
         }}
       >
         <Container fluid>
