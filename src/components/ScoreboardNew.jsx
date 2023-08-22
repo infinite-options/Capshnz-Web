@@ -155,7 +155,7 @@ const ScoreboardNew = () => {
   return (
     <div
       style={{
-        //display: "flex",
+        display: "grid",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
@@ -192,7 +192,7 @@ const ScoreboardNew = () => {
                 fontFamily: "Grandstander",
                 fontWeight: "700",
                 wordWrap: "break-word",
-                marginTop: "8px",
+                marginTop: "0.5rem",
                 border: "none",
                 outline: "none",
                 textAlign: "center",

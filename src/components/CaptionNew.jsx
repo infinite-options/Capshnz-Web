@@ -180,10 +180,11 @@ const CaptionNew = () => {
         background: "#7580B5D9",
         width: "100%",
         height: "100vh",
-        // display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
+        display: "grid",
+        placeItems: "center",
+        // justifyContent: "center",
+        // alignItems: "center",
+        // flexDirection: "column",
         overflow: "scroll",
       }}
     >
@@ -213,7 +214,7 @@ const CaptionNew = () => {
                 marginTop: 30,
                 marginRight: "auto",
                 marginLeft: "auto",
-                // position: "relative",
+                position: "relative",
               }}
             >
               <img
