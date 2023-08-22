@@ -177,7 +177,7 @@ const StartGame = () => {
           placeItems: "center",
         }}
       >
-        <Container style={{ paddingTop: "150px", marginLeft: "0px" }} fluid>
+        <Container style={{ paddingTop: "10px", marginLeft: "0px" }} fluid>
           <Row
             className="text-center py-3"
             style={{
