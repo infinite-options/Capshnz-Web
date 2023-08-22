@@ -47,7 +47,6 @@ const ChooseScoring = () => {
         style={{
           display: "grid",
           placeItems: "center",
-          overflow: "scroll",
         }}
       >
         <Container fluid>
