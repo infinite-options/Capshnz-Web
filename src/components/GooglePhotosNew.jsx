@@ -150,13 +150,15 @@ const GooglePhotosNew = () => {
           </div>
         )}
       </div>
-      <div className="headerGooglePhotos">{chooseAlbums()}</div>
-      <div className="containerGooglePhotos">
-        {albumImages.map((url, index) => {
-          return (
-            <img key={index} className="imageGooglePhotos" src={url}></img>
-          );
-        })}
+      <div style={{ overflow: "scroll" }}>
+        <div className="headerGooglePhotos">{chooseAlbums()}</div>
+        <div className="containerGooglePhotos">
+          {albumImages.map((url, index) => {
+            return (
+              <img key={index} className="imageGooglePhotos" src={url}></img>
+            );
+          })}
+        </div>
       </div>
       <br />
       {selectedAlbum === "" ? (

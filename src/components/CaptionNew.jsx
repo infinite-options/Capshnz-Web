@@ -246,6 +246,7 @@ const CaptionNew = () => {
                 wordWrap: "break-word",
                 marginLeft: "auto",
                 marginRight: "auto",
+                marginTop: "2rem",
                 marginBottom: "2rem",
               }}
             >

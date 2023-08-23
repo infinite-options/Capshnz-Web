@@ -139,7 +139,6 @@ const WaitingRoom = () => {
         style={{
           display: "grid",
           placeItems: "center",
-          marginTop: "100px",
         }}
       >
         <Container fluid>
@@ -314,6 +313,7 @@ const WaitingRoom = () => {
                 fontWeight: "700",
                 wordWrap: "break-word",
                 marginTop: "10px",
+                marginBottom: "50px",
               }}
             >
               Select Deck
@@ -338,6 +338,7 @@ const WaitingRoom = () => {
                 fontWeight: "700",
                 wordWrap: "break-word",
                 marginTop: "10px",
+                marginBottom: "50px",
               }}
             >
               {isLoading ? "Starting..." : `Start Game`}

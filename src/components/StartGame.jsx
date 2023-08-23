@@ -81,7 +81,6 @@ const StartGame = () => {
         width: "100%",
         height: "100vh",
         background: "rgba(241, 205, 92, 0.73)",
-        overflow: "scroll",
       }}
     >
       <Form onSubmit={joinGameButton}>
