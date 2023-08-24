@@ -107,6 +107,7 @@ const ChooseRounds = () => {
         width: "100%",
         height: "100vh",
         background: "rgba(153, 90, 98, 0.70)",
+        overflow: "scroll",
       }}
     >
       <Form>
