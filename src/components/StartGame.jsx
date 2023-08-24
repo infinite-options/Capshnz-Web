@@ -85,7 +85,7 @@ const StartGame = () => {
       }}
     >
       <Form onSubmit={joinGameButton}>
-        <Container fluid>
+        <Container maxWidth="sm">
           <Row className="text-center py-4">
             <Col>
               <div
