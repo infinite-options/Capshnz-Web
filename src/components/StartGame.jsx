@@ -202,11 +202,12 @@ const StartGame = () => {
             wordWrap: "break-word",
             marginRight: "auto",
             marginLeft: "auto",
+            marginTop: "4rem",
           }}
         >
           <Col>Want to provide game feedback?</Col>
         </Row>
-        <Row className="text-center" style={{ marginTop: "9rem" }}>
+        <Row className="text-center">
           <Col style={{ position: "relative" }}>
             <Polygon
               style={{ position: "relative", top: "2px", left: "-30px" }}
