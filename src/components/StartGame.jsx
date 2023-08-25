@@ -264,7 +264,7 @@ const StartGame = () => {
         </Row>
         <Row
           className="text-center"
-          style={{ marginTop: "16px", paddingBottom: "20px" }}
+          style={{ marginTop: "16px", paddingBottom: "120px" }}
         >
           <Col style={{ position: "relative" }}>
             <Polygon
