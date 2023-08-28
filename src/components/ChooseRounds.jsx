@@ -250,7 +250,7 @@ const ChooseRounds = () => {
                   fontWeight: "600",
                   wordWrap: "break-word",
                   marginLeft: "-79px",
-                  marginBottom: "50px",
+                  marginBottom: "100px",
                 }}
               >
                 {isLoading ? "Loading..." : "Continue"}
