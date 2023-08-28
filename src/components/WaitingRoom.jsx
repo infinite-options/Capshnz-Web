@@ -338,7 +338,7 @@ const WaitingRoom = () => {
                 fontWeight: "700",
                 wordWrap: "break-word",
                 marginTop: "10px",
-                marginBottom: "50px",
+                marginBottom: "150px",
               }}
             >
               {isLoading ? "Starting..." : `Start Game`}
