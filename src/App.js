@@ -54,7 +54,7 @@ export default function App() {
           <CookiesProvider>
             <Router>
               <Routes>
-                <Route path="/" element={<Landing />} />
+                <Route path="/landingold" element={<Landing />} />
                 <Route path="/UserInfo" element={<UserInfo />} />
                 <Route path="/JoinGame" element={<JoinGame />} />
                 <Route path="/Feedback" element={<Feedback />} />
@@ -75,7 +75,7 @@ export default function App() {
                 <Route path="/ChooseRounds" element={<ChooseRounds />} />
                 <Route path="/FinalScore" element={<FinalScore />} />
                 <Route path="/WaitingRoom" element={<WaitingRoom />} />
-                <Route path="/Landing" element={<LandingNew />} />
+                <Route path="/" element={<LandingNew />} />
                 <Route path="/VerificationOtp" element={<VerificationOtp />} />
                 <Route path="/EnterName" element={<EnterName />} />
                 <Route path="/CaptionNew" element={<CaptionNew />} />
