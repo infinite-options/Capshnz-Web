@@ -130,6 +130,7 @@ const WaitingRoom = () => {
         display: "grid",
         placeItems: "center",
         width: "100%",
+        height: "100vh",
         background: "#CBDFBD",
         overflow: "scroll",
         paddingBottom: "1rem",
