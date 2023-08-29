@@ -179,13 +179,9 @@ const CaptionNew = () => {
       style={{
         background: "#7580B5D9",
         width: "100%",
-        height: "100vh",
         display: "grid",
         placeItems: "center",
-        // justifyContent: "center",
-        // alignItems: "center",
-        // flexDirection: "column",
-        overflow: "scroll",
+        paddingBottom: "2rem",
       }}
     >
       <Container fliud>
@@ -201,7 +197,7 @@ const CaptionNew = () => {
           <Col>
             <div
               style={{
-                width: 375,
+                width: "90%",
                 height: 365,
                 background: "#D9D9D9",
                 borderRadius: 0,
@@ -283,7 +279,7 @@ const CaptionNew = () => {
               ref={captionInputRef}
               onKeyDown={handleKeyDown}
               style={{
-                width: 391,
+                width: "90%",
                 height: 62.38,
                 background: "white",
                 borderRadius: 40,
@@ -394,7 +390,7 @@ const CaptionNew = () => {
 
               <div
                 style={{
-                  width: "415px",
+                  width: "90%",
                   height: 65,
                   background: "white",
                   borderRadius: 40,

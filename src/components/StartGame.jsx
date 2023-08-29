@@ -79,29 +79,24 @@ const StartGame = () => {
         display: "grid",
         placeItems: "center",
         width: "100%",
-        height: "100vh",
         background: "rgba(241, 205, 92, 0.73)",
-        overflow: "scroll",
         overflowX: "hidden",
+        paddingTop: "2rem",
+        paddingBottom: "2rem",
       }}
     >
       <Container className="g-0" fluid>
-        <Row className="text-center py-4">
+        <Row className="text-center">
           <Col>
             <div
               style={{
                 width: "100%",
-                //height: "29px",
                 color: "white",
                 fontSize: "40px",
                 fontFamily: "Grandstander",
                 fontWeight: "800",
                 wordWrap: "break-word",
-
-                // display: "flex",
-                // flexDirection: "column",
-                // justifyContent: "center",
-                // alignItems: "center",
+                marginBottom: "2rem",
               }}
             >
               Welcome
@@ -110,12 +105,12 @@ const StartGame = () => {
             </div>
           </Col>
         </Row>
-        <Row
-          className="text-center g-0"
-          style={{ marginLeft: "auto", marginRight: "auto" }}
-        >
-          <Col>
-            <Form onSubmit={joinGameButton} className="g-0">
+        <Form onSubmit={joinGameButton} className="g-0">
+          <Row
+            className="text-center g-0"
+            style={{ marginLeft: "auto", marginRight: "auto" }}
+          >
+            <Col>
               <Form.Group>
                 <Form.Label
                   style={{
@@ -151,39 +146,40 @@ const StartGame = () => {
                   inputMode="numeric"
                 />
               </Form.Group>
-            </Form>
-          </Col>
-        </Row>
-        <Row
-          className="text-center py-3 g-0"
-          style={{ marginRight: "auto", marginLeft: "auto" }}
-        >
-          <Col>
-            <Button
-              variant="success"
-              type="submit"
-              disabled={isJoinLoading}
-              style={{
-                minWidth: 180,
-                minHeight: 35,
-                background: "#46C3A6",
-                borderRadius: 30,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                color: "white",
-                fontSize: 23,
-                fontFamily: "Grandstander",
-                fontWeight: "600",
-                wordWrap: "break-word",
-                marginRight: "auto",
-                marginLeft: "auto",
-              }}
-            >
-              {isJoinLoading ? "Joining..." : "Join Game"}
-            </Button>
-          </Col>
-        </Row>
+            </Col>
+          </Row>
+          <Row
+            className="text-center py-3 g-0"
+            style={{ marginRight: "auto", marginLeft: "auto" }}
+          >
+            <Col>
+              <Button
+                variant="success"
+                type="submit"
+                disabled={isJoinLoading}
+                style={{
+                  minWidth: 180,
+                  minHeight: 35,
+                  background: "#46C3A6",
+                  borderRadius: 30,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "white",
+                  fontSize: 23,
+                  fontFamily: "Grandstander",
+                  fontWeight: "600",
+                  wordWrap: "break-word",
+                  marginRight: "auto",
+                  marginLeft: "auto",
+                }}
+              >
+                {isJoinLoading ? "Joining..." : "Join Game"}
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+
         {/* <div
         style={{
           display: "grid",
@@ -262,10 +258,7 @@ const StartGame = () => {
         >
           <Col>Want to create your own game?</Col>
         </Row>
-        <Row
-          className="text-center"
-          style={{ marginTop: "16px", paddingBottom: "120px" }}
-        >
+        <Row className="text-center" style={{ marginTop: "16px" }}>
           <Col style={{ position: "relative" }}>
             <Polygon
               style={{ position: "relative", top: "2px", left: "-30px" }}

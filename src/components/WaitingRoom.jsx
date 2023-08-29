@@ -130,9 +130,9 @@ const WaitingRoom = () => {
         display: "grid",
         placeItems: "center",
         width: "100%",
-        height: "100vh",
         background: "#CBDFBD",
         overflow: "scroll",
+        paddingBottom: "1rem",
       }}
     >
       <div
@@ -313,7 +313,6 @@ const WaitingRoom = () => {
                 fontWeight: "700",
                 wordWrap: "break-word",
                 marginTop: "10px",
-                marginBottom: "50px",
               }}
             >
               Select Deck
@@ -338,7 +337,6 @@ const WaitingRoom = () => {
                 fontWeight: "700",
                 wordWrap: "break-word",
                 marginTop: "10px",
-                marginBottom: "150px",
               }}
             >
               {isLoading ? "Starting..." : `Start Game`}

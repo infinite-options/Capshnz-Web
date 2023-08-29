@@ -1,7 +1,7 @@
 body {
     background: '#7580B5D9';
     max-width: 100%;
-    max-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: hidden;
+    /* max-height: 100vh; */
+    /* overflow-x: hidden; */
+    /* overflow-y: hidden; */
 }
