@@ -105,9 +105,10 @@ const ChooseRounds = () => {
         display: "grid",
         placeItems: "center",
         width: "100%",
-        height: "100vh",
         background: "rgba(153, 90, 98, 0.70)",
         overflow: "scroll",
+        paddingBottom: "1rem",
+        paddingTop: "2rem",
       }}
     >
       <Form>
@@ -130,7 +131,7 @@ const ChooseRounds = () => {
                   fontFamily: "Grandstander",
                   fontWeight: "600",
                   wordWrap: "break-word",
-                  marginTop: "64px",
+                  //marginTop: "64px",
                 }}
               >
                 Number of Rounds
@@ -228,9 +229,17 @@ const ChooseRounds = () => {
           </Row>
           <Row
             className="text-center py-3"
-            style={{ marginLeft: "90px", marginTop: "64px" }}
+            style={{
+              marginTop: "64px",
+            }}
           >
-            <Col>
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <Button
                 variant="success"
                 type="submit"
@@ -249,8 +258,7 @@ const ChooseRounds = () => {
                   fontFamily: "Grandstander",
                   fontWeight: "600",
                   wordWrap: "break-word",
-                  marginLeft: "-79px",
-                  marginBottom: "100px",
+                  //marginLeft: "-79px",
                 }}
               >
                 {isLoading ? "Loading..." : "Continue"}

@@ -126,9 +126,9 @@ const FinalScore = () => {
         justifyContent: "center",
         alignItems: "center",
         width: "100%",
-        height: "100vh",
         background: "#E58D80",
-        overflow: "scroll",
+        paddingTop: "2rem",
+        paddingBottom: "1rem",
       }}
     >
       <Container>

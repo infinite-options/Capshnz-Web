@@ -291,7 +291,7 @@ const VoteImage = () => {
       style={{
         background: "#878787",
         width: "100%",
-        height: "100vh",
+        // height: "100vh",
         //display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -312,7 +312,7 @@ const VoteImage = () => {
           <Col>
             <div
               style={{
-                width: 375,
+                width: "90%",
                 height: 365,
                 background: "#D9D9D9",
                 borderRadius: 0,
@@ -338,31 +338,6 @@ const VoteImage = () => {
         <Form>
           <Row className="text-center">
             <Col>
-              {/* {!voteSubmitted && (
-                <Button
-                  onClick={(event) => voteButton(false)}
-                  style={{
-                    width: "400px",
-                    height: 54,
-                    background: "#5E9E94",
-                    borderRadius: 30,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "white",
-                    fontSize: 35,
-                    fontFamily: "Grandstander",
-                    fontWeight: "600",
-                    wordWrap: "break-word",
-                    //marginLeft: "1rem",
-                    marginTop: "2rem",
-                    marginLeft: "auto",
-                    marginRight: "auto",
-                  }}
-                >
-                  Press to Submit
-                </Button>
-              )} */}
               {voteSubmitted && (
                 <div
                   className="submittedVote"

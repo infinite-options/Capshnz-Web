@@ -160,9 +160,9 @@ const ScoreboardNew = () => {
         justifyContent: "center",
         alignItems: "center",
         width: "100%",
-        height: "100vh",
         background: "#E58D80",
-        overflow: "scroll",
+        paddingTop: "2rem",
+        paddingBottom: "1rem",
       }}
     >
       <Container>
@@ -243,7 +243,7 @@ const ScoreboardNew = () => {
           </div>
           <div
             style={{
-              minWidth: "340px",
+              maxWidth: "95%",
               padding: "20px",
               borderRadius: "40px",
               background: "#F2BF7D",
@@ -294,11 +294,15 @@ const ScoreboardNew = () => {
             })}
           </div>
         </Row>
-        <Row
-          className="text-center"
-          style={{ marginTop: "32px", marginLeft: "0px" }}
-        >
-          <Col style={{ position: "relative" }}>
+        <Row className="text-center" style={{ marginTop: "32px" }}>
+          <Col
+            style={{
+              position: "relative",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             {userData.host && userData.roundNumber !== userData.numOfRounds && (
               <Button
                 variant="warning"
@@ -318,7 +322,7 @@ const ScoreboardNew = () => {
                   wordWrap: "break-word",
                   marginLeft: "auto",
                   marginRight: "auto",
-                  marginBottom: "2rem",
+                  marginBottom: "3rem",
                 }}
               >
                 Next Round
@@ -343,7 +347,7 @@ const ScoreboardNew = () => {
                   wordWrap: "break-word",
                   marginLeft: "auto",
                   marginRight: "auto",
-                  marginBottom: "2rem",
+                  marginBottom: "3rem",
                 }}
               >
                 Final Score
@@ -359,7 +363,7 @@ const ScoreboardNew = () => {
             <input
               type="text"
               style={{
-                width: "405px",
+                width: "350",
                 height: 56,
                 background: "#FFF",
                 borderRadius: 30,
