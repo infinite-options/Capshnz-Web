@@ -79,7 +79,7 @@ const StartGame = () => {
         display: "grid",
         placeItems: "center",
         width: "100%",
-        height: "100vh",
+        minHeight: "100vh",
         background: "rgba(241, 205, 92, 0.73)",
         overflowX: "hidden",
         paddingTop: "2rem",

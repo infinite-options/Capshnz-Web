@@ -179,6 +179,7 @@ const CaptionNew = () => {
       style={{
         background: "#7580B5D9",
         width: "100%",
+        minHeight: "100vh",
         display: "grid",
         placeItems: "center",
         paddingBottom: "2rem",
