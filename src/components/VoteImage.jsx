@@ -291,7 +291,7 @@ const VoteImage = () => {
       style={{
         background: "#878787",
         width: "100%",
-        height: "100vh",
+        minHeight: "100vh",
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",

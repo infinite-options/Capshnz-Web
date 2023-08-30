@@ -160,7 +160,7 @@ const ScoreboardNew = () => {
         justifyContent: "center",
         alignItems: "center",
         width: "100%",
-        // height: "100vh",
+        minHeight: "100vh",
         background: "#E58D80",
         paddingTop: "2rem",
         paddingBottom: "1rem",
