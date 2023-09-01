@@ -214,6 +214,7 @@ const FinalScore = () => {
               alt="loading CNN images"
               width="250"
               className="loadingimg"
+              style={{ objectFit: "contain" }}
             />
           </div>
         )}
@@ -365,7 +366,7 @@ const FinalScore = () => {
                       className="imgCaption"
                       src={caption.round_image_uid}
                       alt="Loading Image...."
-                      style={{ borderRadius: 0 }}
+                      style={{ borderRadius: 0, objectFit: "contain" }}
                     />
                   </Col>
                 </Row>

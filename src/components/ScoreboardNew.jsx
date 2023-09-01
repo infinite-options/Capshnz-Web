@@ -233,7 +233,12 @@ const ScoreboardNew = () => {
               <img
                 className="imgVote"
                 src={userData.imageURL}
-                style={{ width: "96%", height: "96%", borderRadius: "0px" }}
+                style={{
+                  width: "96%",
+                  height: "96%",
+                  borderRadius: "0px",
+                  objectFit: "contain",
+                }}
               />
             </div>
           </Col>
