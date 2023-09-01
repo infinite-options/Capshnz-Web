@@ -56,83 +56,84 @@ const VerificationOtp = () => {
 
   return (
     <div className="div-main">
-      <div
+      {/* <div
         style={{
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
         }}
-      >
-        <Container className="container-main" fluid>
-          <Row className="text-center" style={{ marginTop: "36px" }}>
-            <Col
+      > */}
+      <Container className="container-main" fluid>
+        <Row className="text-center" style={{ paddingTop: "2rem" }}>
+          <Col
+            style={{
+              position: "relative",
+            }}
+          >
+            <input
               style={{
-                position: "relative",
+                width: "90%",
+                height: "70px",
+                backgroundColor: "white",
+                borderRadius: "40px",
+                flexShrink: 0,
+                fontSize: "1.5rem",
+                fontFamily: "Grandstander",
+                fontWeight: "700",
+                wordWrap: "break-word",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                border: "none",
+                textAlign: "center",
               }}
-            >
-              <input
-                style={{
-                  width: "351px",
-                  height: "70px",
-                  backgroundColor: "white",
-                  borderRadius: "40px",
-                  flexShrink: 0,
-                  fontSize: "33px",
-                  fontFamily: "Grandstander",
-                  fontWeight: "700",
-                  wordWrap: "break-word",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  border: "none",
-                  textAlign: "center",
-                }}
-                value="Welcome to Capshnz"
-                readOnly
-              />
+              value="Welcome to Capshnz"
+              readOnly
+            />
 
-              <PolygonWhiteDownward
-                style={{
-                  marginLeft: "-223px",
-                  marginTop: "-10px",
-                }}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col
+            <PolygonWhiteDownward
               style={{
-                marginLeft: "70px",
-                marginTop: "20px",
-                marginBottom: "60px",
+                marginLeft: "-223px",
+                marginTop: "-10px",
+              }}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col
+            style={{
+              marginLeft: "70px",
+              marginTop: "20px",
+              marginBottom: "60px",
+            }}
+          >
+            <PolygonGreyUpward
+              style={{ marginLeft: "20px", marginBottom: "-10px" }}
+            />
+            <div
+              style={{
+                width: "90%",
+                height: 61,
+                background: "#B5BBD3",
+                borderRadius: 40,
+                color: "white",
+                fontSize: "1.5rem",
+                fontFamily: "Grandstander",
+                fontWeight: "800",
+                wordWrap: "break-word",
+                border: "none",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              <PolygonGreyUpward
-                style={{ marginLeft: "20px", marginBottom: "-10px" }}
-              />
-              <div
-                style={{
-                  width: 340,
-                  height: 61,
-                  background: "#B5BBD3",
-                  borderRadius: 40,
-                  color: "white",
-                  fontSize: 30,
-                  fontFamily: "Grandstander",
-                  fontWeight: "800",
-                  wordWrap: "break-word",
-                  border: "none",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                Enter 3 digit code
-              </div>
-            </Col>
-          </Row>
-          <div
+              Enter 3 digit code
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col
             style={{
               display: "flex",
               justifyContent: "center",
@@ -146,68 +147,75 @@ const VerificationOtp = () => {
               onChange={handleChange}
               marginLeft="10px"
             />
-          </div>
+          </Col>
           {!valid && (
             <div className="validConfirmation">
               Invalid Code. Please Try Again.
             </div>
           )}
-          <Row>
-            <Col
+        </Row>
+        <Row style={{ paddingBottom: "2rem", paddingTop: "2rem" }}>
+          <Col
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              variant="success"
+              type="submit"
+              onClick={handleSubmit}
+              //disabled={() => {}}
               style={{
+                width: 218,
+                height: 54,
+                background: "#5E9E94",
+                borderRadius: 30,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                color: "white",
+                fontSize: 31,
+                fontFamily: "Grandstander",
+                fontWeight: "600",
+                wordWrap: "break-word",
+                marginTop: "3rem",
               }}
             >
-              <Button
-                variant="success"
-                type="submit"
-                onClick={handleSubmit}
-                //disabled={() => {}}
-                style={{
-                  width: 218,
-                  height: 54,
-                  background: "#5E9E94",
-                  borderRadius: 30,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "white",
-                  fontSize: 31,
-                  fontFamily: "Grandstander",
-                  fontWeight: "600",
-                  wordWrap: "break-word",
-                  marginTop: "100px",
-                }}
-              >
-                Enter
-              </Button>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: 2,
-                  color: "white",
-                  fontSize: "24px",
-                  fontFamily: "Grandstander",
-                  fontWeight: "900",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  wordWrap: "break-word",
-                }}
-              >
-                A 3 digit code has been sent to your email. Please check your
-                email and enter the code above.
-              </div>
-            </Col>
-          </Row>
-        </Container>
-      </div>
+              Enter
+            </Button>
+          </Col>
+        </Row>
+        <Row
+          style={{
+            position: "absolute",
+            marginBottom: "2rem",
+            paddingTop: "1rem",
+          }}
+        >
+          <Col>
+            <div
+              style={{
+                //position: "absolute",
+                //bottom: "1rem",
+                color: "white",
+                fontSize: "1.2rem",
+                fontFamily: "Grandstander",
+                fontWeight: "900",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                wordWrap: "break-word",
+              }}
+            >
+              A 3 digit code has been sent to your email. Please check your
+              email and enter the code above.
+            </div>
+          </Col>
+        </Row>
+      </Container>
+      {/* </div> */}
     </div>
   );
 };

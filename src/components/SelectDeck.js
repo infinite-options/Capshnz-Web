@@ -74,11 +74,10 @@ export default function SelectDeck() {
     <div
       style={{
         display: "grid",
-          placeItems: "center",
+        placeItems: "center",
         width: "100%",
-        height: "100vh",
+        minHeight: "100vh",
         background: "#C8DAD8",
-        overflow: "scroll",
       }}
     >
       {/* <div>
@@ -144,7 +143,7 @@ export default function SelectDeck() {
                 }
                 className="deck"
               >
-                <div style={{cursor: 'pointer',}}>
+                <div style={{ cursor: "pointer" }}>
                   <img
                     src={deck.deck_thumbnail_url}
                     alt={deck.deck_title}

@@ -218,7 +218,12 @@ const CaptionNew = () => {
                 className="imgCaption"
                 src={userData.imageURL}
                 alt="Loading Image...."
-                style={{ width: "96%", height: "96%", borderRadius: "0" }}
+                style={{
+                  width: "96%",
+                  height: "96%",
+                  borderRadius: "0",
+                  objectFit: "contain",
+                }}
               />
             </div>
           </Col>
