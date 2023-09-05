@@ -18,6 +18,15 @@ import useAbly from "../util/ably";
 import React, { useContext } from "react";
 import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 
+//This function is made to shuffle the sequence of the captions array.
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 const VoteImage = () => {
   const navigate = useNavigate(),
     location = useLocation();
@@ -40,6 +49,8 @@ const VoteImage = () => {
   const isCaptionSubmitted = useRef(false);
   const [loadingImg, setloadingImg] = useState(true);
   const context = useContext(ErrorContext);
+
+  const shuffledCaptions = shuffleArray(captions);
 
   if (
     cookies.userData != undefined &&
@@ -418,7 +429,7 @@ const VoteImage = () => {
           {!voteSubmitted && (
             <Row>
               <Col>
-                {captions.map((caption, index) => {
+                {shuffledCaptions.map((caption, index) => {
                   let status = "";
                   if (caption === isMyCaption) status = "myCaption";
                   else if (toggles[index] === true) status = "selected";
