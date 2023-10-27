@@ -415,7 +415,9 @@ const VoteImage = () => {
                   backgroundColors="#ADC3EC"
                   onComplete={() => {
                     if (!voteSubmitted) {
-                      voteButton(true);
+                      // wrong value being sent, it should be -1
+                      // voteButton(true);
+                      voteButton(-1)
                     }
                   }}
                 >
