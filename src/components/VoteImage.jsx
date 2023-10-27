@@ -273,15 +273,23 @@ const VoteImage = () => {
     try {
       let numOfPlayersVoting = -1;
 
-      if (selectedCaptionIndex === -1) {
-        alert("Please vote for a caption.");
-        return;
-      }
+      //  commented to allow api call when players who havent voted
+      // if (selectedCaptionIndex === -1) {
+      //   alert("Please vote for a caption.");
+      //   return;
+      // }
 
       setVoteSubmitted(true);
 
+      //  commented to allow api call when players who havent voted
       // Determine the caption to vote for
-      const selectedCaption = captions[selectedCaptionIndex];
+      // const selectedCaption = captions[selectedCaptionIndex];
+
+      //  code added to allow allow api call when player hasnt voted
+      let selectedCaption = null;
+      if(selectedCaptionIndex > -1){
+        selectedCaption = captions[selectedCaptionIndex];
+      }
 
       numOfPlayersVoting = await postVote(selectedCaption, userData);
 
