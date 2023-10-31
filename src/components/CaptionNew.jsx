@@ -121,7 +121,9 @@ const CaptionNew = () => {
       } else if (timerComplete) {
         numOfPlayersSubmitting = await submitCaption(caption, userData);
       }
-      if (numOfPlayersSubmitting === 0) {
+      //  commenting "if (numOfPlayersSubmitting === 0) {" to continue game even if the participant has not submitted caption
+      // if (numOfPlayersSubmitting === 0) {
+// 
         // const submittedCaptions = await getCaptions()
 
         await publish({
@@ -130,7 +132,7 @@ const CaptionNew = () => {
             // ,submittedCaptions: submittedCaptions,
           },
         });
-      }
+      // }
     } catch (error) {
       handleApiError(error, submitButton, context);
     }
