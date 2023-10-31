@@ -125,14 +125,15 @@ const CaptionNew = () => {
       // if (numOfPlayersSubmitting === 0) {
 // 
         // const submittedCaptions = await getCaptions()
-
+        //  adding check for timer complete, to proceed to next round
+        if(timerComplete){
         await publish({
           data: {
             message: "Start Vote",
             // ,submittedCaptions: submittedCaptions,
           },
         });
-      // }
+      }
     } catch (error) {
       handleApiError(error, submitButton, context);
     }
