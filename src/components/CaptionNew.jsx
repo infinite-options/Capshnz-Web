@@ -266,9 +266,9 @@ const CaptionNew = () => {
                 fontWeight="700"
                 fontSize="30"
                 onComplete={() => {
-                  if (!captionSubmitted) {
+                  // if (!captionSubmitted) { removing dependent condition for next round
                     submitButton(true);
-                  }
+                  // }
                 }}
               >
                 {({ remainingTime }) => {
