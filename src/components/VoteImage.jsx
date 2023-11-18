@@ -1,7 +1,7 @@
 import { ReactComponent as PolygonWhiteUpward } from "../assets/polygon-upward-white.svg";
 import Form from "react-bootstrap/Form";
 import { Row, Col, Button, Container } from "react-bootstrap";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo  } from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import {
   getSubmittedCaptions,
@@ -18,8 +18,14 @@ import useAbly from "../util/ably";
 import React, { useContext } from "react";
 import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 
+//worker files
+import worker from '../workers/vote-api-worker.js';
+import WebWorker from "../workers/webWorker.js";
+import Axios from "axios";
+
 //This function is made to shuffle the sequence of the captions array.
 function shuffleArray(array) {
+
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
@@ -40,6 +46,14 @@ const VoteImage = () => {
   const [isMyCaption, setIsMyCaption] = useState("");
   const [voteSubmitted, setVoteSubmitted] = useState(false);
   const [votedCaption, setvotedCaption] = useState(-1);
+  // const webWorker = new WebWorker(worker,  { type: "module" });
+  const webWorker = new WebWorker(worker,  { type: "module", data: { axios: Axios } });
+
+  // for timer
+  const [remainingTime, setRemainingTime] = useState(10);
+  const [isPageVisible, setPageVisibility] = useState(true);
+  const [timeRemaining, setTimeRemaining] = useState(userData.roundTime || 60); // Use userData.roundTime or a default value
+
   const backgroundColors = {
     default: "#D4B551",
     selected: "Green",
@@ -50,7 +64,13 @@ const VoteImage = () => {
   const [loadingImg, setloadingImg] = useState(true);
   const context = useContext(ErrorContext);
 
-  const shuffledCaptions = shuffleArray(captions);
+  // const shuffledCaptions = shuffleArray(captions);
+  const shuffledCaptions = useMemo(() => {
+    return shuffleArray(captions);
+  }, [captions]);
+
+  // ... rest of the com
+
 
   if (
     cookies.userData != undefined &&
@@ -59,7 +79,7 @@ const VoteImage = () => {
     async function sendingError() {
       let code1 = "Vote Page";
       let code2 = "userData.imageURL does not match cookies.userData.imageURL";
-      // console.log("vote:err")
+
       await sendError(code1, code2);
     }
     // sendingError()
@@ -90,8 +110,7 @@ const VoteImage = () => {
     }
     setCaptions(tempCaptions);
     setToggles(tempToggles);
-    // console.log("tempCaptions")
-    // console.log(tempCaptions)
+
     setIsMyCaption(myCaption);
     const updatedUserData = {
       ...userData,
@@ -100,8 +119,7 @@ const VoteImage = () => {
     setCookie("userData", updatedUserData, { path: "/" });
     if (tempCaptions.length <= 1) {
       await skipVote(tempCaptions, onlyCaptionSubmitted, myCaption);
-      // console.log("skipVote")
-      // console.log(tempCaptions)
+
     }
   }
   async function skipVote(tempCaptions, onlyCaptionSubmitted, myCaption) {
@@ -120,22 +138,18 @@ const VoteImage = () => {
   }
 
   useEffect(() => {
-    // console.log("Start")
-    // console.log(captions)
-    // console.log(cookies.userData)
+
     if (captions.length === 0 && cookies.userData.captions != undefined) {
       setloadingImg(false);
       setSubmittedCaptions(cookies.userData.captions);
       isCaptionSubmitted.current = true;
-      // console.log("get from cookie")
-      // console.log(cookies.userData.captions)
+
     }
 
     if (userData.host && cookies.userData.captions === undefined) {
       async function getCaptions() {
         const submittedCaptions = await getSubmittedCaptions(userData);
-        // console.log("get from service")
-        // console.log(submittedCaptions)
+
         await publish({
           data: {
             message: "Set Vote",
@@ -148,8 +162,7 @@ const VoteImage = () => {
 
     subscribe((event) => {
       if (event.data.message === "Set Vote") {
-        // console.log("get from ably")
-        // console.log(event.data.submittedCaptions)
+
         isCaptionSubmitted.current = true;
         setloadingImg(false);
         setSubmittedCaptions(event.data.submittedCaptions);
@@ -181,8 +194,7 @@ const VoteImage = () => {
   }, []);
   async function getCaptionsForUser() {
     const submittedCaptions = await getSubmittedCaptions(userData);
-    // console.log("get from service:user")
-    // console.log(submittedCaptions)
+
     setloadingImg(false);
     setSubmittedCaptions(submittedCaptions);
   }
@@ -190,7 +202,7 @@ const VoteImage = () => {
     const interval = setInterval(() => {
       if (!isCaptionSubmitted.current) {
         getCaptionsForUser();
-        // console.log(isCaptionSubmitted)
+
         isCaptionSubmitted.current = true;
       }
     }, 5000);
@@ -200,6 +212,42 @@ const VoteImage = () => {
       unSubscribe();
     };
   }, []);
+
+// timer synchronization when screen minimizes
+useEffect(() => {
+  const handleVisibilityChange = () => {
+    if (document.hidden) {
+
+      // Page is not visible, pause the timer and save time remaining
+      setTimeRemaining(timeRemaining);
+      localStorage.setItem("votepage-minimize-time", new Date().getTime());
+
+      webWorker.postMessage(["vote-page", userData, remainingTime,null]);
+
+      setPageVisibility(false);
+
+    } else {
+      // Page is visible again, resume the timer
+      webWorker.postMessage("exit");
+      let minimizeTime = localStorage.getItem("votepage-minimize-time");
+      let currentTime = new Date().getTime();
+      let diff = currentTime - minimizeTime;
+      diff = Math.floor(diff / 1000);
+
+      setTimeRemaining(timeRemaining - diff)
+      setPageVisibility(true);
+    }
+  };
+
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+
+  return () => {
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
+  };
+// }, [timeRemaining]);
+}, [remainingTime]);
+
+
   async function closeButton() {
     try {
       let scoreboard = userData.scoreBoardEnd;
@@ -293,9 +341,27 @@ const VoteImage = () => {
 
       numOfPlayersVoting = await postVote(selectedCaption, userData);
 
-      if (numOfPlayersVoting === 0) {
+
+
+      if (numOfPlayersVoting === 0 || selectedCaptionIndex == -1) {
+
+        let publishTimer = 0;
+          
+        if(numOfPlayersVoting != 0)  publishTimer = 5000;
+
+        function timeout() {
+
+        setTimeout(async () => {
+  
+
         await publish({ data: { message: "Start ScoreBoard" } });
-      }
+      } , publishTimer); // 5000 milliseconds = 5 seconds
+
+    }
+  if(userData.host || numOfPlayersVoting === 0) timeout();
+}
+
+
     } catch (error) {
       handleApiError(error, voteButton, context);
     }
@@ -418,18 +484,22 @@ const VoteImage = () => {
                   size={76}
                   strokeWidth={5}
                   isPlaying
+                  
+                  // duration={timeRemaining}
                   duration={userData.roundTime}
                   colors="#000000"
                   backgroundColors="#ADC3EC"
                   onComplete={() => {
-                    if (!voteSubmitted) {
+                    // if (!voteSubmitted) {
                       // wrong value being sent, it should be -1
                       // voteButton(true);
                       voteButton(-1)
-                    }
+                    // }
                   }}
                 >
                   {({ remainingTime }) => {
+                   setRemainingTime(remainingTime);
+
                     return <div className="countdownVote">{remainingTime}</div>;
                   }}
                 </CountdownCircleTimer>
