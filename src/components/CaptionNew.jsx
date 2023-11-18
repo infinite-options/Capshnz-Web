@@ -19,7 +19,12 @@ import {
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 
+import worker from '../workers/api-worker.js';
+import WebWorker from "../workers/webWorker.js";
+import Axios from "axios";
 const CaptionNew = () => {
+
+  const webWorker = new WebWorker(worker,  { type: "module", data: { axios: Axios } });
   const navigate = useNavigate(),
     location = useLocation();
   const [userData, setUserData] = useState(location.state);
@@ -32,19 +37,23 @@ const CaptionNew = () => {
   const isCaptionDisplayed = useRef(false);
   const context = useContext(ErrorContext);
   const [inputCaption, setInputCaption] = useState("");
+  // for timer
+  const [isPageVisible, setPageVisibility] = useState(true);
+  const [timeRemaining, setTimeRemaining] = useState(userData.roundTime || 60); // Use userData.roundTime or a default value
+  const [remainingTime, setRemainingTime] = useState(10);
 
+  // const [RT, setRT] = useState(userData.roundTime || 60);
   const captionInputRef = useRef(null);
 
   async function sendingError() {
     let code1 = "Caption Page";
     let code2 = "userData.imageURL does not match cookies.userData.imageURL";
-    // console.log("caption:err")
+
     await sendError(code1, code2);
-    // console.log(cookies.userData.imageURL)
-    // console.log("user")
-    // console.log(userData.imageURL)
+
   }
   useEffect(() => {
+
     async function getCaptionsForUser() {
       const image_URL = await getGameImageForRound(
         userData.gameCode,
@@ -83,8 +92,10 @@ const CaptionNew = () => {
     return scoreboard;
   }
   function handleChange(event) {
+
+    localStorage.setItem("user-caption", event.target.value);
     setCaption(event.target.value);
-    console.log("===", caption);
+    // console.log("===", caption);
     setInputCaption(event.target.value);
   }
   async function closeButton() {
@@ -108,31 +119,42 @@ const CaptionNew = () => {
   }
   async function submitButton(timerComplete) {
     try {
+
       let numOfPlayersSubmitting = -1;
       //const modifiedCaption = caption.replace(/'/g, "\\\\'");
       if (caption === "" && !timerComplete) {
         alert("Please enter a valid caption.");
         return;
       }
-      //console.log("mod cap =", modifiedCaption);
+
       setCaptionSubmitted(true);
       if (caption !== "" && !timerComplete) {
         numOfPlayersSubmitting = await submitCaption(caption, userData);
       } else if (timerComplete) {
-        numOfPlayersSubmitting = await submitCaption(caption, userData);
-      }
-      //  commenting "if (numOfPlayersSubmitting === 0) {" to continue game even if the participant has not submitted caption
-      // if (numOfPlayersSubmitting === 0) {
-// 
-        // const submittedCaptions = await getCaptions()
+          numOfPlayersSubmitting = await submitCaption(caption, userData);
+        }
+
         //  adding check for timer complete, to proceed to next round
-        if(timerComplete){
-        await publish({
-          data: {
-            message: "Start Vote",
-            // ,submittedCaptions: submittedCaptions,
-          },
-        });
+        if(timerComplete || numOfPlayersSubmitting === 0){ //if timer runs out or everyone votes
+          let publishTimer = 0;
+          
+          if(numOfPlayersSubmitting != 0)  publishTimer = 5000;
+
+          function timeout() {
+
+          setTimeout(async () => {
+    
+            await publish({
+              data: {
+                message: "Start Vote",
+                // ,submittedCaptions: submittedCaptions,
+              },
+            });
+          }, publishTimer); // 5000 milliseconds = 5 seconds
+        }
+
+        timeout();
+
       }
     } catch (error) {
       handleApiError(error, submitButton, context);
@@ -147,19 +169,13 @@ const CaptionNew = () => {
   };
   async function getCaptions() {
     const submittedCaptions = await getSubmittedCaptions(userData);
-    // console.log("get from service:Caption")
-    // console.log(submittedCaptions)
+
     return submittedCaptions;
   }
   useEffect(() => {
     subscribe((event) => {
       if (event.data.message === "Start Vote") {
-        // const updatedUserData = {
-        //     ...userData,
-        //     captions: event.data.submittedCaptions
-        // }
-        // setCookie("userData", updatedUserData, { path: '/' })
-        // console.log(cookies)
+
         navigate("/VoteImage", { state: userData });
       } else if (event.data.message === "EndGame caption") {
         detach();
@@ -177,6 +193,41 @@ const CaptionNew = () => {
     });
   }, [userData]);
 
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+
+      if (document.hidden) {
+
+        // Page is not visible, pause the timer and save time remaining
+        setTimeRemaining(timeRemaining);
+        localStorage.setItem("minimize-time", new Date().getTime());
+        
+        webWorker.postMessage(["start-timeout", userData, remainingTime,localStorage.getItem("user-caption")]);
+        setPageVisibility(false);
+
+      } else {
+        // Page is visible again, resume the timer
+
+        webWorker.postMessage("exit");
+        let minimizeTime = localStorage.getItem("minimize-time");
+        let currentTime = new Date().getTime();
+        let diff = currentTime - minimizeTime;
+        diff = Math.floor(diff / 1000);
+
+        setTimeRemaining(timeRemaining - diff)
+        setPageVisibility(true);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+
+  }, [remainingTime]);
+
+  
   return (
     <div
       style={{
@@ -255,28 +306,32 @@ const CaptionNew = () => {
                 marginBottom: "2rem",
               }}
             >
-              <CountdownCircleTimer
+                 <CountdownCircleTimer
                 size={76}
                 strokeWidth={5}
-                isPlaying
-                duration={userData.roundTime}
+                isPlaying = {isPageVisible}
+
+                duration={timeRemaining}
                 colors="#000000"
                 background="#566176"
                 fontFamily="Grandstander"
                 fontWeight="700"
                 fontSize="30"
                 onComplete={() => {
-                  // if (!captionSubmitted) { removing dependent condition for next round
-                    submitButton(true);
-                  // }
+
+                  submitButton(true);
+
                 }}
               >
                 {({ remainingTime }) => {
+                   setRemainingTime(remainingTime);
                   return (
                     <div className="countdownCaption">{remainingTime}</div>
                   );
                 }}
               </CountdownCircleTimer>
+
+ 
             </div>
           </Col>
         </Row>
@@ -334,6 +389,7 @@ const CaptionNew = () => {
                   marginRight: "auto",
                   marginTop: "100px",
                 }}
+
               >
                 Submit
               </Button>
