@@ -18,6 +18,7 @@ import {
 } from "../util/Api";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { ReactComponent as CloseButton } from "../assets/close-button.svg";
+import LoadingScreen from  "./LoadingScreen";
 
 import worker from '../workers/api-worker.js';
 import WebWorker from "../workers/webWorker.js";
@@ -40,11 +41,14 @@ const CaptionNew = () => {
   // for timer
   const [isPageVisible, setPageVisibility] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState(userData.roundTime || 60); // Use userData.roundTime or a default value
-  const [remainingTime, setRemainingTime] = useState(10);
-
+  const [remainingTime, setRemainingTime] = useState(0);
+  const [isOutofSync, setIsOutOfSync] = useState(false);
+  const [loadSpinner, setLoadSpinner] = useState(false);
+  const [value, setValue] = useState([]);
+  let testValue = 0;
   // const [RT, setRT] = useState(userData.roundTime || 60);
   const captionInputRef = useRef(null);
-
+  localStorage.setItem("isOutofSync", false)
   async function sendingError() {
     let code1 = "Caption Page";
     let code2 = "userData.imageURL does not match cookies.userData.imageURL";
@@ -172,26 +176,76 @@ const CaptionNew = () => {
 
     return submittedCaptions;
   }
-  useEffect(() => {
-    subscribe((event) => {
-      if (event.data.message === "Start Vote") {
 
-        navigate("/VoteImage", { state: userData });
-      } else if (event.data.message === "EndGame caption") {
-        detach();
-        if (!userData.host) {
-          alert("Host has Ended the game");
-        }
-        const updatedUserData = {
-          ...userData,
-          scoreBoard: event.data.scoreBoard,
-        };
-        setUserData(updatedUserData);
-        setCookie("userData", updatedUserData, { path: "/" });
-        navigate("/FinalScore", { state: updatedUserData });
+  
+  const handleNavigate =()=>{
+    let minimizeTime = localStorage.getItem("minimize-time");
+    console.log("minimize time", minimizeTime)
+    if(document.hidden){
+      let remTime = localStorage.getItem("remaining-time");
+    
+    
+    let currentTime = new Date().getTime();
+    console.log("current time",currentTime)
+    let diff;
+    if(minimizeTime == 0){
+      diff  =  0
+    }else{
+      diff = currentTime - minimizeTime;
+    }
+    diff = Math.ceil(diff / 1000);
+    console.log("minimizeTime, remTime, diff, rem - diff",minimizeTime,remTime, diff, remTime-diff)
+    let val = remTime - diff;
+    console.log("here diff is less that zero, isOutofSync", val, localStorage.getItem("isOutofSync"));
+    if(val < -5) {
+      
+      setIsOutOfSync(true)
+      localStorage.setItem("isOutofSync", true)
+
+      console.log("isOutofSync 195",isOutofSync)
+    }
+    // if (!isOutofSync) {
+    }
+    let isDeSync = localStorage.getItem("isOutofSync")
+    console.log("desync", isDeSync)
+  if(isDeSync == "false"){
+    localStorage.setItem("minimize-time",  0);
+    console.log("here 210")
+    localStorage.setItem("remaining-time",  0);
+    navigate("/VoteImage", { state: userData });
+  } else {
+    setLoadSpinner(true);
+    localStorage.setItem("isOutofSync", false);
+    setTimeout(()=>{
+      navigate("/MidGameWaitingRoom", {state: userData})
+    }, 2000)
+  }
+
+
+} 
+
+  useEffect(() => {
+
+    subscribe((event) => {
+
+      if (event.data.message === "Start Vote") {
+        handleNavigate();
       }
     });
+  
   }, [userData]);
+
+
+  useEffect(() => {
+    console.log("isOutofSync line 267", isOutofSync);
+  }, [isOutofSync]);
+
+  useEffect(() => {
+    
+    console.log("value line 216", value, testValue);
+    
+  }, [value]);
+
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -200,22 +254,29 @@ const CaptionNew = () => {
 
         // Page is not visible, pause the timer and save time remaining
         setTimeRemaining(timeRemaining);
+        localStorage.setItem("remaining-time", remainingTime);
         localStorage.setItem("minimize-time", new Date().getTime());
+        console.log("here 257 ------> timeRemaining, remainingTime",timeRemaining,remainingTime, localStorage.getItem("remaining-time"))
         
         webWorker.postMessage(["start-timeout", userData, remainingTime,localStorage.getItem("user-caption")]);
         setPageVisibility(false);
 
       } else {
         // Page is visible again, resume the timer
-
-        webWorker.postMessage("exit");
         let minimizeTime = localStorage.getItem("minimize-time");
         let currentTime = new Date().getTime();
         let diff = currentTime - minimizeTime;
         diff = Math.floor(diff / 1000);
-
-        setTimeRemaining(timeRemaining - diff)
+        webWorker.postMessage("exit");
         setPageVisibility(true);
+
+        if(timeRemaining - diff < 0){
+
+        setTimeRemaining(timeRemaining - diff);
+        localStorage.setItem("remaining-time", remainingTime);
+        console.log("timeRemaining",timeRemaining - diff)
+        console.log("remainingTime", remainingTime);
+      }
       }
     };
 
@@ -227,8 +288,9 @@ const CaptionNew = () => {
 
   }, [remainingTime]);
 
-  
   return (
+    <div>
+      { loadSpinner && <LoadingScreen />}
     <div
       style={{
         background: "#7580B5D9",
@@ -480,6 +542,7 @@ const CaptionNew = () => {
           </Col>
         </Row>
       </Container>
+    </div>
     </div>
   );
 };

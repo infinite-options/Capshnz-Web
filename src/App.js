@@ -31,6 +31,7 @@ import EnterName from "./components/EnterName";
 import CaptionNew from "./components/CaptionNew";
 import VoteImage from "./components/VoteImage";
 import ScoreboardNew from "./components/ScoreboardNew";
+import MidGameWaitingRoom from "./components/MidGameWaitingRoom";
 
 export const ErrorContext = createContext();
 
@@ -81,6 +82,7 @@ export default function App() {
                 <Route path="/CaptionNew" element={<CaptionNew />} />
                 <Route path="/VoteImage" element={<VoteImage />} />
                 <Route path="/ScoreboardNew" element={<ScoreboardNew />} />
+                <Route path="/MidGameWaitingRoom" element={<MidGameWaitingRoom />} />
               </Routes>
             </Router>
           </CookiesProvider>

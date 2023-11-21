@@ -23,6 +23,10 @@ import worker from '../workers/vote-api-worker.js';
 import WebWorker from "../workers/webWorker.js";
 import Axios from "axios";
 
+//for desync
+// const [isOutofSync, setIsOutOfSync] = useState(false);
+import LoadingScreen from  "./LoadingScreen";
+
 //This function is made to shuffle the sequence of the captions array.
 function shuffleArray(array) {
 
@@ -53,6 +57,9 @@ const VoteImage = () => {
   const [remainingTime, setRemainingTime] = useState(10);
   const [isPageVisible, setPageVisibility] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState(userData.roundTime || 60); // Use userData.roundTime or a default value
+
+  // for desync
+  const [loadSpinner, setLoadSpinner] = useState(false);
 
   const backgroundColors = {
     default: "#D4B551",
@@ -168,11 +175,62 @@ const VoteImage = () => {
         setSubmittedCaptions(event.data.submittedCaptions);
         console.log("Captions received:", event.data.submittedCaptions);
       } else if (event.data.message === "Start ScoreBoard") {
-        setCookie("userData", userData, { path: "/" });
-        navigate("/ScoreboardNew", { state: userData });
+
+        handleNavigate()
+        // setCookie("userData", userData, { path: "/" });
+        // navigate("/ScoreboardNew", { state: userData });
       }
     });
   }, [userData]);
+
+  const handleNavigate =()=>{
+        setCookie("userData", userData, { path: "/" });
+        let minimizeTime = localStorage.getItem("votepage-minimize-time");
+    console.log("minimize time", minimizeTime)
+    if(document.hidden){
+      let remTime = localStorage.getItem("remaining-time-votePage");
+    
+    
+    let currentTime = new Date().getTime();
+    console.log("current time",currentTime)
+    let diff;
+    if(minimizeTime == 0){
+      diff  =  0
+    }else{
+      diff = currentTime - minimizeTime;
+    }
+    diff = Math.ceil(diff / 1000);
+    console.log("minimizeTime, remTime, diff, rem - diff",minimizeTime,remTime, diff, remTime-diff)
+    let val = remTime - diff;
+    console.log("here diff is less that zero, isOutofSync", val, localStorage.getItem("isOutofSync"));
+    if(val < -5) {
+      
+      // setIsOutOfSync(true)
+      localStorage.setItem("isOutofSync", true)
+
+      // console.log("isOutofSync 195",isOutofSync)
+    }
+
+  }
+    let isDeSync = localStorage.getItem("isOutofSync")
+    console.log("desync", isDeSync)
+  if(isDeSync == "false"){
+    localStorage.setItem("votepage-minimize-time",  0);
+    console.log("here 210")
+    localStorage.setItem("remaining-time-votePage",  0);
+    navigate("/ScoreboardNew", { state: userData });
+  } else {
+    setLoadSpinner(true);
+    localStorage.setItem("isOutofSync", false);
+    setTimeout(()=>{
+      navigate("/MidGameWaitingRoom", {state: userData})
+    }, 2000)
+  }
+
+
+} 
+
+
 
   useEffect(() => {
     subscribe((event) => {
@@ -221,6 +279,8 @@ useEffect(() => {
       // Page is not visible, pause the timer and save time remaining
       setTimeRemaining(timeRemaining);
       localStorage.setItem("votepage-minimize-time", new Date().getTime());
+      localStorage.setItem("remaining-time-votePage", remainingTime);
+
 
       webWorker.postMessage(["vote-page", userData, remainingTime,null]);
 
@@ -236,6 +296,14 @@ useEffect(() => {
 
       setTimeRemaining(timeRemaining - diff)
       setPageVisibility(true);
+
+      if(timeRemaining - diff < 0){
+
+        setTimeRemaining(timeRemaining - diff);
+        localStorage.setItem("remaining-time-votePage", remainingTime);
+        console.log("timeRemaining",timeRemaining - diff)
+        console.log("remainingTime", remainingTime);
+      }
     }
   };
 
@@ -372,6 +440,7 @@ useEffect(() => {
   }
 
   return (
+    <div>       { loadSpinner && <LoadingScreen />}
     <div
       style={{
         background: "#878787",
@@ -581,6 +650,8 @@ useEffect(() => {
         </Row>
       </Container>
     </div>
+    </div>
+ 
   );
 };
 export default VoteImage;
