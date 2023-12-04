@@ -30,9 +30,12 @@ const CaptionNew = () => {
     location = useLocation();
   const [userData, setUserData] = useState(location.state);
   const [cookies, setCookie] = useCookies(["userData"]);
-  const { publish, subscribe, unSubscribe, detach } = useAbly(
-    `${userData.gameCode}/${userData.roundNumber}`
-  );
+  // const { publish, subscribe, unSubscribe, detach } = useAbly(
+    // `${userData.gameCode}/${userData.roundNumber}`
+  // );
+
+  const { publish, subscribe, unSubscribe, detach } = useAbly( userData.gameCode);
+
   const [caption, setCaption] = useState("");
   const [captionSubmitted, setCaptionSubmitted] = useState(false);
   const isCaptionDisplayed = useRef(false);
@@ -151,6 +154,8 @@ const CaptionNew = () => {
             await publish({
               data: {
                 message: "Start Vote",
+                roundNumber: userData.roundNumber,
+                imageURL: userData.imageURL,
                 // ,submittedCaptions: submittedCaptions,
               },
             });
@@ -180,13 +185,13 @@ const CaptionNew = () => {
   
   const handleNavigate =()=>{
     let minimizeTime = localStorage.getItem("minimize-time");
-    console.log("minimize time", minimizeTime)
+    // console.log("minimize time", minimizeTime)
     if(document.hidden){
       let remTime = localStorage.getItem("remaining-time");
     
     
     let currentTime = new Date().getTime();
-    console.log("current time",currentTime)
+    // console.log("current time",currentTime)
     let diff;
     if(minimizeTime == 0){
       diff  =  0
@@ -194,31 +199,37 @@ const CaptionNew = () => {
       diff = currentTime - minimizeTime;
     }
     diff = Math.ceil(diff / 1000);
-    console.log("minimizeTime, remTime, diff, rem - diff",minimizeTime,remTime, diff, remTime-diff)
+    // console.log("minimizeTime, remTime, diff, rem - diff",minimizeTime,remTime, diff, remTime-diff)
     let val = remTime - diff;
-    console.log("here diff is less that zero, isOutofSync", val, localStorage.getItem("isOutofSync"));
-    if(val < -5) {
+    // console.log("here diff is less that zero, isOutofSync", val, localStorage.getItem("isOutofSync"));
+    if(val < -4) {
       
       setIsOutOfSync(true)
       localStorage.setItem("isOutofSync", true)
 
-      console.log("isOutofSync 195",isOutofSync)
+      // console.log("isOutofSync 195",isOutofSync)
     }
     // if (!isOutofSync) {
     }
     let isDeSync = localStorage.getItem("isOutofSync")
-    console.log("desync", isDeSync)
+    // console.log("desync", isDeSync)
+    setLoadSpinner(true);
+    // console.log("212 loadSpinner", loadSpinner)
   if(isDeSync == "false"){
     localStorage.setItem("minimize-time",  0);
-    console.log("here 210")
+    // console.log("here 210")
     localStorage.setItem("remaining-time",  0);
+    localStorage.removeItem("user-caption")
     navigate("/VoteImage", { state: userData });
   } else {
+    if(!userData.host){
     setLoadSpinner(true);
     localStorage.setItem("isOutofSync", false);
+    localStorage.removeItem("user-caption")
     setTimeout(()=>{
       navigate("/MidGameWaitingRoom", {state: userData})
     }, 2000)
+  }
   }
 
 
@@ -237,12 +248,12 @@ const CaptionNew = () => {
 
 
   useEffect(() => {
-    console.log("isOutofSync line 267", isOutofSync);
+    // console.log("isOutofSync line 267", isOutofSync);
   }, [isOutofSync]);
 
   useEffect(() => {
     
-    console.log("value line 216", value, testValue);
+    // console.log("value line 216", value, testValue);
     
   }, [value]);
 
@@ -256,7 +267,7 @@ const CaptionNew = () => {
         setTimeRemaining(timeRemaining);
         localStorage.setItem("remaining-time", remainingTime);
         localStorage.setItem("minimize-time", new Date().getTime());
-        console.log("here 257 ------> timeRemaining, remainingTime",timeRemaining,remainingTime, localStorage.getItem("remaining-time"))
+        // console.log("here 257 ------> timeRemaining, remainingTime",timeRemaining,remainingTime, localStorage.getItem("remaining-time"))
         
         webWorker.postMessage(["start-timeout", userData, remainingTime,localStorage.getItem("user-caption")]);
         setPageVisibility(false);
@@ -272,10 +283,13 @@ const CaptionNew = () => {
 
         if(timeRemaining - diff < 0){
 
+          setTimeRemaining(timeRemaining - diff);
+          // localStorage.setItem("remaining-time", remainingTime);
+        // localStorage.setItem("remaining-time", remainingTime);
+        // console.log("timeRemaining",timeRemaining - diff)
+        // console.log("remainingTime", remainingTime);
+      }else if(timeRemaining - diff >= 0){
         setTimeRemaining(timeRemaining - diff);
-        localStorage.setItem("remaining-time", remainingTime);
-        console.log("timeRemaining",timeRemaining - diff)
-        console.log("remainingTime", remainingTime);
       }
       }
     };
@@ -290,7 +304,7 @@ const CaptionNew = () => {
 
   return (
     <div>
-      { loadSpinner && <LoadingScreen />}
+      { (localStorage.getItem("isOutofSync") == "true") && <LoadingScreen />}
     <div
       style={{
         background: "#7580B5D9",

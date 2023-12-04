@@ -30,6 +30,7 @@ const addUserByEmailURL =  "https://bmarz6chil.execute-api.us-west-1.amazonaws.c
 const addFeedbackURL =  "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/addFeedback"
 const summaryURL =  "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/summary"
 const summaryEmailURL =  "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/summaryEmail"
+const getCurrentRoundURL = "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/getCurrentGame"
 
 async function checkGameCode(gameCode){
     const codeStatus = await axios.get(checkGameURL + '/' + gameCode)
@@ -268,6 +269,10 @@ async function addFeedback(userData, feedback) {
 async function summary(gameUID) {
     return await axios.get(`${summaryURL}?gameUID=${gameUID}`)
 }
+
+async function getCurrentRound(gameUID){
+    return await axios.get(`${getCurrentRoundURL}?gameUID=${gameUID}`)
+}
 function summaryEmail(userData) {
     const payload = {
         gameUID: userData.gameUID,
@@ -279,4 +284,4 @@ export { checkGameCode, checkEmailCode, addUser, createGame, addUserByEmail, sum
     joinGame, getDecks, selectDeck, assignDeck, setDatabaseImages, addFeedback, summaryEmail,
     getApiImages, postRoundImage, getDatabaseImage, getPlayers, submitCaption,
     getSubmittedCaptions, postVote, updateScores, leftOverVotingPlayers, getScoreBoard,
-    createNextRound, postCreateRounds, getNextImage, sendError,getCnnImageURLS ,checkGameStarted,getGameScore,getGameImageForRound}
+    createNextRound, postCreateRounds, getNextImage, sendError,getCnnImageURLS ,checkGameStarted,getGameScore,getGameImageForRound, getCurrentRound}

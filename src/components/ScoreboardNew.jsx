@@ -16,9 +16,11 @@ const ScoreboardNew = () => {
     location = useLocation();
   const [userData, setUserData] = useState(location.state);
   const [cookies, setCookie] = useCookies(["userData"]);
-  const { publish, subscribe, unSubscribe, detach } = useAbly(
-    `${userData.gameCode}/${userData.roundNumber}`
-  );
+  // const { publish, subscribe, unSubscribe, detach } = useAbly(
+  //   `${userData.gameCode}/${userData.roundNumber}`
+  // );
+  const { publish, subscribe, unSubscribe, detach } = useAbly( userData.gameCode);
+
   const [scoreBoard, setScoreBoard] = useState([]);
   const isGameEnded = useRef(false);
   const [isScoreBoard, setisScoreBoard] = useState(false);

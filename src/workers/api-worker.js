@@ -31,7 +31,9 @@ export default () => {
         
             if (response.ok) {
               const data = await response.json();
-
+              console.log("api call was successful", localStorage.getItem("user-caption"))
+              localStorage.removeItem("user-caption")
+              console.log("after delere", localStorage.getItem("user-caption"))
               /* eslint-disable-next-line no-restricted-globals */
               self.postMessage(["mesg from post", userData]);
               /* eslint-disable-next-line no-restricted-globals */

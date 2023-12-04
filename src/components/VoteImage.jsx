@@ -24,7 +24,6 @@ import WebWorker from "../workers/webWorker.js";
 import Axios from "axios";
 
 //for desync
-// const [isOutofSync, setIsOutOfSync] = useState(false);
 import LoadingScreen from  "./LoadingScreen";
 
 //This function is made to shuffle the sequence of the captions array.
@@ -42,9 +41,11 @@ const VoteImage = () => {
     location = useLocation();
   const [userData, setUserData] = useState(location.state);
   const [cookies, setCookie] = useCookies(["userData"]);
-  const { publish, subscribe, unSubscribe, detach } = useAbly(
-    `${userData.gameCode}/${userData.roundNumber}`
-  );
+  // const { publish, subscribe, unSubscribe, detach } = useAbly(
+  //   `${userData.gameCode}/${userData.roundNumber}`
+  // );
+  const { publish, subscribe, unSubscribe, detach } = useAbly( userData.gameCode);
+
   const [captions, setCaptions] = useState([]);
   const [toggles, setToggles] = useState([]);
   const [isMyCaption, setIsMyCaption] = useState("");
@@ -161,6 +162,8 @@ const VoteImage = () => {
           data: {
             message: "Set Vote",
             submittedCaptions: submittedCaptions,
+            roundNumber: userData.roundNumber,
+            imageURL: userData.imageURL,
           },
         });
       }
@@ -220,11 +223,14 @@ const VoteImage = () => {
     localStorage.setItem("remaining-time-votePage",  0);
     navigate("/ScoreboardNew", { state: userData });
   } else {
+    if(!userData.host){
     setLoadSpinner(true);
     localStorage.setItem("isOutofSync", false);
+
     setTimeout(()=>{
       navigate("/MidGameWaitingRoom", {state: userData})
     }, 2000)
+  }
   }
 
 
@@ -422,7 +428,7 @@ useEffect(() => {
         setTimeout(async () => {
   
 
-        await publish({ data: { message: "Start ScoreBoard" } });
+        await publish({ data: { message: "Start ScoreBoard", roundNumber: userData.roundNumber } });
       } , publishTimer); // 5000 milliseconds = 5 seconds
 
     }
