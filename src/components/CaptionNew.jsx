@@ -219,7 +219,7 @@ const CaptionNew = () => {
     localStorage.setItem("minimize-time",  0);
     // console.log("here 210")
     localStorage.setItem("remaining-time",  0);
-    localStorage.removeItem("user-caption")
+    // localStorage.removeItem("user-caption")
     navigate("/VoteImage", { state: userData });
   } else {
     if(!userData.host){
