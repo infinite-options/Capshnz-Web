@@ -1,6 +1,6 @@
 // api-worker.js
 
-export default () => {
+// export default () => {
     let timeoutID;
     /* eslint-disable-next-line no-restricted-globals */
       self.addEventListener("message", async (event) => {
@@ -56,5 +56,5 @@ export default () => {
                   self.close()
         }
       });      
-    };
+    // };
   

@@ -19,8 +19,8 @@ import React, { useContext } from "react";
 import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 
 //worker files
-import worker from '../workers/vote-api-worker.js';
-import WebWorker from "../workers/webWorker.js";
+// import worker from '../workers/vote-api-worker.js';
+// import WebWorker from "../workers/webWorker.js";
 import Axios from "axios";
 
 //for desync
@@ -52,8 +52,8 @@ const VoteImage = () => {
   const [voteSubmitted, setVoteSubmitted] = useState(false);
   const [votedCaption, setvotedCaption] = useState(-1);
   // const webWorker = new WebWorker(worker,  { type: "module" });
-  const webWorker = new WebWorker(worker,  { type: "module", data: { axios: Axios } });
-
+  // const webWorker = new WebWorker(worker,  { type: "module", data: { axios: Axios } });
+  const webWorker  = new Worker(new URL('../workers/api-worker.js', import.meta.url))
   // for timer
   const [remainingTime, setRemainingTime] = useState(10);
   const [isPageVisible, setPageVisibility] = useState(true);

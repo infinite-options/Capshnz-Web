@@ -1,6 +1,6 @@
 // api-worker.js
-
-export default () => {
+// eslint-disable-next-line import/no-anonymous-default-export
+// export default () => {
   let timeoutID;
   /* eslint-disable-next-line no-restricted-globals */
   self.addEventListener("message", async (event) => {
@@ -67,4 +67,4 @@ export default () => {
     self.onmessage = (event) =>{
       console.log("on line 70 event on here",event)
     }
-        };
+        // };
