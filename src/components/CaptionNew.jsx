@@ -186,10 +186,11 @@ const CaptionNew = () => {
   
   const handleNavigate =()=>{
     let minimizeTime = localStorage.getItem("minimize-time");
-    // console.log("minimize time", minimizeTime)
+    let hostTime = false;
+    console.log("minimize time, remTime", minimizeTime, localStorage.getItem("remaining-time"))
     if(document.hidden){
       let remTime = localStorage.getItem("remaining-time");
-    
+    // userData.host ? console.log("host hidden") : console.log("not-host hidcden")
     
     let currentTime = new Date().getTime();
     // console.log("current time",currentTime)
@@ -197,40 +198,87 @@ const CaptionNew = () => {
     if(minimizeTime == 0){
       diff  =  0
     }else{
-      diff = currentTime - minimizeTime;
+      diff = currentTime - parseInt(minimizeTime);
     }
     diff = Math.ceil(diff / 1000);
     // console.log("minimizeTime, remTime, diff, rem - diff",minimizeTime,remTime, diff, remTime-diff)
-    let val = remTime - diff;
-    // console.log("here diff is less that zero, isOutofSync", val, localStorage.getItem("isOutofSync"));
+    let val = parseInt(remTime) - diff;
+    console.log("here diff is less that zero, isOutofSync", val, localStorage.getItem("isOutofSync"));
     if(val < -4) {
       
       setIsOutOfSync(true)
       localStorage.setItem("isOutofSync", true)
 
-      // console.log("isOutofSync 195",isOutofSync)
+      console.log("isOutofSync 195",localStorage.getItem("remaining-time"))
     }
     // if (!isOutofSync) {
     }
     let isDeSync = localStorage.getItem("isOutofSync")
-    // console.log("desync", isDeSync)
+    console.log("desync", isDeSync)
     setLoadSpinner(true);
     // console.log("212 loadSpinner", loadSpinner)
   if(isDeSync == "false"){
-    localStorage.setItem("minimize-time",  0);
-    // console.log("here 210")
+    // localStorage.setItem("minimize-time",  0);
+    // localStorage.setItem("remaining-time",  0);
+
+    // let curr = new Date().now()
+    // navigate("/VoteImage", { state: userData })
+    let curr = Date.now()
+    let rem = localStorage.getItem("remaining-time")
+
+    let diff=  minimizeTime == 0 ? 0 : curr - parseInt(minimizeTime);
+    diff = Math.floor(diff/1000);
+    console.log("here 238 user.data.roundTime",diff, userData.roundTime)
+    // if( diff>= (userData.roundTime+ rem) ) {
+    //   hostTime = true
+    // }
+        localStorage.setItem("minimize-time",  0);
     localStorage.setItem("remaining-time",  0);
-    // localStorage.removeItem("user-caption")
-    navigate("/VoteImage", { state: userData });
+
+    if(userData.host && (diff>= (userData.roundTime+ parseInt(rem)) )){
+      // setTimeout(()=>{
+        console.log("navigate -score 240")
+
+        navigate("/ScoreboardNew", { state: userData });
+      // }, 2000)
+    }else{
+      console.log("navigate -vote 245")
+      navigate("/VoteImage", { state: userData })
+    }
   } else {
     if(!userData.host){
     setLoadSpinner(true);
     localStorage.setItem("isOutofSync", false);
     localStorage.removeItem("user-caption")
     setTimeout(()=>{
+      console.log("navigate -middleware 254")
       navigate("/MidGameWaitingRoom", {state: userData})
     }, 2000)
+  }else{
+    if( !document.hidden){
+    let curr = Date.now()
+    let diff=  curr - parseInt(minimizeTime);
+    diff = Math.floor(diff/1000);
+    console.log("here 238 user.data.roundTime",diff, userData.roundTime)
+    if( diff>= userData.roundTime ) {
+      hostTime = true
+    }
+
+    if( hostTime ){
+    // setTimeout(()=>{
+      console.log("navigating to score baord", document.hidden, new Date())
+      // if(!document.hidden)
+      console.log("navigate -score 271")
+      navigate("/ScoreboardNew", { state: userData });
+    // }, 2000)
+  }else{
+    setTimeout(()=>{
+      console.log("navigate -vote 276")
+      navigate("/VoteImage", {state: userData})
+    }, 2000)
   }
+}
+}
   }
 
 
@@ -277,7 +325,7 @@ const CaptionNew = () => {
         // Page is visible again, resume the timer
         let minimizeTime = localStorage.getItem("minimize-time");
         let currentTime = new Date().getTime();
-        let diff = currentTime - minimizeTime;
+        let diff = parseInt(currentTime) - parseInt(minimizeTime);
         diff = Math.floor(diff / 1000);
         webWorker.postMessage("exit");
         setPageVisibility(true);
