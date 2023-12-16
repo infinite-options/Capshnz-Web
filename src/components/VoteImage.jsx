@@ -432,7 +432,9 @@ useEffect(() => {
       } , publishTimer); // 5000 milliseconds = 5 seconds
 
     }
-  if(userData.host || numOfPlayersVoting === 0) timeout();
+
+    console.log("here line 436 numOfPlayersVoting : ",numOfPlayersVoting )
+  if(userData.host || numOfPlayersVoting === 0 || selectedCaptionIndex === -1) timeout();
 }
 
 
