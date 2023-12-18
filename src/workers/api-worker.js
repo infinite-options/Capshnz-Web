@@ -64,7 +64,7 @@
     });
 
     /* eslint-disable-next-line no-restricted-globals */
-    self.onmessage = (event) =>{
-      console.log("on line 70 event on here",event)
-    }
+    // self.onmessage = (event) =>{
+    //   console.log("on line 70 event on here",event)
+    // }
         // };
