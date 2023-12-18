@@ -239,6 +239,8 @@ const VoteImage = () => {
 
 
   useEffect(() => {
+    localStorage.removeItem("user-caption")
+    localStorage.removeItem("minimize-time")
     subscribe((event) => {
       if (event.data.message === "EndGame vote") {
         detach();

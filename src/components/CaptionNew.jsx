@@ -48,8 +48,7 @@ const CaptionNew = () => {
   const [remainingTime, setRemainingTime] = useState(0);
   const [isOutofSync, setIsOutOfSync] = useState(false);
   const [loadSpinner, setLoadSpinner] = useState(false);
-  const [value, setValue] = useState([]);
-  let testValue = 0;
+
   // const [RT, setRT] = useState(userData.roundTime || 60);
   const captionInputRef = useRef(null);
   localStorage.setItem("isOutofSync", false)
@@ -61,7 +60,7 @@ const CaptionNew = () => {
 
   }
   useEffect(() => {
-
+    localStorage.removeItem("minimize-time")
     async function getCaptionsForUser() {
       const image_URL = await getGameImageForRound(
         userData.gameCode,
@@ -190,12 +189,13 @@ const CaptionNew = () => {
     console.log("minimize time, remTime", minimizeTime, localStorage.getItem("remaining-time"))
     if(document.hidden){
       let remTime = localStorage.getItem("remaining-time");
+      // remTime = parseInt
     // userData.host ? console.log("host hidden") : console.log("not-host hidcden")
     
     let currentTime = new Date().getTime();
     // console.log("current time",currentTime)
     let diff;
-    if(minimizeTime == 0){
+    if(parseInt(minimizeTime) == 0){
       diff  =  0
     }else{
       diff = currentTime - parseInt(minimizeTime);
@@ -214,7 +214,7 @@ const CaptionNew = () => {
     // if (!isOutofSync) {
     }
     let isDeSync = localStorage.getItem("isOutofSync")
-    console.log("desync", isDeSync)
+    console.log("desync is hidden", isDeSync, document.hidden)
     setLoadSpinner(true);
     // console.log("212 loadSpinner", loadSpinner)
   if(isDeSync == "false"){
@@ -260,7 +260,8 @@ const CaptionNew = () => {
     let diff=  curr - parseInt(minimizeTime);
     diff = Math.floor(diff/1000);
     console.log("here 238 user.data.roundTime",diff, userData.roundTime)
-    if( diff>= userData.roundTime ) {
+    let rem = parseInt(localStorage.getItem("remaining-time"))
+    if( diff>= (userData.roundTime+rem) ) {
       hostTime = true
     }
 
@@ -295,29 +296,17 @@ const CaptionNew = () => {
   
   }, [userData]);
 
-
-  useEffect(() => {
-    // console.log("isOutofSync line 267", isOutofSync);
-  }, [isOutofSync]);
-
-  useEffect(() => {
-    
-    // console.log("value line 216", value, testValue);
-    
-  }, [value]);
-
-
   useEffect(() => {
     const handleVisibilityChange = () => {
 
       if (document.hidden) {
-
+        console.log("after api worker the code should come here")
         // Page is not visible, pause the timer and save time remaining
         setTimeRemaining(timeRemaining);
         localStorage.setItem("remaining-time", remainingTime);
         localStorage.setItem("minimize-time", new Date().getTime());
         // console.log("here 257 ------> timeRemaining, remainingTime",timeRemaining,remainingTime, localStorage.getItem("remaining-time"))
-        
+        // if(!captionSubmitted)
         webWorker.postMessage(["start-timeout", userData, remainingTime,localStorage.getItem("user-caption")]);
         setPageVisibility(false);
 
@@ -327,17 +316,19 @@ const CaptionNew = () => {
         let currentTime = new Date().getTime();
         let diff = parseInt(currentTime) - parseInt(minimizeTime);
         diff = Math.floor(diff / 1000);
-        webWorker.postMessage("exit");
         setPageVisibility(true);
-
+        console.log("332 page back online, timeremaining, diff", timeRemaining, diff, timeRemaining-diff)
         if(timeRemaining - diff < 0){
 
-          setTimeRemaining(timeRemaining - diff);
+          // setTimeRemaining(timeRemaining - diff);
+          setTimeRemaining(0);
+          handleNavigate()
           // localStorage.setItem("remaining-time", remainingTime);
         // localStorage.setItem("remaining-time", remainingTime);
         // console.log("timeRemaining",timeRemaining - diff)
-        // console.log("remainingTime", remainingTime);
+        console.log("remainingTime, localhsot vvall 339", remainingTime,localStorage.getItem("remaining-time"));
       }else if(timeRemaining - diff >= 0){
+        webWorker.postMessage("exit");
         setTimeRemaining(timeRemaining - diff);
       }
       }

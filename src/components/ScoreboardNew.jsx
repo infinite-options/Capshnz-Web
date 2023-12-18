@@ -44,6 +44,8 @@ const ScoreboardNew = () => {
         setloadingImg(false);
         scoreBoard.sort((a, b) => b.votes - a.votes);
         // console.log(scoreBoard)
+        console.log("callig score board from scoreboardNew page at time =", new Date())
+
         setisScoreBoard(true);
         publish({
           data: {
@@ -106,6 +108,8 @@ const ScoreboardNew = () => {
   }
 
   useEffect(() => {
+    localStorage.removeItem("user-caption")
+    localStorage.removeItem("minimize-time")
     subscribe(async (event) => {
       if (event.data.message === "Set ScoreBoard") {
         const updatedUserData = {
