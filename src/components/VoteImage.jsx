@@ -188,31 +188,34 @@ const VoteImage = () => {
 
   const handleNavigate =()=>{
         setCookie("userData", userData, { path: "/" });
-        let minimizeTime = localStorage.getItem("votepage-minimize-time");
+        // let minimizeTime = localStorage.getItem("votepage-minimize-time");
+        let minimizeTime = parseInt(localStorage.getItem("votepage-minimize-time"));
     console.log("minimize time", minimizeTime)
-    if(document.hidden){
-      let remTime = localStorage.getItem("remaining-time-votePage");
-    
-    
-    let currentTime = new Date().getTime();
-    console.log("current time",currentTime)
-    let diff;
-    if(minimizeTime == 0){
-      diff  =  0
-    }else{
-      diff = currentTime - minimizeTime;
-    }
-    diff = Math.ceil(diff / 1000);
-    console.log("minimizeTime, remTime, diff, rem - diff",minimizeTime,remTime, diff, remTime-diff)
-    let val = remTime - diff;
-    console.log("here diff is less that zero, isOutofSync", val, localStorage.getItem("isOutofSync"));
-    if(val < -5) {
-      
-      // setIsOutOfSync(true)
+    if(document.hidden && !userData.host){
       localStorage.setItem("isOutofSync", true)
 
-      // console.log("isOutofSync 195",isOutofSync)
-    }
+    //   let remTime = parseInt(localStorage.getItem("remaining-time-votePage"));
+    
+    
+    // let currentTime = new Date().getTime();
+    // console.log("current time",currentTime)
+    // let diff;
+    // if(minimizeTime == 0){
+    //   diff  =  0
+    // }else{
+    //   diff = currentTime - minimizeTime;
+    // }
+    // diff = Math.ceil(diff / 1000);
+    // console.log("minimizeTime, remTime, diff, rem - diff",minimizeTime,remTime, diff, remTime-diff)
+    // let val = remTime - diff;
+    // console.log("here diff is less that zero, isOutofSync", val, localStorage.getItem("isOutofSync"));
+    // if(val < -1) {
+      
+    //   // setIsOutOfSync(true)
+    //   localStorage.setItem("isOutofSync", true)
+
+    //   // console.log("isOutofSync 195",isOutofSync)
+    // }
 
   }
     let isDeSync = localStorage.getItem("isOutofSync")
@@ -240,7 +243,7 @@ const VoteImage = () => {
 
   useEffect(() => {
     localStorage.removeItem("user-caption")
-    localStorage.removeItem("minimize-time")
+    // localStorage.removeItem("minimize-time")
     subscribe((event) => {
       if (event.data.message === "EndGame vote") {
         detach();
@@ -297,7 +300,7 @@ useEffect(() => {
     } else {
       // Page is visible again, resume the timer
       webWorker.postMessage("exit");
-      let minimizeTime = localStorage.getItem("votepage-minimize-time");
+      let minimizeTime = parseInt(localStorage.getItem("votepage-minimize-time"));
       let currentTime = new Date().getTime();
       let diff = currentTime - minimizeTime;
       diff = Math.floor(diff / 1000);

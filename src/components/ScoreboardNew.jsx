@@ -109,7 +109,8 @@ const ScoreboardNew = () => {
 
   useEffect(() => {
     localStorage.removeItem("user-caption")
-    localStorage.removeItem("minimize-time")
+    // localStorage.removeItem("minimize-time")
+    localStorage.setItem("minimize-time", 0)
     subscribe(async (event) => {
       if (event.data.message === "Set ScoreBoard") {
         const updatedUserData = {

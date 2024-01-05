@@ -52,6 +52,7 @@ const CaptionNew = () => {
   // const [RT, setRT] = useState(userData.roundTime || 60);
   const captionInputRef = useRef(null);
   localStorage.setItem("isOutofSync", false)
+  let isCaptionSubmitted = useRef(false);
   async function sendingError() {
     let code1 = "Caption Page";
     let code2 = "userData.imageURL does not match cookies.userData.imageURL";
@@ -60,7 +61,11 @@ const CaptionNew = () => {
 
   }
   useEffect(() => {
-    localStorage.removeItem("minimize-time")
+    isCaptionSubmitted.current = captionSubmitted
+  }, [captionSubmitted])
+  useEffect(() => {
+    // localStorage.removeItem("minimize-time")
+    localStorage.setItem("minimize-time", 0)
     async function getCaptionsForUser() {
       const image_URL = await getGameImageForRound(
         userData.gameCode,
@@ -133,8 +138,9 @@ const CaptionNew = () => {
         alert("Please enter a valid caption.");
         return;
       }
-
+      console.log("line137 first", captionSubmitted)
       setCaptionSubmitted(true);
+      console.log("line139 after setting", captionSubmitted)
       if (caption !== "" && !timerComplete) {
         numOfPlayersSubmitting = await submitCaption(caption, userData);
       } else if (timerComplete) {
@@ -184,6 +190,12 @@ const CaptionNew = () => {
 
   
   const handleNavigate =()=>{
+    console.log("here in navigate 190, captionSubmitted, document hidden",isCaptionSubmitted.current , document.hidden)
+    
+    if( isCaptionSubmitted.current && document.hidden && !userData.host) {
+      // if caption is submitted and user leaves the room,
+      navigate("/MidGameWaitingRoom", {state: userData})
+    }
     let minimizeTime = localStorage.getItem("minimize-time");
     let hostTime = false;
     console.log("minimize time, remTime", minimizeTime, localStorage.getItem("remaining-time"))
@@ -193,7 +205,7 @@ const CaptionNew = () => {
     // userData.host ? console.log("host hidden") : console.log("not-host hidcden")
     
     let currentTime = new Date().getTime();
-    // console.log("current time",currentTime)
+    console.log("current time, minimize time , their diff",currentTime, minimizeTime , currentTime - parseInt(minimizeTime))
     let diff;
     if(parseInt(minimizeTime) == 0){
       diff  =  0
@@ -201,7 +213,7 @@ const CaptionNew = () => {
       diff = currentTime - parseInt(minimizeTime);
     }
     diff = Math.ceil(diff / 1000);
-    // console.log("minimizeTime, remTime, diff, rem - diff",minimizeTime,remTime, diff, remTime-diff)
+    console.log(" remTime, diff, rem - diff",remTime, diff, remTime-diff)
     let val = parseInt(remTime) - diff;
     console.log("here diff is less that zero, isOutofSync", val, localStorage.getItem("isOutofSync"));
     if(val < -4) {
@@ -216,19 +228,13 @@ const CaptionNew = () => {
     let isDeSync = localStorage.getItem("isOutofSync")
     console.log("desync is hidden", isDeSync, document.hidden)
     setLoadSpinner(true);
-    // console.log("212 loadSpinner", loadSpinner)
   if(isDeSync == "false"){
-    // localStorage.setItem("minimize-time",  0);
-    // localStorage.setItem("remaining-time",  0);
-
-    // let curr = new Date().now()
-    // navigate("/VoteImage", { state: userData })
     let curr = Date.now()
     let rem = localStorage.getItem("remaining-time")
 
     let diff=  minimizeTime == 0 ? 0 : curr - parseInt(minimizeTime);
     diff = Math.floor(diff/1000);
-    console.log("here 238 user.data.roundTime",diff, userData.roundTime)
+    console.log("here 238, diff, minimizeTime",diff, minimizeTime, localStorage.getItem("minimize-time"))
     // if( diff>= (userData.roundTime+ rem) ) {
     //   hostTime = true
     // }
@@ -238,15 +244,16 @@ const CaptionNew = () => {
     if(userData.host && (diff>= (userData.roundTime+ parseInt(rem)) )){
       // setTimeout(()=>{
         console.log("navigate -score 240")
-
+      // if( !document.hidden)
         navigate("/ScoreboardNew", { state: userData });
       // }, 2000)
     }else{
-      console.log("navigate -vote 245")
+      console.log("navigate -vote 245", document.hidden)
+      if( !document.hidden)
       navigate("/VoteImage", { state: userData })
     }
   } else {
-    if(!userData.host){
+    if(!userData.host ){
     setLoadSpinner(true);
     localStorage.setItem("isOutofSync", false);
     localStorage.removeItem("user-caption")
@@ -257,9 +264,11 @@ const CaptionNew = () => {
   }else{
     if( !document.hidden){
     let curr = Date.now()
+    console.log("curr, minimize time, curr - minimize time", curr, minimizeTime , curr - parseInt(minimizeTime))
     let diff=  curr - parseInt(minimizeTime);
     diff = Math.floor(diff/1000);
     console.log("here 238 user.data.roundTime",diff, userData.roundTime)
+
     let rem = parseInt(localStorage.getItem("remaining-time"))
     if( diff>= (userData.roundTime+rem) ) {
       hostTime = true
@@ -286,10 +295,10 @@ const CaptionNew = () => {
 } 
 
   useEffect(() => {
-
     subscribe((event) => {
 
       if (event.data.message === "Start Vote") {
+        console.log("getting called from subscribe 294, time --->", new Date().getTime(), captionSubmitted)
         handleNavigate();
       }
     });
@@ -307,7 +316,11 @@ const CaptionNew = () => {
         localStorage.setItem("minimize-time", new Date().getTime());
         // console.log("here 257 ------> timeRemaining, remainingTime",timeRemaining,remainingTime, localStorage.getItem("remaining-time"))
         // if(!captionSubmitted)
-        webWorker.postMessage(["start-timeout", userData, remainingTime,localStorage.getItem("user-caption")]);
+        let userCaption = localStorage.getItem("user-caption") || "";
+        if(!captionSubmitted){
+          console.log("here line 313 scaptionsubmited variable --->", captionSubmitted)
+          webWorker.postMessage(["start-timeout", userData, remainingTime,userCaption]);
+        }
         setPageVisibility(false);
 
       } else {
@@ -322,6 +335,8 @@ const CaptionNew = () => {
 
           // setTimeRemaining(timeRemaining - diff);
           setTimeRemaining(0);
+          console.log("getting called from handleVisibilityChange 331")
+          localStorage.setItem("isOutofSync", true)
           handleNavigate()
           // localStorage.setItem("remaining-time", remainingTime);
         // localStorage.setItem("remaining-time", remainingTime);
