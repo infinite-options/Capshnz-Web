@@ -190,7 +190,7 @@ const CaptionNew = () => {
 
   
   const handleNavigate =()=>{
-    console.log("here in navigate 190, captionSubmitted, document hidden",isCaptionSubmitted.current , document.hidden)
+    console.log("here in navigate 190, captionSubmitted, document hidden, time remaining",isCaptionSubmitted.current , document.hidden, localStorage.getItem("remaining-time"))
     
     if( isCaptionSubmitted.current && document.hidden && !userData.host) {
       // if caption is submitted and user leaves the room,
@@ -217,13 +217,11 @@ const CaptionNew = () => {
     let val = parseInt(remTime) - diff;
     console.log("here diff is less that zero, isOutofSync", val, localStorage.getItem("isOutofSync"));
     if(val < -4) {
-      
+      isCaptionSubmitted.current = true;
       setIsOutOfSync(true)
       localStorage.setItem("isOutofSync", true)
 
-      console.log("isOutofSync 195",localStorage.getItem("remaining-time"))
     }
-    // if (!isOutofSync) {
     }
     let isDeSync = localStorage.getItem("isOutofSync")
     console.log("desync is hidden", isDeSync, document.hidden)
@@ -235,22 +233,27 @@ const CaptionNew = () => {
     let diff=  minimizeTime == 0 ? 0 : curr - parseInt(minimizeTime);
     diff = Math.floor(diff/1000);
     console.log("here 238, diff, minimizeTime",diff, minimizeTime, localStorage.getItem("minimize-time"))
-    // if( diff>= (userData.roundTime+ rem) ) {
-    //   hostTime = true
-    // }
-        localStorage.setItem("minimize-time",  0);
-    localStorage.setItem("remaining-time",  0);
 
-    if(userData.host && (diff>= (userData.roundTime+ parseInt(rem)) )){
-      // setTimeout(()=>{
+    // localStorage.setItem("minimize-time",  0);
+    // localStorage.setItem("remaining-time",  0);
+
+    // if(userData.host && (diff>= (userData.roundTime+ parseInt(rem)) )){
+      if(userData.host && (diff>= (userData.roundTime) )){
+        // setTimeout(()=>{
         console.log("navigate -score 240")
       // if( !document.hidden)
-        navigate("/ScoreboardNew", { state: userData });
+      localStorage.setItem("minimize-time",  0);
+      localStorage.setItem("remaining-time",  0);
+          navigate("/ScoreboardNew", { state: userData });
       // }, 2000)
     }else{
       console.log("navigate -vote 245", document.hidden)
-      if( !document.hidden)
+      if( !document.hidden){
+        localStorage.setItem("minimize-time",  0);
+        localStorage.setItem("remaining-time",  0);
       navigate("/VoteImage", { state: userData })
+    
+      }
     }
   } else {
     if(!userData.host ){
@@ -263,14 +266,17 @@ const CaptionNew = () => {
     }, 2000)
   }else{
     if( !document.hidden){
-    let curr = Date.now()
-    console.log("curr, minimize time, curr - minimize time", curr, minimizeTime , curr - parseInt(minimizeTime))
+      // let curr = Date.now()
+      let curr = new Date().getTime()
+      console.log("curr, minimize time, curr - minimize time", curr, minimizeTime , curr - parseInt(minimizeTime))
     let diff=  curr - parseInt(minimizeTime);
     diff = Math.floor(diff/1000);
     console.log("here 238 user.data.roundTime",diff, userData.roundTime)
 
     let rem = parseInt(localStorage.getItem("remaining-time"))
-    if( diff>= (userData.roundTime+rem) ) {
+    console.log("rem time 279", rem)
+    if( diff>= (userData.roundTime + rem) ) {
+      console.log("274 diff, userData.roundTime,rem", diff, userData.roundTime,rem)
       hostTime = true
     }
 
@@ -279,12 +285,16 @@ const CaptionNew = () => {
       console.log("navigating to score baord", document.hidden, new Date())
       // if(!document.hidden)
       console.log("navigate -score 271")
-      navigate("/ScoreboardNew", { state: userData });
+      localStorage.setItem("minimize-time",  0);
+      localStorage.setItem("remaining-time",  0);
+    navigate("/ScoreboardNew", { state: userData });
     // }, 2000)
   }else{
     setTimeout(()=>{
       console.log("navigate -vote 276")
-      navigate("/VoteImage", {state: userData})
+      localStorage.setItem("minimize-time",  0);
+      localStorage.setItem("remaining-time",  0);
+    navigate("/VoteImage", {state: userData})
     }, 2000)
   }
 }
@@ -300,6 +310,12 @@ const CaptionNew = () => {
       if (event.data.message === "Start Vote") {
         console.log("getting called from subscribe 294, time --->", new Date().getTime(), captionSubmitted)
         handleNavigate();
+      }
+
+      if(userData.host && event.data.message === "Start ScoreBoard"){
+        setCookie("userData", userData, {path: '/'})
+        navigate("/ScoreBoardNew", { state: userData })
+
       }
     });
   
@@ -324,14 +340,28 @@ const CaptionNew = () => {
         setPageVisibility(false);
 
       } else {
+            /* eslint-disable-next-line no-restricted-globals */
+          // self.onmessage = (event) =>{
+          //   console.log("on line 70 event on here",event)
+          // }
+
         // Page is visible again, resume the timer
         let minimizeTime = localStorage.getItem("minimize-time");
+        console.log("minimizeTime-------> 363 ", minimizeTime)
         let currentTime = new Date().getTime();
         let diff = parseInt(currentTime) - parseInt(minimizeTime);
         diff = Math.floor(diff / 1000);
         setPageVisibility(true);
+        // webWorker.addEventListener('message', (event) => {
+        //   const [message, userData] = event.data;
+        //   console.log('Received message:', message);
+        //   console.log('Received userData:', userData);
+          
+        //   // Process the received message or data here
+        // });
+    
         console.log("332 page back online, timeremaining, diff", timeRemaining, diff, timeRemaining-diff)
-        if(timeRemaining - diff < 0){
+        if(timeRemaining - diff < 0 || captionSubmitted){
 
           // setTimeRemaining(timeRemaining - diff);
           setTimeRemaining(0);
