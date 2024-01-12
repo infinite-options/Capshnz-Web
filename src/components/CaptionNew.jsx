@@ -21,11 +21,9 @@ import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 import LoadingScreen from  "./LoadingScreen";
 
 import worker from '../workers/api-worker.js';
-// import WebWorker from "../workers/webWorker.js";
 import Axios from "axios";
 const CaptionNew = () => {
 
-  // const webWorker = new WebWorker(worker,  { type: "module", data: { axios: Axios } });
   const webWorker  = new Worker(new URL('../workers/api-worker.js', import.meta.url))
   const navigate = useNavigate(),
     location = useLocation();

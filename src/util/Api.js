@@ -238,15 +238,44 @@ async function postCreateRounds(gameCode, imageURLs){
     return imageURL
 }
 
-async function getNextImage(gameCode, roundNumber){
+// old code without retry
+// async function getNextImage(gameCode, roundNumber){
+//     const payload = {
+//         game_code: gameCode,
+//         round_number: roundNumber.toString()
+//     }
+//     const imageURL = await axios.post(nextImage, payload)
+//         .then(response => response.data.image)
+//     return imageURL
+// }
+
+async function getNextImage(gameCode, roundNumber) {
     const payload = {
         game_code: gameCode,
         round_number: roundNumber.toString()
+    };
+
+    const maxRetries = 3;
+    let retries = 0;
+    let error;
+
+    while (retries < maxRetries) {
+        console.log("Trying API---->", retries , +" times");
+        try {
+            const response = await axios.post(nextImage, payload);
+            return response.data.image;
+        } catch (err) {
+            // Capture the error 
+            error = err;
+            // Increment the retry count
+            retries++;
+        }
     }
-    const imageURL = await axios.post(nextImage, payload)
-        .then(response => response.data.image)
-    return imageURL
+
+    // trow error after retries exhaust
+    throw error;
 }
+
 
 async function sendError(code1, code2){
     await axios.get(errorURL + code1 + "*" + code2).then(res => {console.log(res)})
