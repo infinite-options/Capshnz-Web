@@ -20,7 +20,10 @@ export default function CnnDeck(){
     
     useEffect(() => {
         async function getCnnURLS(){
-            const CNNImageURLResponse = await getCnnImageURLS()
+            // const CNNImageURLResponse = await getCnnImageURLS()
+            let response = await getCnnImageURLS();
+            const CNNImageURLResponse = response["data"]
+            console.log("CNNImageURLResponse", CNNImageURLResponse)
             if (CNNImageURLResponse.length == 0) {
                 setloadingImg(3)
                 isMessageDisplayed.current = true
@@ -68,7 +71,8 @@ export default function CnnDeck(){
         }
         setUserData(updatedUserData)
         setCookie("userData", updatedUserData, {path: '/'})
-        navigate("/Waiting", {state: updatedUserData})
+        // navigate("/Waiting", {state: updatedUserData})
+        navigate("/WaitingRoom", {state: updatedUserData})
     }
 
     return(
@@ -88,12 +92,13 @@ export default function CnnDeck(){
             <ul className="CNNdeck-container">
                 {CNNImageURL.map((CNNImages, index) => {
                     if(CNNImages.article_link !== "PRIVATE"){
+                        console.log("cnn deck", CNNImages)
                         return(
                             <div key={index} onClick={event => handleClick(CNNImages.article_link)} className="CNNWeekdeck">
-                                    <div className="CNNdeck-background">
-                                    <img src={CNNImages.thumbnail_link} alt={CNNImages.date} className="deck-image"/>
+                               <div className="CNNdeck-background">
+                                    <img src={CNNImages.thumbnail_link} alt={CNNImages.year} className="deck-image"/>
                                 <div className="CNNdeckText">
-                                        {CNNImages.date} 
+                                        {CNNImages.year}
                                     </div>
                                 </div>
                                 <br/>
