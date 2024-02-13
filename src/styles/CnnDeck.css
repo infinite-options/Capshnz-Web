@@ -1,51 +1,47 @@
-.CNNDeck {
-    height: 812px;
-}
-.CNNWeekdeck {
-    font-weight: bold;
-    color: black;
-    margin: 10px;
-}
-.gameRulesSelectDeck {
-    display: inline-block;
-    position: absolute;
-    margin-top: 52px;
-    margin-left: 30px;
-    margin-bottom: 20px;
-    font-family: Josefin Sans, sans-serif;
-    font-weight: bold;
-    color: blue;
-    text-decoration: none;
-}
-.CNNdeck-container {
-    max-width: 375px;
-    height: 812px;
+.CnnDeckContainer {
     display: flex;
-    flex-flow: row wrap;
-    justify-content: space-around;
-    padding: 0;
-    list-style: none;
+    flex-direction: column;
+    align-items: center;
+    background-color:rgba(153, 90, 98, 0.7)
+
 }
-.CNNdeck-background {
+
+.CnnCard {
+    width: 60%; /* Each card width is 90% of the screen width */
+    /*margin: 10px auto;*/ /* Center the card horizontally */
+    /* border-top: 1px solid #ccc; */
+    border-bottom: 1px solid white;
+    /* border-radius: 5px; */
+    overflow: hidden;
     cursor: pointer;
-    height: 160px;
-    width: 160px;
-    background-color: yellow;
+    transition: transform 0.2s;
+    display: flex; /* Use flexbox */
+    align-items: center; /* Center items vertically */
+    justify-content: space-between; /* Space items horizontally */
+    padding : 20px;
 }
-.CNNdeck-image {
-    object-fit: cover;
-    height: 100px;
-    width: 100px;
-    position: absolute;
-    top: 50%;
-    margin-left: 0.5%;
-    transform: translateY(-364%);
-    border-radius: 40px;
+
+.CnnCard:hover {
+    transform: scale(1.05);
+    /* background-color: rgba(120, 70, 80, 0.7);  for darker bg */
+     background-color: rgba(220, 170, 180, 0.7);  /*for lighter  bg */
 }
-.CNNdeckText {
-    font-family: Josefin Sans, sans-serif;
-    font-weight: bold;
-    font-size: 12px;
-    margin-top: 15px;
-    text-align: center;
+
+.CnnCardImage {
+    width: 30%; /* Adjust image width */
+    height: auto; /* Maintain aspect ratio */
+    margin-left: 5px; /* Add some spacing */
+}
+
+.CnnCardText {
+    width: 65%; /* Adjust text width */
+    padding: 10px;
+    font-size: 16px;
+    text-align: left; /* Align text to the left */
+    color: #F8F8FF;
+}
+
+.page-heading{
+    margin-top: 30px;
+    color:  #F8F8FF
 }

@@ -24,7 +24,9 @@ const createRounds = "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev
 const nextImage = "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/getNextImage"
 const errorURL = "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/sendError/"
 const CheckGameURL = "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/getRoundImage"
-const getCNNDeckURLS = "https://myx6g22dd2rtcpviw3d5wuz7eu0zudaq.lambda-url.us-west-2.on.aws/"
+// const getCNNDeckURLS = "https://myx6g22dd2rtcpviw3d5wuz7eu0zudaq.lambda-url.us-west-2.on.aws/"
+// const getCNNDeckURLS = "http://127.0.0.1:4000/api/v2/cnn_webscrape"
+const getCNNDeckURLS = "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/api/v2/cnn_webscrape"
 const getgameScoreURL =  "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/getScores/"
 const addUserByEmailURL =  "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/addUserByEmail"
 const addFeedbackURL =  "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/addFeedback"
@@ -238,15 +240,44 @@ async function postCreateRounds(gameCode, imageURLs){
     return imageURL
 }
 
-async function getNextImage(gameCode, roundNumber){
+// old code without retry
+// async function getNextImage(gameCode, roundNumber){
+//     const payload = {
+//         game_code: gameCode,
+//         round_number: roundNumber.toString()
+//     }
+//     const imageURL = await axios.post(nextImage, payload)
+//         .then(response => response.data.image)
+//     return imageURL
+// }
+
+async function getNextImage(gameCode, roundNumber) {
     const payload = {
         game_code: gameCode,
         round_number: roundNumber.toString()
+    };
+
+    const maxRetries = 3;
+    let retries = 0;
+    let error;
+
+    while (retries < maxRetries) {
+        console.log("Trying API---->", retries , +" times");
+        try {
+            const response = await axios.post(nextImage, payload);
+            return response.data.image;
+        } catch (err) {
+            // Capture the error 
+            error = err;
+            // Increment the retry count
+            retries++;
+        }
     }
-    const imageURL = await axios.post(nextImage, payload)
-        .then(response => response.data.image)
-    return imageURL
+
+    // trow error after retries exhaust
+    throw error;
 }
+
 
 async function sendError(code1, code2){
     await axios.get(errorURL + code1 + "*" + code2).then(res => {console.log(res)})
