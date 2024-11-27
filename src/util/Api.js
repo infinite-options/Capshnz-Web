@@ -78,9 +78,9 @@ async function addUser(userData) {
     return playerInfo
 }
 
-async function addUserByEmail(email) {
+async function addUserByEmail(user_email) {
     const response = await axios.post(addUserByEmailURL, 
-        { email })
+        { user_email })
     return response.data
 }
 
