@@ -71,7 +71,32 @@ const VoteImage = () => {
   const isCaptionSubmitted = useRef(false);
   const [loadingImg, setloadingImg] = useState(true);
   const context = useContext(ErrorContext);
-
+  useEffect(() => {
+    if (localStorage.getItem("isOutofSync") === "true") {
+      console.log("User is out of sync, auto-submitting vote.");
+      autoSubmitVote();
+    }
+  }, []);
+  
+  async function autoSubmitVote() {
+    try {
+      const result = await postVote(null, userData); // Submit null vote for this player
+      console.log("Auto-submitted vote:", result);
+      setVoteSubmitted(true);
+  
+      // Notify server about auto-submission if needed
+      // await publish({
+      //   data: {
+      //     message: "AutoSubmitVote",
+      //     playerUID: userData.playerUID,
+      //     roundNumber: userData.roundNumber,
+      //     vote: null,
+      //   },
+      // });
+    } catch (error) {
+      handleApiError(error, autoSubmitVote, context);
+    }
+  }
   // const shuffledCaptions = shuffleArray(captions);
   const shuffledCaptions = useMemo(() => {
     return shuffleArray(captions);
@@ -286,19 +311,22 @@ const VoteImage = () => {
 useEffect(() => {
   const handleVisibilityChange = () => {
     if (document.hidden) {
-
+      console.log(`Player ${userData.playerUID} is going out of sync.`);
       // Page is not visible, pause the timer and save time remaining
       setTimeRemaining(timeRemaining);
       localStorage.setItem("votepage-minimize-time", new Date().getTime());
       localStorage.setItem("remaining-time-votePage", remainingTime);
+      localStorage.setItem("isOutofSync", true);
 
-
+      // Auto-submit only for the current player
+      autoSubmitVote(); 
       webWorker.postMessage(["vote-page", userData, remainingTime,null]);
 
       setPageVisibility(false);
 
     } else {
       // Page is visible again, resume the timer
+      console.log(`Player ${userData.playerUID} is back.`);
       webWorker.postMessage("exit");
       let minimizeTime = parseInt(localStorage.getItem("votepage-minimize-time"));
       let currentTime = new Date().getTime();
@@ -308,12 +336,17 @@ useEffect(() => {
       setTimeRemaining(timeRemaining - diff)
       setPageVisibility(true);
 
-      if(timeRemaining - diff < 0){
-
+      if(timeRemaining - diff < 0 || localStorage.getItem("isOutofSync") === "true"){
+        console.log(`Auto-submitting vote for Player ${userData.playerUID}`);
         setTimeRemaining(timeRemaining - diff);
         localStorage.setItem("remaining-time-votePage", remainingTime);
         console.log("timeRemaining",timeRemaining - diff)
         console.log("remainingTime", remainingTime);
+        autoSubmitVote();
+
+      }else {
+        console.log(`Player ${userData.playerUID} is still in sync.`);
+        localStorage.setItem("isOutofSync", false);
       }
     }
   };
@@ -325,6 +358,42 @@ useEffect(() => {
   };
 // }, [timeRemaining]);
 }, [remainingTime]);
+// useEffect(() => {
+//   const handleVisibilityChange = () => {
+//     if (document.hidden) {
+//       console.log(`Player ${userData.playerUID} is going out of sync.`);
+//       localStorage.setItem("votepage-minimize-time", new Date().getTime());
+//       localStorage.setItem("remaining-time-votePage", remainingTime);
+//       localStorage.setItem("isOutofSync", true);
+
+//       // Auto-submit only for the current player
+//       autoSubmitVote(); 
+//     } else {
+//       console.log(`Player ${userData.playerUID} is back.`);
+//       const minimizeTime = parseInt(localStorage.getItem("votepage-minimize-time"), 10);
+//       const currentTime = new Date().getTime();
+//       const diff = Math.floor((currentTime - minimizeTime) / 1000);
+
+//       const updatedTimeRemaining = remainingTime - diff;
+//       setTimeRemaining(updatedTimeRemaining);
+
+//       // Only auto-submit if this player is out of sync
+//       if (updatedTimeRemaining <= 0 || localStorage.getItem("isOutofSync") === "true") {
+//         console.log(`Auto-submitting vote for Player ${userData.playerUID}`);
+//         autoSubmitVote();
+//       } else {
+//         console.log(`Player ${userData.playerUID} is still in sync.`);
+//         localStorage.setItem("isOutofSync", false);
+//       }
+//     }
+//   };
+
+//   document.addEventListener("visibilitychange", handleVisibilityChange);
+
+//   return () => {
+//     document.removeEventListener("visibilitychange", handleVisibilityChange);
+//   };
+// }, [remainingTime]);
 
 
   async function closeButton() {

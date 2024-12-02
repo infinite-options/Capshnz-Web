@@ -46,7 +46,8 @@ const CaptionNew = () => {
   const [remainingTime, setRemainingTime] = useState(0);
   const [isOutofSync, setIsOutOfSync] = useState(false);
   const [loadSpinner, setLoadSpinner] = useState(false);
-
+  
+  console.log("here0:",localStorage.getItem("isOutofSync"))
   // const [RT, setRT] = useState(userData.roundTime || 60);
   const captionInputRef = useRef(null);
   localStorage.setItem("isOutofSync", false)
@@ -173,7 +174,26 @@ const CaptionNew = () => {
       handleApiError(error, submitButton, context);
     }
   }
-
+  async function autoSubmitCaption() {
+    try {
+      const result = await submitCaption("", userData); // Submit empty caption for this player
+      console.log("Auto-submitted caption:", result);
+      setCaptionSubmitted(true);
+  
+      // Notify server about auto-submission if needed
+      // await publish({
+      //   data: {
+      //     message: "AutoSubmit",
+      //     playerUID: userData.playerUID,
+      //     roundNumber: userData.roundNumber,
+      //     caption: "",
+      //   },
+      // });
+    } catch (error) {
+      handleApiError(error, autoSubmitCaption, context);
+    }
+  }
+  
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       submitButton(false);
@@ -300,7 +320,14 @@ const CaptionNew = () => {
   }
 
 
-} 
+}
+console.log("here1:",localStorage.getItem("isOutofSync"))
+useEffect(() => {
+  if (localStorage.getItem("isOutofSync") === "true") {
+    console.log("User is out of sync, auto-submitting caption.");
+    autoSubmitCaption();
+  }
+}, []); 
 
   useEffect(() => {
     subscribe((event) => {
@@ -324,10 +351,13 @@ const CaptionNew = () => {
 
       if (document.hidden) {
         console.log("after api worker the code should come here")
+        console.log(`Player ${userData.playerUID} is going out of sync.`);
         // Page is not visible, pause the timer and save time remaining
         setTimeRemaining(timeRemaining);
         localStorage.setItem("remaining-time", remainingTime);
         localStorage.setItem("minimize-time", new Date().getTime());
+        localStorage.setItem("isOutofSync", true);
+        autoSubmitCaption(); 
         // console.log("here 257 ------> timeRemaining, remainingTime",timeRemaining,remainingTime, localStorage.getItem("remaining-time"))
         // if(!captionSubmitted)
         let userCaption = localStorage.getItem("user-caption") || "";
@@ -338,6 +368,7 @@ const CaptionNew = () => {
         setPageVisibility(false);
 
       } else {
+        console.log(`Player ${userData.playerUID} is back.`);
             /* eslint-disable-next-line no-restricted-globals */
           // self.onmessage = (event) =>{
           //   console.log("on line 70 event on here",event)
@@ -365,6 +396,7 @@ const CaptionNew = () => {
           setTimeRemaining(0);
           console.log("getting called from handleVisibilityChange 331")
           localStorage.setItem("isOutofSync", true)
+          autoSubmitCaption();
           handleNavigate()
           // localStorage.setItem("remaining-time", remainingTime);
         // localStorage.setItem("remaining-time", remainingTime);
@@ -373,6 +405,9 @@ const CaptionNew = () => {
       }else if(timeRemaining - diff >= 0){
         webWorker.postMessage("exit");
         setTimeRemaining(timeRemaining - diff);
+      }else {
+        console.log(`Player ${userData.playerUID} is still in sync.`);
+        localStorage.setItem("isOutofSync", false);
       }
       }
     };
@@ -384,7 +419,42 @@ const CaptionNew = () => {
     };
 
   }, [remainingTime]);
-
+  // useEffect(() => {
+  //   const handleVisibilityChange = () => {
+  //     if (document.hidden) {
+  //       console.log(`Player ${userData.playerUID} is going out of sync.`);
+  //       localStorage.setItem("minimize-time", new Date().getTime());
+  //       localStorage.setItem("remaining-time", remainingTime);
+  //       localStorage.setItem("isOutofSync", true);
+  
+  //       // Auto-submit only for the current player
+  //       autoSubmitCaption(); 
+  //     } else {
+  //       console.log(`Player ${userData.playerUID} is back.`);
+  //       const minimizeTime = parseInt(localStorage.getItem("minimize-time"), 10);
+  //       const currentTime = new Date().getTime();
+  //       const diff = Math.floor((currentTime - minimizeTime) / 1000);
+  
+  //       const updatedTimeRemaining = remainingTime - diff;
+  //       setTimeRemaining(updatedTimeRemaining);
+  
+  //       // Only auto-submit if this player is out of sync
+  //       if (updatedTimeRemaining <= 0 || localStorage.getItem("isOutofSync") === "true") {
+  //         console.log(`Auto-submitting caption for Player ${userData.playerUID}`);
+  //         autoSubmitCaption();
+  //       } else {
+  //         console.log(`Player ${userData.playerUID} is still in sync.`);
+  //         localStorage.setItem("isOutofSync", false);
+  //       }
+  //     }
+  //   };
+  //   console.log("in handle:RT",remainingTime)
+  //   document.addEventListener("visibilitychange", handleVisibilityChange);
+  
+  //   return () => {
+  //     document.removeEventListener("visibilitychange", handleVisibilityChange);
+  //   };
+  // }, [remainingTime]);
   return (
     <div>
       { (localStorage.getItem("isOutofSync") == "true") && <LoadingScreen />}
