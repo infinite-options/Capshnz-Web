@@ -47,7 +47,6 @@ const CaptionNew = () => {
   const [isOutofSync, setIsOutOfSync] = useState(false);
   const [loadSpinner, setLoadSpinner] = useState(false);
   
-  console.log("here0:",localStorage.getItem("isOutofSync"))
   // const [RT, setRT] = useState(userData.roundTime || 60);
   const captionInputRef = useRef(null);
   localStorage.setItem("isOutofSync", false)
@@ -321,7 +320,6 @@ const CaptionNew = () => {
 
 
 }
-console.log("here1:",localStorage.getItem("isOutofSync"))
 useEffect(() => {
   if (localStorage.getItem("isOutofSync") === "true") {
     console.log("User is out of sync, auto-submitting caption.");
