@@ -288,7 +288,8 @@ async function sendError(code1, code2){
     return
 }
 async function getGameScore(gameCode,roundNo){
-    const scoreboard = await axios.get(getgameScoreURL + '/' + gameCode + ',' + roundNo).then(response => {
+    // const scoreboard = await axios.get(getgameScoreURL + '/' + gameCode + ',' + roundNo).then(response => {
+    const scoreboard = await axios.get(getgameScoreURL + gameCode + ',' + roundNo).then(response => {
         return response.data.scoreboard
     })
     return scoreboard
