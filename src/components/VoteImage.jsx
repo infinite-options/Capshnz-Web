@@ -496,8 +496,9 @@ useEffect(() => {
       //   alert("Please vote for a caption.");
       //   return;
       // }
-
+      console.log("line499 before setting vote", voteSubmitted);
       setVoteSubmitted(true);
+      console.log("line501 after setting vote", voteSubmitted);
 
       //  commented to allow api call when players who havent voted
       // Determine the caption to vote for
@@ -512,7 +513,7 @@ useEffect(() => {
       numOfPlayersVoting = await postVote(selectedCaption, userData);
 
 
-      console.log("after numOfPlayersVoting");
+      console.log("after numOfPlayersVoting:");
       if (numOfPlayersVoting === 0 || selectedCaptionIndex == -1) {
 
         let publishTimer = 0;

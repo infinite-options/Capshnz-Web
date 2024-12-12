@@ -169,11 +169,16 @@ const CaptionNew = () => {
       console.log("line137 first", captionSubmitted)
       setCaptionSubmitted(true);
       console.log("line139 after setting", captionSubmitted)
-      if (caption !== "" && !timerComplete) {
+      // if (caption !== "" && !timerComplete) {
+      //   numOfPlayersSubmitting = await submitCaption(caption, userData);
+      // } else if (timerComplete) {
+      //     numOfPlayersSubmitting = await submitCaption(caption, userData);
+      //   }
+      console.log("before numOfPlayersSubmitting");
+      if (caption !== "" && timerComplete) {
         numOfPlayersSubmitting = await submitCaption(caption, userData);
-      } else if (timerComplete) {
-          numOfPlayersSubmitting = await submitCaption(caption, userData);
-        }
+      }
+      console.log("after numOfPlayersVoting:",);
 
         //  adding check for timer complete, to proceed to next round
         if(timerComplete || numOfPlayersSubmitting === 0){ //if timer runs out or everyone votes
@@ -213,7 +218,7 @@ const CaptionNew = () => {
             }
           }, publishTimer); // 5000 milliseconds = 5 seconds
         }
-        
+        console.log("here line 221 numOfPlayersVoting:",numOfPlayersSubmitting );
         timeout();
 
       }
