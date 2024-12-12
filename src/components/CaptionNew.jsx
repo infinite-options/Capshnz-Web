@@ -169,16 +169,19 @@ const CaptionNew = () => {
       console.log("line137 first", captionSubmitted)
       setCaptionSubmitted(true);
       console.log("line139 after setting", captionSubmitted)
-      // if (caption !== "" && !timerComplete) {
-      //   numOfPlayersSubmitting = await submitCaption(caption, userData);
-      // } else if (timerComplete) {
-      //     numOfPlayersSubmitting = await submitCaption(caption, userData);
-      //   }
       console.log("before numOfPlayersSubmitting");
-      if (caption !== "" && timerComplete) {
-        console.log("inside if line 179:", caption, userData);
+      if (caption !== "" && !timerComplete) {
+        console.log("inside if line 174:", caption, userData);
         numOfPlayersSubmitting = await submitCaption(caption, userData);
-      }
+      } else if (timerComplete) {
+        console.log("inside else if line 177:", caption, userData);
+          numOfPlayersSubmitting = await submitCaption(caption, userData);
+        }
+      
+      // if (caption !== "" && timerComplete) {
+      //   console.log("inside if line 179:", caption, userData);
+      //   numOfPlayersSubmitting = await submitCaption(caption, userData);
+      // }
 
       console.log("after numOfPlayersSUbmitting",);
 
