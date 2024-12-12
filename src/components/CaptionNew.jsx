@@ -53,9 +53,12 @@ const CaptionNew = () => {
   const triggerPopup = (message) => {
     console.log("popup triggered in caption",message);
     setPopupMessage(message);
+    console.log("test1");
     setShowPopup(true);
+    console.log("test2");
     // Automatically hide after 3 seconds
     setTimeout(() => setShowPopup(false), 3000);
+    console.log("test3");
   };
 
   const publishWithPopup = async (data) => {
@@ -68,6 +71,7 @@ const CaptionNew = () => {
       }
       console.log("caption publish data:",data.data);
       await publish(data);
+      console.log("test0");
       triggerPopup(`Message broadcasted: ${data.data.message}`);
     } catch (error) {
       console.error("Error broadcasting message:", error);

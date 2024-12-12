@@ -508,11 +508,11 @@ useEffect(() => {
       if(selectedCaptionIndex > -1){
         selectedCaption = captions[selectedCaptionIndex];
       }
-
+      console.log("before numOfPlayersVoting");
       numOfPlayersVoting = await postVote(selectedCaption, userData);
 
 
-
+      console.log("after numOfPlayersVoting");
       if (numOfPlayersVoting === 0 || selectedCaptionIndex == -1) {
 
         let publishTimer = 0;
@@ -523,12 +523,12 @@ useEffect(() => {
 
         setTimeout(async () => {
   
-
+          console.log("before publish start scoreboard after numofplayersVoting");
         await publishWithPopup({data:{ message: "Start ScoreBoard", roundNumber: userData.roundNumber } });
       } , publishTimer); // 5000 milliseconds = 5 seconds
 
     }
-
+    
     console.log("here line 436 numOfPlayersVoting : ",numOfPlayersVoting )
   if(userData.host || numOfPlayersVoting === 0 || selectedCaptionIndex === -1) timeout();
 }
