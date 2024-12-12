@@ -185,6 +185,7 @@ async function submitCaption(caption, userData){
         game_code: userData.gameCode,
         round_number: userData.roundNumber.toString()
     }
+    console.log("payload inside submitCaption:", payload);
     const numOfPlayersSubmitting = await axios.post(submitCaptionURL, payload)
         .then(response => response.data.no_caption_submitted)
     return numOfPlayersSubmitting
@@ -203,6 +204,7 @@ async function postVote(caption, userData){
         game_code: userData.gameCode,
         round_number: userData.roundNumber.toString()
     }
+    console.log("payload inside postVote:", payload);
     const numOfPlayersVoting = await axios.post(postVoteCaptionURL, payload)
         .then(response => response.data.players_count)
     return numOfPlayersVoting

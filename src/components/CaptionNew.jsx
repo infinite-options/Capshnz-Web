@@ -176,9 +176,11 @@ const CaptionNew = () => {
       //   }
       console.log("before numOfPlayersSubmitting");
       if (caption !== "" && timerComplete) {
+        console.log("inside if line 179:", caption, userData);
         numOfPlayersSubmitting = await submitCaption(caption, userData);
       }
-      console.log("after numOfPlayersVoting:",);
+
+      console.log("after numOfPlayersSUbmitting",);
 
         //  adding check for timer complete, to proceed to next round
         if(timerComplete || numOfPlayersSubmitting === 0){ //if timer runs out or everyone votes
