@@ -1,6 +1,6 @@
 import { ReactComponent as PolygonWhiteUpward } from "../assets/polygon-upward-white.svg";
 import Form from "react-bootstrap/Form";
-import { Row, Col, Button, Container } from "react-bootstrap";
+import { Modal, Row, Col, Button, Container } from "react-bootstrap";
 import { useState, useEffect, useRef, useMemo  } from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import {
@@ -45,7 +45,9 @@ const VoteImage = () => {
   //   `${userData.gameCode}/${userData.roundNumber}`
   // );
   const { publish, subscribe, unSubscribe, detach } = useAbly( userData.gameCode);
-
+   // Popup state
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
   const [captions, setCaptions] = useState([]);
   const [toggles, setToggles] = useState([]);
   const [isMyCaption, setIsMyCaption] = useState("");
@@ -62,6 +64,27 @@ const VoteImage = () => {
   // for desync
   const [loadSpinner, setLoadSpinner] = useState(false);
 
+  // Function to trigger popup
+  const triggerPopup = (message) => {
+    console.log("popup triggered in vote",message);
+    setPopupMessage(message);
+    setShowPopup(true);
+    setTimeout(() => setShowPopup(false), 3000); // Auto-hide after 3 seconds
+  };
+  const publishWithPopup = async (data) => {
+    console.log("inside publish vote");
+    try {
+      if (!data.data || !data.data.message) {
+        console.error("No message defined in data:", data.data);
+        return;
+      }
+      console.log("Vote publish data:",data.data);
+      await publish(data);
+      triggerPopup(`Message broadcasted: ${data.data.message}`);
+    } catch (error) {
+      console.error("Error broadcasting message:", error);
+    }
+  };
   const backgroundColors = {
     default: "#D4B551",
     selected: "Green",
@@ -183,14 +206,14 @@ const VoteImage = () => {
       async function getCaptions() {
         const submittedCaptions = await getSubmittedCaptions(userData);
 
-        await publish({
-          data: {
+        await publishWithPopup(
+          { data: {
             message: "Set Vote",
             submittedCaptions: submittedCaptions,
             roundNumber: userData.roundNumber,
             imageURL: userData.imageURL,
-          },
-        });
+          }},
+        );
       }
       getCaptions();
     }
@@ -405,12 +428,11 @@ useEffect(() => {
           scoreboard[i].game_score = 0;
         }
       }
-      await publish({
-        data: {
+      await publishWithPopup({data :{
           message: "EndGame vote",
           scoreBoard: scoreboard,
         },
-      });
+    });
     } catch (error) {
       handleApiError(error, closeButton, context);
     }
@@ -502,7 +524,7 @@ useEffect(() => {
         setTimeout(async () => {
   
 
-        await publish({ data: { message: "Start ScoreBoard", roundNumber: userData.roundNumber } });
+        await publishWithPopup({data:{ message: "Start ScoreBoard", roundNumber: userData.roundNumber } });
       } , publishTimer); // 5000 milliseconds = 5 seconds
 
     }
@@ -535,6 +557,18 @@ useEffect(() => {
       }}
     >
       <Container fluid>
+        {/* Popup Modal */}
+        <Modal show={showPopup} onHide={() => setShowPopup(false)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Notification</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>{popupMessage}</Modal.Body>
+            <Modal.Footer>
+              <Button variant="primary" onClick={() => setShowPopup(false)}>
+                Close
+              </Button>
+            </Modal.Footer>
+          </Modal>
         <Row className="text-center">
           <Col>
             <CloseButton

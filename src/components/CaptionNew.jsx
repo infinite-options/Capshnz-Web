@@ -1,5 +1,5 @@
 import Form from "react-bootstrap/Form";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Modal, Container, Row, Col, Button } from "react-bootstrap";
 import { useState, useEffect, useRef, useContext } from "react";
 import * as ReactBootStrap from "react-bootstrap";
 import { useCookies } from "react-cookie";
@@ -46,7 +46,33 @@ const CaptionNew = () => {
   const [remainingTime, setRemainingTime] = useState(0);
   const [isOutofSync, setIsOutOfSync] = useState(false);
   const [loadSpinner, setLoadSpinner] = useState(false);
+  // State for popup visibility
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
   
+  const triggerPopup = (message) => {
+    console.log("popup triggered in caption",message);
+    setPopupMessage(message);
+    setShowPopup(true);
+    // Automatically hide after 3 seconds
+    setTimeout(() => setShowPopup(false), 3000);
+  };
+
+  const publishWithPopup = async (data) => {
+    console.log("inside publish caption");
+    try {
+      console.log("Data received by publishWithPopup:", data.data);
+      if (!data.data || !data.data.message) {
+        console.error("No message defined in data:", data.data);
+        return;
+      }
+      console.log("caption publish data:",data.data);
+      await publish(data);
+      triggerPopup(`Message broadcasted: ${data.data.message}`);
+    } catch (error) {
+      console.error("Error broadcasting message:", error);
+    }
+  };
   // const [RT, setRT] = useState(userData.roundTime || 60);
   const captionInputRef = useRef(null);
   localStorage.setItem("isOutofSync", false)
@@ -117,12 +143,12 @@ const CaptionNew = () => {
           scoreboard[i].game_score = 0;
         }
       }
-      await publish({
+      await publishWithPopup({
         data: {
-          message: "EndGame caption",
-          scoreBoard: scoreboard,
-        },
-      });
+        message: "EndGame Caption",
+        scoreBoard: scoreBoard,
+      },
+    });
     } catch (error) {
       handleApiError(error, closeButton, context);
     }
@@ -151,21 +177,39 @@ const CaptionNew = () => {
           
           if(numOfPlayersSubmitting != 0)  publishTimer = 5000;
 
-          function timeout() {
+        //   function timeout() {
 
-          setTimeout(async () => {
+        //   setTimeout(async () => {
     
-            await publish({
-              data: {
+        //     await publishWithPopup({
+        //       data: {
+        //         message: "Start Vote",
+        //         roundNumber: userData.roundNumber,
+        //         imageURL: userData.imageURL,
+        //         // ,submittedCaptions: submittedCaptions,
+        //       },
+        //     });
+        //   }, publishTimer); // 5000 milliseconds = 5 seconds
+        // }
+
+        // timeout();
+        function timeout() {
+          setTimeout(async () => {
+            try {
+              await publishWithPopup({
+                data: {
                 message: "Start Vote",
                 roundNumber: userData.roundNumber,
                 imageURL: userData.imageURL,
-                // ,submittedCaptions: submittedCaptions,
-              },
-            });
+                // Add other necessary fields here
+              }
+            },);
+            } catch (error) {
+              console.error("Error in timeout publish:", error);
+            }
           }, publishTimer); // 5000 milliseconds = 5 seconds
         }
-
+        
         timeout();
 
       }
@@ -467,6 +511,17 @@ useEffect(() => {
       }}
     >
       <Container fluid>
+        <Modal show={showPopup} onHide={() => setShowPopup(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Notification</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{popupMessage}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={() => setShowPopup(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+        </Modal>
         <Row className="text-center">
           <Col>
             <CloseButton
