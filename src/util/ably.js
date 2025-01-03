@@ -36,7 +36,7 @@ const useAbly = (() => {
     };
 
     const onMemberUpdate = async (callback) => {
-      await channel.presence.subscribe("enter", callback);
+      await channel.presence?.subscribe("enter", callback);
     };
 
     const subscribe = async (listener) => {
