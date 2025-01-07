@@ -31,32 +31,43 @@ export default function Caption() {
     // console.log(userData.imageURL)
   }
   useEffect(() => {
+    let mounted = true;
+    let interval = null;
+
     async function getCaptionsForUser() {
-      const image_URL = await getGameImageForRound(userData.gameCode, userData.roundNumber);
-      if (image_URL != userData.imageURL) {
-        sendingError();
-        const updatedUserData = {
-          ...userData,
-          imageURL: image_URL,
-        };
-        setUserData(updatedUserData);
-        setCookie("userData", updatedUserData, { path: "/" });
-      } else {
-        setCookie("userData", userData, { path: "/" });
+      try {
+        const image_URL = await getGameImageForRound(userData.gameCode, userData.roundNumber);
+        if (!mounted) return;
+
+        if (image_URL !== userData.imageURL) {
+          sendingError();
+          const updatedUserData = {
+            ...userData,
+            imageURL: image_URL,
+          };
+          setUserData(updatedUserData);
+          setCookie("userData", updatedUserData, { path: "/" });
+        }
+      } catch (error) {
+        console.error("Error getting captions:", error);
       }
     }
-    const interval = setInterval(() => {
-      if (!isCaptionDisplayed.current && cookies.userData.imageURL !== userData.imageURL) {
+
+    if (!isCaptionDisplayed.current && cookies.userData.imageURL !== userData.imageURL) {
+      interval = setInterval(() => {
         getCaptionsForUser();
         isCaptionDisplayed.current = true;
-      }
-    }, 5000);
+      }, 5000);
+    }
 
     return () => {
-      clearInterval(interval);
+      mounted = false;
+      if (interval) {
+        clearInterval(interval);
+      }
       unSubscribe();
     };
-  }, []);
+  }, [userData.roundNumber]); // Only re-run when round number changes
   async function scoreBoard() {
     const scoreboard = await getScoreBoard(userData);
     scoreboard.sort((a, b) => b.game_score - a.game_score);
@@ -118,14 +129,8 @@ export default function Caption() {
     return submittedCaptions;
   }
   useEffect(() => {
-    subscribe((event) => {
+    const subscription = subscribe((event) => {
       if (event.data.message === "Start Vote") {
-        // const updatedUserData = {
-        //     ...userData,
-        //     captions: event.data.submittedCaptions
-        // }
-        // setCookie("userData", updatedUserData, { path: '/' })
-        // console.log(cookies)
         navigate("/Vote", { state: userData });
       } else if (event.data.message === "EndGame caption") {
         detach();
@@ -141,17 +146,26 @@ export default function Caption() {
         navigate("/EndGame", { state: updatedUserData });
       }
     });
-  }, [userData]);
 
-  useEffect(() => {
     return () => {
-      // Force garbage collection of previous round's image
-      if (imageRef.current) {
-        imageRef.current.src = "";
-        imageRef.current = null;
+      if (subscription) {
+        subscription.unsubscribe();
       }
     };
-  }, [userData.roundNumber]); // Only run on round change
+  }, [userData.roundNumber]); // Only re-run when round number changes
+
+  useEffect(() => {
+    const currentImage = imageRef.current;
+
+    return () => {
+      if (currentImage) {
+        currentImage.src = "";
+        // Create a new blank image to force garbage collection
+        const img = new Image();
+        img.src = currentImage.src;
+      }
+    };
+  }, [userData.roundNumber]);
 
   return (
     <div className='caption'>
