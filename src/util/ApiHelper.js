@@ -85,7 +85,6 @@ function preloadImage(url) {
     const img = new Image();
 
     img.onload = () => {
-      // Explicitly remove handlers to help garbage collection
       img.onload = null;
       img.onerror = null;
       resolve(url);
