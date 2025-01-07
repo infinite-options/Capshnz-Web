@@ -56,24 +56,23 @@ const ScoreboardNew = () => {
   }, [userData, isScoreBoard]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      // console.log("score interval")
-      if (!isScoreBoardDisplayed.current && scoreBoard.length == 0) {
-        async function getScoreBoard() {
-          const scoreboard = await getGameScore(userData.gameCode, userData.roundNumber);
-          setloadingImg(false);
-          scoreboard.sort((a, b) => b.game_score - a.game_score);
-          setScoreBoard(scoreboard);
-          return scoreBoard;
-        }
-        // console.log("score from service")
-        getScoreBoard();
+    let interval;
+    if (!isScoreBoardDisplayed.current && scoreBoard.length === 0) {
+      interval = setInterval(async () => {
+        const scoreboard = await getGameScore(userData.gameCode, userData.roundNumber);
+        setloadingImg(false);
+        scoreboard.sort((a, b) => b.game_score - a.game_score);
+        setScoreBoard(scoreboard);
         isScoreBoardDisplayed.current = true;
-      }
-    }, 5000);
+      }, 5000);
+    }
 
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-  }, [scoreBoard]);
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [scoreBoard, userData.gameCode, userData.roundNumber]);
   async function closeButton() {
     await publish({
       data: {
@@ -83,6 +82,12 @@ const ScoreboardNew = () => {
   }
   async function nextRoundButton() {
     try {
+      // Clean up localStorage before transitioning
+      localStorage.removeItem("user-caption");
+      localStorage.removeItem("minimize-time");
+      localStorage.removeItem("remaining-time");
+      localStorage.removeItem("isOutofSync");
+
       const nextRound = userData.roundNumber + 1;
       const imageURL = await getNextImage(userData.gameCode, nextRound);
       await publish({
