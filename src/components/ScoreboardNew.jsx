@@ -108,9 +108,9 @@ const ScoreboardNew = () => {
 
   useEffect(() => {
     localStorage.removeItem("user-caption");
-    // localStorage.removeItem("minimize-time")
     localStorage.setItem("minimize-time", 0);
-    subscribe(async (event) => {
+
+    const subscription = subscribe(async (event) => {
       if (event.data.message === "Set ScoreBoard") {
         const updatedUserData = {
           ...userData,
@@ -137,11 +137,16 @@ const ScoreboardNew = () => {
         navigate("/FinalScore", { state: userData });
       }
     });
-    return () => unSubscribe();
+
+    return () => {
+      if (subscription) {
+        unSubscribe();
+      }
+    };
   }, []);
 
   useEffect(() => {
-    subscribe(async (event) => {
+    const subscription = subscribe(async (event) => {
       if (event.data.message === "EndGame scoreboard") {
         detach();
         const updatedUserData = {
@@ -156,6 +161,12 @@ const ScoreboardNew = () => {
         navigate("/FinalScore", { state: updatedUserData });
       }
     });
+
+    return () => {
+      if (subscription) {
+        unSubscribe();
+      }
+    };
   }, [scoreBoard]);
 
   return (

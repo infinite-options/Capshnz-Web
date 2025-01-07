@@ -96,11 +96,14 @@ const CaptionNew = () => {
     isCaptionSubmitted.current = captionSubmitted;
   }, [captionSubmitted]);
   useEffect(() => {
-    // localStorage.removeItem("minimize-time")
     localStorage.setItem("minimize-time", 0);
+    let interval;
+    let mounted = true;
+
     async function getCaptionsForUser() {
+      if (!mounted) return;
       const image_URL = await getGameImageForRound(userData.gameCode, userData.roundNumber);
-      if (image_URL != userData.imageURL) {
+      if (image_URL !== userData.imageURL) {
         sendingError();
         const updatedUserData = {
           ...userData,
@@ -112,7 +115,8 @@ const CaptionNew = () => {
         setCookie("userData", userData, { path: "/" });
       }
     }
-    const interval = setInterval(() => {
+
+    interval = setInterval(() => {
       if (!isCaptionDisplayed.current && cookies.userData.imageURL !== userData.imageURL) {
         getCaptionsForUser();
         isCaptionDisplayed.current = true;
@@ -120,10 +124,13 @@ const CaptionNew = () => {
     }, 5000);
 
     return () => {
-      clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+      mounted = false;
+      if (interval) {
+        clearInterval(interval);
+      }
       unSubscribe();
     };
-  }, []);
+  }, [cookies.userData.imageURL, setCookie, unSubscribe, userData]);
   async function scoreBoard() {
     const scoreboard = await getScoreBoard(userData);
     scoreboard.sort((a, b) => b.game_score - a.game_score);
