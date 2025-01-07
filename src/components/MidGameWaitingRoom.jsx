@@ -43,7 +43,7 @@ const MidGameWaitingRoom = () => {
   }, []);
   useEffect(() => {
     // console.log("here 15 before subscribe")
-    subscribe((event) => {
+    const subscription = subscribe((event) => {
       // console.log("iside midd game subscribe --> document hidden ?", document.hidden)
       if (!document.hidden) {
         console.log("here event.data.roundNumber", event.data);
@@ -78,7 +78,13 @@ const MidGameWaitingRoom = () => {
         }
       }
     });
-  });
+
+    return () => {
+      if (subscription) {
+        unSubscribe();
+      }
+    };
+  }, [userData, navigate, subscribe, setCookie, unSubscribe]);
 
   function renderCurrentGameData(overallGameData) {
     let currentRoundObject = {};
