@@ -9,7 +9,30 @@ import "../styles/Caption.css";
 import { ErrorContext } from "../App";
 import { handleApiError } from "../util/ApiHelper";
 
+function logMemoryUsage() {
+  if (window.performance && window.performance.memory) {
+    const memory = window.performance.memory;
+    console.log("Memory Usage:", {
+      totalJSHeapSize: `${Math.round(memory.totalJSHeapSize / 1048576)} MB`,
+      usedJSHeapSize: `${Math.round(memory.usedJSHeapSize / 1048576)} MB`,
+      jsHeapSizeLimit: `${Math.round(memory.jsHeapSizeLimit / 1048576)} MB`,
+    });
+  }
+}
+
+function logImageSize(img) {
+  if (img) {
+    console.log("Image Details:", {
+      src: img.src,
+      naturalWidth: img.naturalWidth,
+      naturalHeight: img.naturalHeight,
+      size: `${Math.round((img.naturalWidth * img.naturalHeight * 4) / 1048576)} MB (estimated)`,
+    });
+  }
+}
+
 export default function Caption() {
+  console.log("In Caption");
   const navigate = useNavigate(),
     location = useLocation();
   const [userData, setUserData] = useState(location.state);
@@ -129,10 +152,20 @@ export default function Caption() {
     return submittedCaptions;
   }
   useEffect(() => {
+    console.log(`Round ${userData.roundNumber} - Setting up Ably subscription`);
+
     const subscription = subscribe((event) => {
+      console.log("Ably Event Received:", {
+        message: event.data.message,
+        timestamp: new Date().toISOString(),
+        roundNumber: userData.roundNumber,
+      });
+
       if (event.data.message === "Start Vote") {
+        console.log("Navigating to Vote page");
         navigate("/Vote", { state: userData });
       } else if (event.data.message === "EndGame caption") {
+        console.log("Processing EndGame caption");
         detach();
         if (!userData.host) {
           alert("Host has Ended the game");
@@ -148,6 +181,7 @@ export default function Caption() {
     });
 
     return () => {
+      console.log(`Round ${userData.roundNumber} - Cleaning up Ably subscription`);
       if (subscription) {
         subscription.unsubscribe();
       }
@@ -157,15 +191,46 @@ export default function Caption() {
   useEffect(() => {
     const currentImage = imageRef.current;
 
+    if (currentImage) {
+      currentImage.onload = () => {
+        console.log(`Round ${userData.roundNumber} - Image Loaded`);
+        logImageSize(currentImage);
+        logMemoryUsage();
+      };
+    }
+
     return () => {
       if (currentImage) {
+        console.log(`Round ${userData.roundNumber} - Cleaning up image`);
+        logMemoryUsage();
+        currentImage.onload = null;
         currentImage.src = "";
-        // Create a new blank image to force garbage collection
         const img = new Image();
         img.src = currentImage.src;
+
+        // Log memory after cleanup
+        setTimeout(() => {
+          console.log("Memory after cleanup:");
+          logMemoryUsage();
+        }, 100);
       }
     };
   }, [userData.roundNumber]);
+
+  useEffect(() => {
+    const errorHandler = (error) => {
+      console.error("Global Error:", {
+        message: error.message,
+        stack: error.stack,
+        roundNumber: userData.roundNumber,
+        timestamp: new Date().toISOString(),
+      });
+      logMemoryUsage();
+    };
+
+    window.addEventListener("error", errorHandler);
+    return () => window.removeEventListener("error", errorHandler);
+  }, []);
 
   return (
     <div className='caption'>

@@ -6,6 +6,7 @@ import axios from "../util/config";
 import "../styles/GooglePhotos.css";
 
 const GooglePhotosNew = () => {
+  console.log("In GooglePhotosNew");
   const navigate = useNavigate(),
     location = useLocation();
   const [userData, setUserData] = useState(location.state);
@@ -15,10 +16,8 @@ const GooglePhotosNew = () => {
   const [signedIn, setSignedIn] = useState(false);
   const [selectedAlbum, setSelectedAlbum] = useState("");
   const [albumImages, setAlbumImages] = useState([]);
-  const searchGooglePhotosURL =
-    "https://photoslibrary.googleapis.com/v1/mediaItems:search";
-  const clientID =
-    "336598290180-69pe1qeuqku450vnoi8v1ehhi19jhpmt.apps.googleusercontent.com";
+  const searchGooglePhotosURL = "https://photoslibrary.googleapis.com/v1/mediaItems:search";
+  const clientID = "336598290180-69pe1qeuqku450vnoi8v1ehhi19jhpmt.apps.googleusercontent.com";
   const clientSecret = "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";
 
   const login = useGoogleLogin({
@@ -60,11 +59,7 @@ const GooglePhotosNew = () => {
         return (
           <div key={index}>
             <button
-              className={
-                selectedAlbum === entry.title
-                  ? "selectedGooglePhotos"
-                  : "buttonGooglePhotos"
-              }
+              className={selectedAlbum === entry.title ? "selectedGooglePhotos" : "buttonGooglePhotos"}
               onClick={() => {
                 setSelectedAlbum(entry.title);
                 getPhotos(entry);
@@ -98,27 +93,17 @@ const GooglePhotosNew = () => {
       Authorization: "Bearer " + tokens.access_token,
     };
 
-    axios
-      .post(searchGooglePhotosURL, body, { headers: headers })
-      .then((res) => {
-        let imageUrls = res.data.mediaItems.map((picture) => {
-          return picture.baseUrl;
-        });
-        setAlbumImages(imageUrls);
+    axios.post(searchGooglePhotosURL, body, { headers: headers }).then((res) => {
+      let imageUrls = res.data.mediaItems.map((picture) => {
+        return picture.baseUrl;
       });
+      setAlbumImages(imageUrls);
+    });
   }
 
   const submitAlbum = async () => {
     if (albumImages.length < userData.numOfRounds) {
-      alert(
-        "Please select an album with enough images for each round." +
-          "\n" +
-          "Total Images: " +
-          albumImages.length +
-          "\n" +
-          "Total Rounds: " +
-          userData.numOfRounds
-      );
+      alert("Please select an album with enough images for each round." + "\n" + "Total Images: " + albumImages.length + "\n" + "Total Rounds: " + userData.numOfRounds);
       return;
     }
     const updatedUserData = {
@@ -132,9 +117,9 @@ const GooglePhotosNew = () => {
     navigate("/Waiting", { state: updatedUserData });
   };
   return (
-    <div className="googlephotos">
+    <div className='googlephotos'>
       <br></br>
-      <div className="headerGooglePhotos">
+      <div className='headerGooglePhotos'>
         {signedIn ? (
           <div>
             <h4>{"Select shared album as a deck"}</h4>
@@ -144,19 +129,17 @@ const GooglePhotosNew = () => {
           <div>
             <h4>Sign in to play with an album</h4>
             <br />
-            <button className="selectedGooglePhotos" onClick={() => login()}>
+            <button className='selectedGooglePhotos' onClick={() => login()}>
               Log In to Google Photos
             </button>
           </div>
         )}
       </div>
       <div style={{ overflow: "scroll" }}>
-        <div className="headerGooglePhotos">{chooseAlbums()}</div>
-        <div className="containerGooglePhotos">
+        <div className='headerGooglePhotos'>{chooseAlbums()}</div>
+        <div className='containerGooglePhotos'>
           {albumImages.map((url, index) => {
-            return (
-              <img key={index} className="imageGooglePhotos" src={url}></img>
-            );
+            return <img key={index} className='imageGooglePhotos' src={url}></img>;
           })}
         </div>
       </div>
@@ -165,7 +148,7 @@ const GooglePhotosNew = () => {
         ""
       ) : (
         <div>
-          <button className="selectedGooglePhotos" onClick={submitAlbum}>
+          <button className='selectedGooglePhotos' onClick={submitAlbum}>
             Continue
           </button>
           <br />

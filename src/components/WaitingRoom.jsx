@@ -14,19 +14,12 @@ import "../styles/Landing.css";
 import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 
 const WaitingRoom = () => {
+  console.log("In WaitingRoom");
   const navigate = useNavigate(),
     location = useLocation();
   const [userData, setUserData] = useState(location.state);
   const [cookies, setCookie] = useCookies(["userData"]);
-  const {
-    publish,
-    subscribe,
-    onMemberUpdate,
-    getMembers,
-    addMember,
-    unSubscribe,
-    removeMember,
-  } = useAbly(userData.gameCode);
+  const { publish, subscribe, onMemberUpdate, getMembers, addMember, unSubscribe, removeMember } = useAbly(userData.gameCode);
   const [buttonText, setButtonText] = useState("Share with other players");
   const [lobby, setLobby] = useState([]);
   const [isLoading, setLoading] = useState(false);
@@ -143,21 +136,16 @@ const WaitingRoom = () => {
         }}
       >
         <Container fluid>
-          <Row className="text-center">
+          <Row className='text-center'>
             <Col>
-              <CloseButton
-                onClick={() => navigate("/StartGame", { state: userData })}
-                style={{ position: "absolute", right: 5, top: 5 }}
-              />
+              <CloseButton onClick={() => navigate("/StartGame", { state: userData })} style={{ position: "absolute", right: 5, top: 5 }} />
             </Col>
           </Row>
-          <Row className="text-center">
+          <Row className='text-center'>
             <Col style={{ position: "relative", width: 370 }}>
-              <Polygon
-                style={{ position: "absolute", bottom: "-32px", right: "60px" }}
-              />
+              <Polygon style={{ position: "absolute", bottom: "-32px", right: "60px" }} />
               <input
-                type="text"
+                type='text'
                 style={{
                   width: 350,
                   height: 60,
@@ -177,22 +165,19 @@ const WaitingRoom = () => {
                   border: "none",
                   outline: "none",
                 }}
-                value="Waiting for all Players . . ."
+                value='Waiting for all Players . . .'
                 readOnly
               />
             </Col>
           </Row>
         </Container>
       </div>
-      <ul className="lobbyWaiting" style={{ marginTop: "64px" }}>
+      <ul className='lobbyWaiting' style={{ marginTop: "64px" }}>
         {lobby.map((player, index) => {
           return (
-            <li key={index} className="lobbyPlayerWaiting">
+            <li key={index} className='lobbyPlayerWaiting'>
               <div style={{ display: "flex", alignItems: "center" }}>
-                <i
-                  className="fas fa-circle fa-3x"
-                  style={{ color: "#8D3B9B" }}
-                />
+                <i className='fas fa-circle fa-3x' style={{ color: "#8D3B9B" }} />
                 <div
                   style={{
                     marginLeft: "10px",
@@ -226,7 +211,7 @@ const WaitingRoom = () => {
           {userData.host && userData.deckSelected && (
             <div
               onClick={(event) => selectDeckButton()}
-              className="deck"
+              className='deck'
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -238,22 +223,18 @@ const WaitingRoom = () => {
             >
               <div style={{ cursor: "pointer" }}>
                 <img
-                  src={
-                    userData.deckTitle === "Google Photos"
-                      ? "https://upload.wikimedia.org/wikipedia/commons/f/fb/Google-Photos_icon_logo_%28May-September_2015%29.png"
-                      : userData.deckThumbnail_url
-                  }
+                  src={userData.deckTitle === "Google Photos" ? "https://upload.wikimedia.org/wikipedia/commons/f/fb/Google-Photos_icon_logo_%28May-September_2015%29.png" : userData.deckThumbnail_url}
                   alt={userData.deckTitle}
-                  className="deck-image"
+                  className='deck-image'
                 />
-                <div className="deckText">{userData.deckTitle}</div>
+                <div className='deckText'>{userData.deckTitle}</div>
               </div>
               <br />
             </div>
           )}
 
           <input
-            type="text"
+            type='text'
             style={{
               width: 330,
               height: 55,
@@ -276,7 +257,7 @@ const WaitingRoom = () => {
             readOnly
           />
           <Button
-            variant="warning"
+            variant='warning'
             onClick={copyGameCodeButton}
             style={{
               width: 330,
@@ -298,7 +279,7 @@ const WaitingRoom = () => {
           </Button>
           {userData.host && !userData.deckSelected && (
             <Button
-              variant="warning"
+              variant='warning'
               onClick={selectDeckButton}
               style={{
                 width: 330,
@@ -321,7 +302,7 @@ const WaitingRoom = () => {
           )}
           {userData.host && userData.deckSelected && (
             <Button
-              variant="warning"
+              variant='warning'
               onClick={startGameButton}
               disabled={isLoading}
               style={{

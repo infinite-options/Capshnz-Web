@@ -9,6 +9,7 @@ import Button from "react-bootstrap/Button";
 import "../styles/Landing.css";
 
 const Landing = () => {
+  console.log("In Landing");
   const [isInvalid, setInvalid] = useState(false);
   const [email, setEmail] = useState("");
   const [cookies, setCookie] = useCookies(["email"]);
@@ -48,46 +49,33 @@ const Landing = () => {
 
   return (
     <Form noValidate onSubmit={handleSubmit}>
-      <Container className="container-main" fluid>
-        <Row className="text-center py-5">
+      <Container className='container-main' fluid>
+        <Row className='text-center py-5'>
           <Col>
             <h2>Welcome to Capshnz!</h2>
           </Col>
         </Row>
-        <Row className="d-flex justify-content-center">
-          <Form.Group as={Col} md="10">
+        <Row className='d-flex justify-content-center'>
+          <Form.Group as={Col} md='10'>
             <Form.Label>Enter your Email Address</Form.Label>
-            <Form.Control
-              id="email"
-              required
-              value={email}
-              type="text"
-              placeholder="Enter email here..."
-              onChange={handleEmailChange}
-              isInvalid={isInvalid}
-            />
-            <Form.Control.Feedback type="invalid">
-              Please provide a valid email.
-            </Form.Control.Feedback>
+            <Form.Control id='email' required value={email} type='text' placeholder='Enter email here...' onChange={handleEmailChange} isInvalid={isInvalid} />
+            <Form.Control.Feedback type='invalid'>Please provide a valid email.</Form.Control.Feedback>
           </Form.Group>
         </Row>
-        <Row className="text-center py-3">
-          <Col>
-            By pressing Enter you agree to let us use cookies to improve game
-            performance
-          </Col>
+        <Row className='text-center py-3'>
+          <Col>By pressing Enter you agree to let us use cookies to improve game performance</Col>
         </Row>
-        <Row className="text-center pb-5">
+        <Row className='text-center pb-5'>
           <Col>
-            <Button variant="success" type="submit">
+            <Button variant='success' type='submit'>
               Enter
             </Button>
           </Col>
         </Row>
-        <Row className="py-3 ps-4">
+        <Row className='py-3 ps-4'>
           <Col>
-            <Link to="/GameRules" className="gameRules">
-              <i className="fa fa-info-circle"></i>
+            <Link to='/GameRules' className='gameRules'>
+              <i className='fa fa-info-circle'></i>
               Game Rules
             </Link>
           </Col>

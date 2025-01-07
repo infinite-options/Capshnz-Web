@@ -12,6 +12,7 @@ import { getScoreBoard, getNextImage, getGameScore } from "../util/Api";
 import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 
 const ScoreboardNew = () => {
+  console.log("In ScoreboardNew");
   const navigate = useNavigate(),
     location = useLocation();
   const [userData, setUserData] = useState(location.state);
@@ -19,7 +20,7 @@ const ScoreboardNew = () => {
   // const { publish, subscribe, unSubscribe, detach } = useAbly(
   //   `${userData.gameCode}/${userData.roundNumber}`
   // );
-  const { publish, subscribe, unSubscribe, detach } = useAbly( userData.gameCode);
+  const { publish, subscribe, unSubscribe, detach } = useAbly(userData.gameCode);
 
   const [scoreBoard, setScoreBoard] = useState([]);
   const isGameEnded = useRef(false);
@@ -34,17 +35,13 @@ const ScoreboardNew = () => {
   }
 
   useEffect(() => {
-    if (
-      !isScoreBoard &&
-      userData.host &&
-      cookies.userData.scoreBoard === undefined
-    ) {
+    if (!isScoreBoard && userData.host && cookies.userData.scoreBoard === undefined) {
       async function setScoreBoard() {
         const scoreBoard = await getScoreBoard(userData);
         setloadingImg(false);
         scoreBoard.sort((a, b) => b.votes - a.votes);
         // console.log(scoreBoard)
-        console.log("callig score board from scoreboardNew page at time =", new Date())
+        console.log("callig score board from scoreboardNew page at time =", new Date());
 
         setisScoreBoard(true);
         publish({
@@ -63,10 +60,7 @@ const ScoreboardNew = () => {
       // console.log("score interval")
       if (!isScoreBoardDisplayed.current && scoreBoard.length == 0) {
         async function getScoreBoard() {
-          const scoreboard = await getGameScore(
-            userData.gameCode,
-            userData.roundNumber
-          );
+          const scoreboard = await getGameScore(userData.gameCode, userData.roundNumber);
           setloadingImg(false);
           scoreboard.sort((a, b) => b.game_score - a.game_score);
           setScoreBoard(scoreboard);
@@ -108,9 +102,9 @@ const ScoreboardNew = () => {
   }
 
   useEffect(() => {
-    localStorage.removeItem("user-caption")
+    localStorage.removeItem("user-caption");
     // localStorage.removeItem("minimize-time")
-    localStorage.setItem("minimize-time", 0)
+    localStorage.setItem("minimize-time", 0);
     subscribe(async (event) => {
       if (event.data.message === "Set ScoreBoard") {
         const updatedUserData = {
@@ -174,18 +168,15 @@ const ScoreboardNew = () => {
       }}
     >
       <Container>
-        <Row className="text-center">
+        <Row className='text-center'>
           <Col>
-            <CloseButton
-              onClick={() => navigate("/StartGame", { state: userData })}
-              style={{ position: "absolute", right: 5, top: 5 }}
-            />
+            <CloseButton onClick={() => navigate("/StartGame", { state: userData })} style={{ position: "absolute", right: 5, top: 5 }} />
           </Col>
         </Row>
-        <Row className="text-center">
+        <Row className='text-center'>
           <Col style={{}}>
             <input
-              type="text"
+              type='text'
               style={{
                 width: 350,
                 height: 64,
@@ -207,7 +198,7 @@ const ScoreboardNew = () => {
                 marginRight: "auto",
                 marginLeft: "auto",
               }}
-              value="Scoreboard!"
+              value='Scoreboard!'
               readOnly
             />
             <div style={{ marginTop: "-10px", marginLeft: "120px" }}>
@@ -215,7 +206,7 @@ const ScoreboardNew = () => {
             </div>
           </Col>
         </Row>
-        <Row className="text-center">
+        <Row className='text-center'>
           <Col>
             <div
               style={{
@@ -238,7 +229,7 @@ const ScoreboardNew = () => {
               }}
             >
               <img
-                className="imgVote"
+                className='imgVote'
                 src={userData.imageURL}
                 style={{
                   width: "96%",
@@ -250,7 +241,7 @@ const ScoreboardNew = () => {
             </div>
           </Col>
         </Row>
-        <Row className="text-center">
+        <Row className='text-center'>
           <div style={{ marginLeft: "-110px", marginBottom: "-8px" }}>
             <PolygonYelloUpward />
           </div>
@@ -283,31 +274,24 @@ const ScoreboardNew = () => {
             {scoreBoard.map((player, index) => {
               return (
                 <div key={index}>
-                  <div
-                    style={{ display: "flex", justifyContent: "space-around" }}
-                  >
+                  <div style={{ display: "flex", justifyContent: "space-around" }}>
                     <div>{player.user_alias}</div>
                     <div>{player.votes}</div>
                     <div>{player.score}</div>
                     <div>{player.game_score}</div>
                   </div>
                   {player.caption !== "" && (
-                    <div
-                      className="captionScoreBoard"
-                      style={{ fontSize: "10" }}
-                    >
+                    <div className='captionScoreBoard' style={{ fontSize: "10" }}>
                       {player.caption}
                     </div>
                   )}
-                  {player.caption === "" && (
-                    <div className="captionScoreBoard">&nbsp;</div>
-                  )}
+                  {player.caption === "" && <div className='captionScoreBoard'>&nbsp;</div>}
                 </div>
               );
             })}
           </div>
         </Row>
-        <Row className="text-center" style={{ marginTop: "32px" }}>
+        <Row className='text-center' style={{ marginTop: "32px" }}>
           <Col
             style={{
               position: "relative",
@@ -318,7 +302,7 @@ const ScoreboardNew = () => {
           >
             {userData.host && userData.roundNumber !== userData.numOfRounds && (
               <Button
-                variant="warning"
+                variant='warning'
                 onClick={nextRoundButton}
                 style={{
                   width: 350,
@@ -343,7 +327,7 @@ const ScoreboardNew = () => {
             )}
             {userData.host && userData.roundNumber === userData.numOfRounds && (
               <Button
-                variant="warning"
+                variant='warning'
                 onClick={finalScoresButton}
                 style={{
                   width: 350,
@@ -368,13 +352,13 @@ const ScoreboardNew = () => {
             )}
           </Col>
         </Row>
-        <Row className="text-center">
+        <Row className='text-center'>
           <Col style={{ position: "relative", bottom: 20 }}>
             <div style={{ marginLeft: "-110px" }}>
               <PolygonWhiteUpward />
             </div>
             <input
-              type="text"
+              type='text'
               style={{
                 width: "350",
                 height: 56,

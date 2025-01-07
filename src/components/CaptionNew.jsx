@@ -17,6 +17,7 @@ import LoadingScreen from "./LoadingScreen";
 import worker from "../workers/api-worker.js";
 import Axios from "axios";
 const CaptionNew = () => {
+  console.log("In CaptionNew");
   const webWorker = new Worker(new URL("../workers/api-worker.js", import.meta.url));
 
   useEffect(() => {

@@ -10,6 +10,7 @@ import "../styles/LandingNew.css";
 import { ReactComponent as PolygonWhiteDownward } from "../assets/polygon-downwards-white.svg";
 
 const LandingNew = () => {
+  console.log("In LandingnNew");
   const [isInvalid, setInvalid] = useState(false);
   const [email, setEmail] = useState("");
   const [cookies, setCookie] = useCookies(["email"]);
@@ -48,7 +49,7 @@ const LandingNew = () => {
   };
 
   return (
-    <div className="div-main">
+    <div className='div-main'>
       <div
         style={{
           display: "flex",
@@ -58,8 +59,8 @@ const LandingNew = () => {
         }}
       >
         <Form noValidate onSubmit={handleSubmit}>
-          <Container className="container-main" fluid>
-            <Row className="text-center" style={{ marginTop: "36px" }}>
+          <Container className='container-main' fluid>
+            <Row className='text-center' style={{ marginTop: "36px" }}>
               <Col
                 style={{
                   position: "relative",
@@ -82,7 +83,7 @@ const LandingNew = () => {
                     border: "none",
                     textAlign: "center",
                   }}
-                  value="Welcome to Capshnz"
+                  value='Welcome to Capshnz'
                   readOnly
                 />
 
@@ -96,7 +97,7 @@ const LandingNew = () => {
             </Row>
 
             <Form.Group>
-              <Row className="text-center">
+              <Row className='text-center'>
                 <Col>
                   <Form.Control
                     style={{
@@ -118,8 +119,8 @@ const LandingNew = () => {
                     }}
                     required
                     value={email}
-                    type="text"
-                    placeholder="Enter email here..."
+                    type='text'
+                    placeholder='Enter email here...'
                     onChange={handleEmailChange}
                     isInvalid={isInvalid}
                   />
@@ -132,11 +133,11 @@ const LandingNew = () => {
                 </Col>
               </Row>
 
-              <Row className="text-center" style={{ marginTop: "5rem" }}>
+              <Row className='text-center' style={{ marginTop: "5rem" }}>
                 <Col>
                   <Button
-                    variant="success"
-                    type="submit"
+                    variant='success'
+                    type='submit'
                     //disabled={() => {}}
                     style={{
                       width: "60%",
@@ -158,9 +159,7 @@ const LandingNew = () => {
                   </Button>
                 </Col>
               </Row>
-              <Form.Control.Feedback type="invalid">
-                Please provide a valid email.
-              </Form.Control.Feedback>
+              <Form.Control.Feedback type='invalid'>Please provide a valid email.</Form.Control.Feedback>
             </Form.Group>
             <Row>
               <Col>
@@ -180,8 +179,7 @@ const LandingNew = () => {
                     wordWrap: "break-word",
                   }}
                 >
-                  By pressing Enter you agree to let us use cookies to improve
-                  game performance
+                  By pressing Enter you agree to let us use cookies to improve game performance
                 </div>
               </Col>
             </Row>
