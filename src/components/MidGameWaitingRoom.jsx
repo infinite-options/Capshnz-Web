@@ -60,6 +60,7 @@ const MidGameWaitingRoom = () => {
           imageURL: event.data.imageURL, // Assuming midGameTimeStamp is a field in the event variable
         };
         if (event.data.message === "Start Vote") {
+          console.log("Navigating to VoteImage from MidGameWaitingRoom - starting vote phase");
           navigate("/VoteImage", { state: currentState });
         } else if (event.data.message === "Start ScoreBoard") {
           setCookie("userData", userData, { path: "/" });

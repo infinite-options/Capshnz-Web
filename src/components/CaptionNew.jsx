@@ -321,6 +321,7 @@ const CaptionNew = () => {
         if (!document.hidden) {
           localStorage.setItem("minimize-time", 0);
           localStorage.setItem("remaining-time", 0);
+          console.log("Navigating to VoteImage from CaptionNew - normal flow");
           navigate("/VoteImage", { state: userData });
         }
       }
@@ -363,6 +364,7 @@ const CaptionNew = () => {
               console.log("navigate -vote 276");
               localStorage.setItem("minimize-time", 0);
               localStorage.setItem("remaining-time", 0);
+              console.log("Navigating to VoteImage from CaptionNew - host flow");
               navigate("/VoteImage", { state: userData });
             }, 2000);
           }
