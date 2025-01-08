@@ -75,6 +75,9 @@ const MidGameWaitingRoom = () => {
           navigate("/CaptionNew", { state: updatedUserData });
         } else if (event.data.message === "Start EndGame") {
           navigate("/FinalScore", { state: userData });
+        } else if (event.data.message === "Start Caption") {
+          console.log("Navigating to CaptionNew from MidGameWaitingRoom - starting caption phase");
+          navigate("/CaptionNew", { state: userData });
         }
       }
     });

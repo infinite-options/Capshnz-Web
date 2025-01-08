@@ -111,6 +111,7 @@ export default function GooglePhotos() {
       deckUID: "500-000005",
       googlePhotos: albumImages,
     };
+    console.log("Navigating to WaitingRoom from GooglePhotos");
     navigate("/WaitingRoom", { state: updatedUserData });
   };
 

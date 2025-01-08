@@ -264,6 +264,7 @@ const CaptionNew = () => {
 
     if (isCaptionSubmitted.current && document.hidden && !userData.host) {
       // if caption is submitted and user leaves the room,
+      console.log("Navigating to MidGameWaitingRoom from CaptionNew - user left room after caption submit");
       navigate("/MidGameWaitingRoom", { state: userData });
     }
     let minimizeTime = localStorage.getItem("minimize-time");

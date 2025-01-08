@@ -42,18 +42,10 @@ const ChooseRounds = () => {
   }
 
   function validateRoundInfo() {
-    if (
-      !Number.isFinite(roundInfo.numOfRounds) ||
-      roundInfo.numOfRounds < 1 ||
-      roundInfo.numOfRounds > 20
-    ) {
+    if (!Number.isFinite(roundInfo.numOfRounds) || roundInfo.numOfRounds < 1 || roundInfo.numOfRounds > 20) {
       alert("Please enter 1 - 20 rounds.");
       return false;
-    } else if (
-      !Number.isFinite(roundInfo.roundTime) ||
-      roundInfo.roundTime < 1 ||
-      roundInfo.roundTime > 120
-    ) {
+    } else if (!Number.isFinite(roundInfo.roundTime) || roundInfo.roundTime < 1 || roundInfo.roundTime > 120) {
       alert("Please enter a value less than 120 seconds.");
       return false;
     }
@@ -65,12 +57,7 @@ const ChooseRounds = () => {
       setLoading(true);
       if (!validateRoundInfo()) return;
 
-      const gameInfo = await createGame(
-        userData.playerUID,
-        roundInfo.numOfRounds,
-        roundInfo.roundTime,
-        userData.scoreType
-      );
+      const gameInfo = await createGame(userData.playerUID, roundInfo.numOfRounds, roundInfo.roundTime, userData.scoreType);
 
       if (userData.playAgain) {
         await publish({
@@ -91,6 +78,7 @@ const ChooseRounds = () => {
       setUserData(updatedUserData);
       setCookie("userData", updatedUserData, { path: "/" });
       await joinGame(updatedUserData);
+      console.log("Navigating to WaitingRoom from ChooseRounds - after setting up rounds");
       navigate("/WaitingRoom", { state: updatedUserData });
     } catch (error) {
       handleApiError(error, continueButton, context);
@@ -114,16 +102,13 @@ const ChooseRounds = () => {
     >
       <Form>
         <Container fluid>
-          <Row className="text-center">
+          <Row className='text-center'>
             <Col>
-              <CloseButton
-                onClick={() => navigate("/StartGame", { state: userData })}
-                style={{ position: "absolute", right: 5, top: 5 }}
-              />
+              <CloseButton onClick={() => navigate("/StartGame", { state: userData })} style={{ position: "absolute", right: 5, top: 5 }} />
             </Col>
           </Row>
           <Row style={{ marginLeft: "8px" }}>
-            <Form.Group as={Col} md="10">
+            <Form.Group as={Col} md='10'>
               <Form.Label
                 style={{
                   width: "330px",
@@ -150,17 +135,17 @@ const ChooseRounds = () => {
                   wordWrap: "break-word",
                 }}
                 required
-                type="text"
-                placeholder="Enter # of rounds here..."
+                type='text'
+                placeholder='Enter # of rounds here...'
                 onChange={handleChange}
-                name="numOfRounds"
+                name='numOfRounds'
                 // defaultValue="10"
-                inputMode="numeric"
+                inputMode='numeric'
               />
             </Form.Group>
           </Row>
           <Row
-            className="text-center py-3"
+            className='text-center py-3'
             style={{
               marginLeft: "64px",
               marginTop: "8px",
@@ -176,7 +161,7 @@ const ChooseRounds = () => {
             <Col> 1 image per round </Col>
           </Row>
           <Row style={{ marginLeft: "8px", marginTop: "160px" }}>
-            <Form.Group as={Col} md="10">
+            <Form.Group as={Col} md='10'>
               <Form.Label
                 style={{
                   width: "330px",
@@ -203,17 +188,17 @@ const ChooseRounds = () => {
                   wordWrap: "break-word",
                 }}
                 required
-                type="text"
-                placeholder="Enter # of secondes here..."
+                type='text'
+                placeholder='Enter # of secondes here...'
                 onChange={handleChange}
-                name="roundTime"
+                name='roundTime'
                 // defaultValue="60"
-                inputMode="numeric"
+                inputMode='numeric'
               />
             </Form.Group>
           </Row>
           <Row
-            className="text-center py-3"
+            className='text-center py-3'
             style={{
               marginLeft: "64px",
               marginTop: "8px",
@@ -229,7 +214,7 @@ const ChooseRounds = () => {
             <Col> We recommend 60 </Col>
           </Row>
           <Row
-            className="text-center py-3"
+            className='text-center py-3'
             style={{
               marginTop: "64px",
             }}
@@ -242,8 +227,8 @@ const ChooseRounds = () => {
               }}
             >
               <Button
-                variant="success"
-                type="submit"
+                variant='success'
+                type='submit'
                 disabled={isLoading}
                 onClick={continueButton}
                 style={{

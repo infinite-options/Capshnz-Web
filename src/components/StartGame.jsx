@@ -57,10 +57,10 @@ const StartGame = () => {
         console.log(updatedUserData);
         await joinGame(updatedUserData);
       } catch (error) {
-        if (error.response && error.response.status === 409)
-          console.error("Error:", error);
+        if (error.response && error.response.status === 409) console.error("Error:", error);
         else throw error;
       }
+      console.log("Navigating to WaitingRoom from StartGame - after joining game");
       navigate("/WaitingRoom", { state: updatedUserData });
     } catch (error) {
       handleApiError(error, joinGameButton, context);
@@ -86,8 +86,8 @@ const StartGame = () => {
         paddingBottom: "2rem",
       }}
     >
-      <Container className="g-0" fluid>
-        <Row className="text-center">
+      <Container className='g-0' fluid>
+        <Row className='text-center'>
           <Col>
             <div
               style={{
@@ -106,11 +106,8 @@ const StartGame = () => {
             </div>
           </Col>
         </Row>
-        <Form onSubmit={joinGameButton} className="g-0">
-          <Row
-            className="text-center g-0"
-            style={{ marginLeft: "auto", marginRight: "auto" }}
-          >
+        <Form onSubmit={joinGameButton} className='g-0'>
+          <Row className='text-center g-0' style={{ marginLeft: "auto", marginRight: "auto" }}>
             <Col>
               <Form.Group>
                 <Form.Label
@@ -141,22 +138,19 @@ const StartGame = () => {
                   }}
                   required
                   value={gameCode}
-                  type="text"
-                  placeholder="Enter game code here..."
+                  type='text'
+                  placeholder='Enter game code here...'
                   onChange={handleGameCodeChange}
-                  inputMode="numeric"
+                  inputMode='numeric'
                 />
               </Form.Group>
             </Col>
           </Row>
-          <Row
-            className="text-center py-3 g-0"
-            style={{ marginRight: "auto", marginLeft: "auto" }}
-          >
+          <Row className='text-center py-3 g-0' style={{ marginRight: "auto", marginLeft: "auto" }}>
             <Col>
               <Button
-                variant="success"
-                type="submit"
+                variant='success'
+                type='submit'
                 disabled={isJoinLoading}
                 style={{
                   minWidth: 180,
@@ -189,7 +183,7 @@ const StartGame = () => {
         }}
       > */}
         <Row
-          className="text-center py-3 g-0"
+          className='text-center py-3 g-0'
           style={{
             width: 380,
             color: "white",
@@ -204,13 +198,11 @@ const StartGame = () => {
         >
           <Col>Want to provide game feedback?</Col>
         </Row>
-        <Row className="text-center">
+        <Row className='text-center'>
           <Col style={{ position: "relative" }}>
-            <Polygon
-              style={{ position: "relative", top: "2px", left: "-30px" }}
-            />
+            <Polygon style={{ position: "relative", top: "2px", left: "-30px" }} />
             <Button
-              variant="warning"
+              variant='warning'
               onClick={handleFeedback}
               style={{
                 minWidth: 218,
@@ -244,7 +236,7 @@ const StartGame = () => {
           fluid
         > */}
         <Row
-          className="text-center py-4"
+          className='text-center py-4'
           style={{
             width: 380,
             color: "white",
@@ -259,13 +251,11 @@ const StartGame = () => {
         >
           <Col>Want to create your own game?</Col>
         </Row>
-        <Row className="text-center" style={{ marginTop: "16px" }}>
+        <Row className='text-center' style={{ marginTop: "16px" }}>
           <Col style={{ position: "relative" }}>
-            <Polygon
-              style={{ position: "relative", top: "2px", left: "-30px" }}
-            />
+            <Polygon style={{ position: "relative", top: "2px", left: "-30px" }} />
             <Button
-              variant="primary"
+              variant='primary'
               onClick={createNewGameButton}
               disabled={isCreateLoading}
               style={{

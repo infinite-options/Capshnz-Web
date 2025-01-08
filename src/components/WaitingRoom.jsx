@@ -107,7 +107,13 @@ const WaitingRoom = () => {
         };
         setUserData(updatedUserData);
         setCookie("userData", updatedUserData, { path: "/" });
-        navigate("/CaptionNew", { state: updatedUserData });
+        if (userData.host) {
+          console.log("Navigating to CaptionNew from WaitingRoom - host starting game");
+          navigate("/CaptionNew", { state: updatedUserData });
+        } else {
+          console.log("Navigating to CaptionNew from WaitingRoom - non-host joining game");
+          navigate("/CaptionNew", { state: updatedUserData });
+        }
       }
     });
   };

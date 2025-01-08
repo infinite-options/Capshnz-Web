@@ -127,11 +127,12 @@ const ScoreboardNew = () => {
       } else if (event.data.message === "Start Next Round") {
         const updatedUserData = {
           ...userData,
-          roundNumber: event.data.roundNumber,
+          roundNumber: userData.roundNumber + 1,
           imageURL: event.data.imageURL,
         };
         setUserData(updatedUserData);
         setCookie("userData", updatedUserData, { path: "/" });
+        console.log("Navigating to CaptionNew from ScoreboardNew - starting next round");
         navigate("/CaptionNew", { state: updatedUserData });
       } else if (event.data.message === "Start EndGame") {
         navigate("/FinalScore", { state: userData });

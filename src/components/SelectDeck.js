@@ -29,18 +29,13 @@ export default function SelectDeck() {
   async function handleClick(deckTitle, deckUID, thumbnail_url) {
     try {
       await selectDeck(deckUID, userData.gameCode, userData.roundNumber);
+      console.log("Navigating to WaitingRoom from SelectDeck - after deck selection");
       let isApi;
       if (deckTitle === "Google Photos") {
         await publish({ data: { message: "Deck Selected" } });
         navigate("/GooglePhotos", { state: userData });
         return;
-      } else if (
-        deckTitle === "Cleveland Gallery" ||
-        deckTitle === "Chicago Gallery" ||
-        deckTitle === "Giphy Gallery" ||
-        deckTitle === "Harvard Gallery" ||
-        deckTitle === "CNN Gallery"
-      ) {
+      } else if (deckTitle === "Cleveland Gallery" || deckTitle === "Chicago Gallery" || deckTitle === "Giphy Gallery" || deckTitle === "Harvard Gallery" || deckTitle === "CNN Gallery") {
         isApi = true;
       } else {
         isApi = false;
@@ -62,11 +57,7 @@ export default function SelectDeck() {
         // navigate("/Waiting", {state: updatedUserData})
       }
     } catch (error) {
-      handleApiError(
-        error,
-        () => handleClick(deckTitle, deckUID, thumbnail_url),
-        context
-      );
+      handleApiError(error, () => handleClick(deckTitle, deckUID, thumbnail_url), context);
     }
   }
 
@@ -86,21 +77,16 @@ export default function SelectDeck() {
                 Game Rules
             </Link>
             </div> */}
-      <Row className="text-center">
+      <Row className='text-center'>
         <Col>
-          <CloseButton
-            onClick={() => navigate("/StartGame", { state: userData })}
-            style={{ position: "absolute", right: 5, top: 5 }}
-          />
+          <CloseButton onClick={() => navigate("/StartGame", { state: userData })} style={{ position: "absolute", right: 5, top: 5 }} />
         </Col>
       </Row>
-      <Row className="text-center">
+      <Row className='text-center'>
         <Col style={{ position: "relative" }}>
-          <Polygon
-            style={{ position: "absolute", bottom: "-32px", right: "80px" }}
-          />
+          <Polygon style={{ position: "absolute", bottom: "-32px", right: "80px" }} />
           <input
-            type="text"
+            type='text'
             style={{
               width: 350,
               height: 64,
@@ -121,35 +107,21 @@ export default function SelectDeck() {
               outline: "none",
               textAlign: "center",
             }}
-            value="Select a Deck"
+            value='Select a Deck'
             readOnly
           />
         </Col>
       </Row>
       <br />
       <br />
-      <ul className="deck-container">
+      <ul className='deck-container'>
         {decksInfo.map((deck, index) => {
           if (deck.user_uid !== "PRIVATE") {
             return (
-              <div
-                key={index}
-                onClick={(event) =>
-                  handleClick(
-                    deck.deck_title,
-                    deck.deck_uid,
-                    deck.deck_thumbnail_url
-                  )
-                }
-                className="deck"
-              >
+              <div key={index} onClick={(event) => handleClick(deck.deck_title, deck.deck_uid, deck.deck_thumbnail_url)} className='deck'>
                 <div style={{ cursor: "pointer" }}>
-                  <img
-                    src={deck.deck_thumbnail_url}
-                    alt={deck.deck_title}
-                    className="deck-image"
-                  />
-                  <div className="deckText">{deck.deck_title}</div>
+                  <img src={deck.deck_thumbnail_url} alt={deck.deck_title} className='deck-image' />
+                  <div className='deckText'>{deck.deck_title}</div>
                 </div>
                 <br />
               </div>

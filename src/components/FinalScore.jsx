@@ -38,9 +38,7 @@ const FinalScore = () => {
       navigate("/ChooseScoring", { state: updatedUserData });
     } catch (error) {
       if (axios.isTimeoutError(error)) {
-        alert(
-          "The operation time of Play Again is too long, please try again!"
-        );
+        alert("The operation time of Play Again is too long, please try again!");
       } else {
         handleApiError(error, startGameButton, context);
       }
@@ -61,6 +59,7 @@ const FinalScore = () => {
           host: false,
         };
         await joinGame(updatedUserData);
+        console.log("Navigating to WaitingRoom from FinalScore - when starting new game");
         navigate("/WaitingRoom", { state: updatedUserData });
       }
     });
@@ -92,19 +91,12 @@ const FinalScore = () => {
   useEffect(() => {
     async function scoreBoard() {
       setloadingImg(true);
-      const scoreboard = await getGameScore(
-        userData.gameCode,
-        userData.numOfRounds
-      );
+      const scoreboard = await getGameScore(userData.gameCode, userData.numOfRounds);
       setloadingImg(false);
       scoreboard.sort((a, b) => b.game_score - a.game_score);
       setScoreBoard(scoreboard);
     }
-    if (
-      cookies.userData === undefined ||
-      cookies.userData.scoreBoard === undefined ||
-      cookies.userData.scoreBoard.length == 0
-    ) {
+    if (cookies.userData === undefined || cookies.userData.scoreBoard === undefined || cookies.userData.scoreBoard.length == 0) {
       scoreBoard();
     } else {
       // console.log(cookies.userData)
@@ -132,18 +124,15 @@ const FinalScore = () => {
       }}
     >
       <Container>
-        <Row className="text-center">
+        <Row className='text-center'>
           <Col>
-            <CloseButton
-              onClick={() => navigate("/StartGame", { state: userData })}
-              style={{ position: "absolute", right: 5, top: 5 }}
-            />
+            <CloseButton onClick={() => navigate("/StartGame", { state: userData })} style={{ position: "absolute", right: 5, top: 5 }} />
           </Col>
         </Row>
-        <Row className="text-center">
+        <Row className='text-center'>
           <Col style={{ position: "relative" }}>
             <input
-              type="text"
+              type='text'
               style={{
                 width: 350,
                 height: 64,
@@ -165,7 +154,7 @@ const FinalScore = () => {
                 marginRight: "auto",
                 marginLeft: "auto",
               }}
-              value="Game Over!"
+              value='Game Over!'
               readOnly
             />
             <div style={{ marginTop: "-10px", marginLeft: "120px" }}>
@@ -173,14 +162,14 @@ const FinalScore = () => {
             </div>
           </Col>
         </Row>
-        <Row className="text-center" style={{ marginTop: "64px" }}>
+        <Row className='text-center' style={{ marginTop: "64px" }}>
           <Col style={{ position: "relative", marginLeft: "48px" }}>
             <div style={{ marginBottom: "-100px", marginLeft: "100px" }}>
               <Polygon />
             </div>
 
             <input
-              type="text"
+              type='text'
               style={{
                 width: 300,
                 height: 41,
@@ -202,20 +191,14 @@ const FinalScore = () => {
                 marginRight: "auto",
                 marginLeft: "auto",
               }}
-              value="Final Scores"
+              value='Final Scores'
               readOnly
             />
           </Col>
         </Row>
         {loadingImg && (
           <div>
-            <img
-              src="/Loading_icon.gif"
-              alt="loading CNN images"
-              width="250"
-              className="loadingimg"
-              style={{ objectFit: "contain" }}
-            />
+            <img src='/Loading_icon.gif' alt='loading CNN images' width='250' className='loadingimg' style={{ objectFit: "contain" }} />
           </div>
         )}
         <div
@@ -243,23 +226,17 @@ const FinalScore = () => {
             <div style={{ marginRight: "64px" }}>Total</div>
           </div>
           {scoreBoard.map((player, index) => (
-            <div
-              key={index}
-              style={{ display: "flex", justifyContent: "space-between" }}
-            >
+            <div key={index} style={{ display: "flex", justifyContent: "space-between" }}>
               <div style={{ marginLeft: "64px" }}>{player.user_alias}</div>
               <div style={{ marginRight: "64px" }}> {player.game_score}</div>
             </div>
           ))}
         </div>
-        <Row
-          className="text-center"
-          style={{ marginTop: "80px", marginLeft: "0px" }}
-        >
+        <Row className='text-center' style={{ marginTop: "80px", marginLeft: "0px" }}>
           <Col style={{ position: "relative" }}>
             {userData.host && (
               <Button
-                variant="warning"
+                variant='warning'
                 onClick={startGameButton}
                 disabled={isLoading}
                 style={{
@@ -283,23 +260,17 @@ const FinalScore = () => {
               </Button>
             )}
             {isHostStartingAgain && (
-              <div
-                className="d-flex justify-content-center mb-5"
-                style={{ fontFamily: "Grandstander" }}
-              >
-                <Spinner animation="border" role="status" />
+              <div className='d-flex justify-content-center mb-5' style={{ fontFamily: "Grandstander" }}>
+                <Spinner animation='border' role='status' />
                 <span>&nbsp;&nbsp;{"Starting again..."}</span>
               </div>
             )}
           </Col>
         </Row>
-        <Row
-          className="text-center"
-          style={{ marginTop: "32px", marginLeft: "0px" }}
-        >
+        <Row className='text-center' style={{ marginTop: "32px", marginLeft: "0px" }}>
           <Col style={{ position: "relative" }}>
             <Button
-              variant="warning"
+              variant='warning'
               onClick={landingButton}
               style={{
                 width: 350,
@@ -322,14 +293,14 @@ const FinalScore = () => {
             </Button>
           </Col>
         </Row>
-        <Row className="text-center" style={{ marginTop: "80px" }}>
+        <Row className='text-center' style={{ marginTop: "80px" }}>
           <Col style={{ position: "relative" }}>
             <div style={{ marginBottom: "-125px", marginLeft: "150px" }}>
               <Polygon />
             </div>
 
             <input
-              type="text"
+              type='text'
               style={{
                 width: 350,
                 height: 55,
@@ -351,7 +322,7 @@ const FinalScore = () => {
                 marginLeft: "auto",
                 marginRight: "auto",
               }}
-              value="Winning Captions"
+              value='Winning Captions'
               readOnly
             />
           </Col>
@@ -360,20 +331,15 @@ const FinalScore = () => {
           return (
             <div key={index} style={{ marginTop: "64px" }}>
               {"round_image_uid" in caption && (
-                <Row className="text-center py-1">
+                <Row className='text-center py-1'>
                   <Col>
-                    <img
-                      className="imgCaption"
-                      src={caption.round_image_uid}
-                      alt="Loading Image...."
-                      style={{ borderRadius: 0, objectFit: "contain" }}
-                    />
+                    <img className='imgCaption' src={caption.round_image_uid} alt='Loading Image....' style={{ borderRadius: 0, objectFit: "contain" }} />
                   </Col>
                 </Row>
               )}
               {"round_number" in caption && (
                 <Row
-                  className="text-center py-3"
+                  className='text-center py-3'
                   style={{
                     marginLeft: "auto",
                     marginRight: "auto",
@@ -390,7 +356,7 @@ const FinalScore = () => {
                   <Col>{`Round: ${caption.round_number}`}</Col>
                 </Row>
               )}
-              <Row className="text-center py-1">
+              <Row className='text-center py-1'>
                 <Col>
                   {/* <Button
                     variant="warning"
@@ -415,7 +381,7 @@ const FinalScore = () => {
                     {caption.caption}
                   </Button> */}
                   <button
-                    variant="warning"
+                    variant='warning'
                     style={{
                       minWidth: 350,
                       minHeight: 60,
@@ -441,14 +407,11 @@ const FinalScore = () => {
             </div>
           );
         })}
-        <Row
-          className="text-center"
-          style={{ marginTop: "40px", marginLeft: "0px" }}
-        >
+        <Row className='text-center' style={{ marginTop: "40px", marginLeft: "0px" }}>
           <Col style={{ position: "relative" }}>
             {userData.host && (
               <Button
-                variant="warning"
+                variant='warning'
                 onClick={sendEmail}
                 disabled={isSending}
                 style={{

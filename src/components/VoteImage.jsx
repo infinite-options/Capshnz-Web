@@ -221,29 +221,8 @@ const VoteImage = () => {
     let minimizeTime = parseInt(localStorage.getItem("votepage-minimize-time"));
     console.log("minimize time", minimizeTime);
     if (document.hidden && !userData.host) {
-      localStorage.setItem("isOutofSync", true);
-
-      //   let remTime = parseInt(localStorage.getItem("remaining-time-votePage"));
-
-      // let currentTime = new Date().getTime();
-      // console.log("current time",currentTime)
-      // let diff;
-      // if(minimizeTime == 0){
-      //   diff  =  0
-      // }else{
-      //   diff = currentTime - minimizeTime;
-      // }
-      // diff = Math.ceil(diff / 1000);
-      // console.log("minimizeTime, remTime, diff, rem - diff",minimizeTime,remTime, diff, remTime-diff)
-      // let val = remTime - diff;
-      // console.log("here diff is less that zero, isOutofSync", val, localStorage.getItem("isOutofSync"));
-      // if(val < -1) {
-
-      //   // setIsOutOfSync(true)
-      //   localStorage.setItem("isOutofSync", true)
-
-      //   // console.log("isOutofSync 195",isOutofSync)
-      // }
+      console.log("Navigating to MidGameWaitingRoom from VoteImage - user left room");
+      navigate("/MidGameWaitingRoom", { state: userData });
     }
     let isDeSync = localStorage.getItem("isOutofSync");
     console.log("desync", isDeSync);
