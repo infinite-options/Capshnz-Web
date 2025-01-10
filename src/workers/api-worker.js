@@ -6,6 +6,7 @@
   self.addEventListener("message", async (event) => {
       const submitCaptionURL = "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/v2/submitCaption";
 
+      // console.log("event.data",event.data)
       if(event.data[0] === "start-timeout") {   
         let caption = event.data[3];
           let userData = event.data[1];

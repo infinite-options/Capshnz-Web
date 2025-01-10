@@ -1,7 +1,7 @@
 import { ReactComponent as PolygonWhiteUpward } from "../assets/polygon-upward-white.svg";
 import Form from "react-bootstrap/Form";
 import { Modal, Row, Col, Button, Container } from "react-bootstrap";
-import { useState, useEffect, useRef, useMemo  } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import {
   getSubmittedCaptions,
@@ -24,11 +24,10 @@ import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 import Axios from "axios";
 
 //for desync
-import LoadingScreen from  "./LoadingScreen";
+import LoadingScreen from "./LoadingScreen";
 
 //This function is made to shuffle the sequence of the captions array.
 function shuffleArray(array) {
-
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
@@ -44,8 +43,10 @@ const VoteImage = () => {
   // const { publish, subscribe, unSubscribe, detach } = useAbly(
   //   `${userData.gameCode}/${userData.roundNumber}`
   // );
-  const { publish, subscribe, unSubscribe, detach } = useAbly( userData.gameCode);
-   // Popup state
+  const { publish, subscribe, unSubscribe, detach } = useAbly(
+    userData.gameCode
+  );
+  // Popup state
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const [captions, setCaptions] = useState([]);
@@ -55,7 +56,7 @@ const VoteImage = () => {
   const [votedCaption, setvotedCaption] = useState(-1);
   // const webWorker = new WebWorker(worker,  { type: "module" });
   // const webWorker = new WebWorker(worker,  { type: "module", data: { axios: Axios } });
-  const webWorker  = new Worker(new URL('../workers/api-worker.js', import.meta.url))
+  const webWorker = useRef(null);
   // for timer
   const [remainingTime, setRemainingTime] = useState(10);
   const [isPageVisible, setPageVisibility] = useState(true);
@@ -66,7 +67,7 @@ const VoteImage = () => {
 
   // Function to trigger popup
   const triggerPopup = (message) => {
-    console.log("popup triggered in vote",message);
+    console.log("popup triggered in vote", message);
     setPopupMessage(message);
     setShowPopup(true);
     setTimeout(() => setShowPopup(false), 3000); // Auto-hide after 3 seconds
@@ -78,7 +79,7 @@ const VoteImage = () => {
         console.error("No message defined in data:", data.data);
         return;
       }
-      console.log("Vote publish data:",data.data);
+      console.log("Vote publish data:", data.data);
       await publish(data);
       triggerPopup(`Message broadcasted: ${data.data.message}`);
     } catch (error) {
@@ -100,13 +101,13 @@ const VoteImage = () => {
       autoSubmitVote();
     }
   }, []);
-  
+
   async function autoSubmitVote() {
     try {
       const result = await postVote(null, userData); // Submit null vote for this player
       console.log("Auto-submitted vote:", result);
       setVoteSubmitted(true);
-  
+
       // Notify server about auto-submission if needed
       // await publish({
       //   data: {
@@ -126,7 +127,6 @@ const VoteImage = () => {
   }, [captions]);
 
   // ... rest of the com
-
 
   if (
     cookies.userData != undefined &&
@@ -175,7 +175,6 @@ const VoteImage = () => {
     setCookie("userData", updatedUserData, { path: "/" });
     if (tempCaptions.length <= 1) {
       await skipVote(tempCaptions, onlyCaptionSubmitted, myCaption);
-
     }
   }
   async function skipVote(tempCaptions, onlyCaptionSubmitted, myCaption) {
@@ -194,103 +193,93 @@ const VoteImage = () => {
   }
 
   useEffect(() => {
-
     if (captions.length === 0 && cookies.userData.captions != undefined) {
       setloadingImg(false);
       setSubmittedCaptions(cookies.userData.captions);
       isCaptionSubmitted.current = true;
-
     }
 
     if (userData.host && cookies.userData.captions === undefined) {
       async function getCaptions() {
         const submittedCaptions = await getSubmittedCaptions(userData);
 
-        await publishWithPopup(
-          { data: {
+        await publishWithPopup({
+          data: {
             message: "Set Vote",
             submittedCaptions: submittedCaptions,
             roundNumber: userData.roundNumber,
             imageURL: userData.imageURL,
-          }},
-        );
+          },
+        });
       }
       getCaptions();
     }
 
     subscribe((event) => {
       if (event.data.message === "Set Vote") {
-
         isCaptionSubmitted.current = true;
         setloadingImg(false);
         setSubmittedCaptions(event.data.submittedCaptions);
         console.log("Captions received:", event.data.submittedCaptions);
       } else if (event.data.message === "Start ScoreBoard") {
-
-        handleNavigate()
+        handleNavigate();
         // setCookie("userData", userData, { path: "/" });
         // navigate("/ScoreboardNew", { state: userData });
       }
     });
   }, [userData]);
 
-  const handleNavigate =()=>{
-        setCookie("userData", userData, { path: "/" });
-        // let minimizeTime = localStorage.getItem("votepage-minimize-time");
-        let minimizeTime = parseInt(localStorage.getItem("votepage-minimize-time"));
-    console.log("minimize time", minimizeTime)
-    if(document.hidden && !userData.host){
-      localStorage.setItem("isOutofSync", true)
+  const handleNavigate = () => {
+    setCookie("userData", userData, { path: "/" });
+    // let minimizeTime = localStorage.getItem("votepage-minimize-time");
+    let minimizeTime = parseInt(localStorage.getItem("votepage-minimize-time"));
+    console.log("minimize time", minimizeTime);
+    if (document.hidden && !userData.host) {
+      localStorage.setItem("isOutofSync", true);
 
-    //   let remTime = parseInt(localStorage.getItem("remaining-time-votePage"));
-    
-    
-    // let currentTime = new Date().getTime();
-    // console.log("current time",currentTime)
-    // let diff;
-    // if(minimizeTime == 0){
-    //   diff  =  0
-    // }else{
-    //   diff = currentTime - minimizeTime;
-    // }
-    // diff = Math.ceil(diff / 1000);
-    // console.log("minimizeTime, remTime, diff, rem - diff",minimizeTime,remTime, diff, remTime-diff)
-    // let val = remTime - diff;
-    // console.log("here diff is less that zero, isOutofSync", val, localStorage.getItem("isOutofSync"));
-    // if(val < -1) {
-      
-    //   // setIsOutOfSync(true)
-    //   localStorage.setItem("isOutofSync", true)
+      //   let remTime = parseInt(localStorage.getItem("remaining-time-votePage"));
 
-    //   // console.log("isOutofSync 195",isOutofSync)
-    // }
+      // let currentTime = new Date().getTime();
+      // console.log("current time",currentTime)
+      // let diff;
+      // if(minimizeTime == 0){
+      //   diff  =  0
+      // }else{
+      //   diff = currentTime - minimizeTime;
+      // }
+      // diff = Math.ceil(diff / 1000);
+      // console.log("minimizeTime, remTime, diff, rem - diff",minimizeTime,remTime, diff, remTime-diff)
+      // let val = remTime - diff;
+      // console.log("here diff is less that zero, isOutofSync", val, localStorage.getItem("isOutofSync"));
+      // if(val < -1) {
 
-  }
-    let isDeSync = localStorage.getItem("isOutofSync")
-    console.log("desync", isDeSync)
-  if(isDeSync == "false"){
-    localStorage.setItem("votepage-minimize-time",  0);
-    console.log("here 210")
-    localStorage.setItem("remaining-time-votePage",  0);
-    navigate("/ScoreboardNew", { state: userData });
-  } else {
-    if(!userData.host){
-    setLoadSpinner(true);
-    localStorage.setItem("isOutofSync", false);
+      //   // setIsOutOfSync(true)
+      //   localStorage.setItem("isOutofSync", true)
 
-    setTimeout(()=>{
-      navigate("/MidGameWaitingRoom", {state: userData})
-    }, 2000)
-  }
-  }
+      //   // console.log("isOutofSync 195",isOutofSync)
+      // }
+    }
+    let isDeSync = localStorage.getItem("isOutofSync");
+    console.log("desync", isDeSync);
+    if (isDeSync == "false") {
+      localStorage.setItem("votepage-minimize-time", 0);
+      console.log("here 210");
+      localStorage.setItem("remaining-time-votePage", 0);
+      navigate("/ScoreboardNew", { state: userData });
+    } else {
+      if (!userData.host) {
+        setLoadSpinner(true);
+        localStorage.setItem("isOutofSync", false);
 
-
-} 
-
-
+        setTimeout(() => {
+          navigate("/MidGameWaitingRoom", { state: userData });
+        }, 2000);
+      }
+    }
+  };
 
   useEffect(() => {
-    localStorage.removeItem("user-caption")
+    localStorage.removeItem("user-caption");
     // localStorage.removeItem("minimize-time")
     subscribe((event) => {
       if (event.data.message === "EndGame vote") {
@@ -330,94 +319,102 @@ const VoteImage = () => {
     };
   }, []);
 
-// timer synchronization when screen minimizes
-useEffect(() => {
-  const handleVisibilityChange = () => {
-    if (document.hidden) {
-      console.log(`Player ${userData.playerUID} is going out of sync.`);
-      // Page is not visible, pause the timer and save time remaining
-      setTimeRemaining(timeRemaining);
-      localStorage.setItem("votepage-minimize-time", new Date().getTime());
-      localStorage.setItem("remaining-time-votePage", remainingTime);
-      localStorage.setItem("isOutofSync", true);
-
-      // Auto-submit only for the current player
-      autoSubmitVote(); 
-      webWorker.postMessage(["vote-page", userData, remainingTime,null]);
-
-      setPageVisibility(false);
-
-    } else {
-      // Page is visible again, resume the timer
-      console.log(`Player ${userData.playerUID} is back.`);
-      webWorker.postMessage("exit");
-      let minimizeTime = parseInt(localStorage.getItem("votepage-minimize-time"));
-      let currentTime = new Date().getTime();
-      let diff = currentTime - minimizeTime;
-      diff = Math.floor(diff / 1000);
-
-      setTimeRemaining(timeRemaining - diff)
-      setPageVisibility(true);
-
-      if(timeRemaining - diff < 0 || localStorage.getItem("isOutofSync") === "true"){
-        console.log(`Auto-submitting vote for Player ${userData.playerUID}`);
-        setTimeRemaining(timeRemaining - diff);
+  // timer synchronization when screen minimizes
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        console.log(`Player ${userData.playerUID} is going out of sync.`);
+        // Page is not visible, pause the timer and save time remaining
+        setTimeRemaining(timeRemaining);
+        localStorage.setItem("votepage-minimize-time", new Date().getTime());
         localStorage.setItem("remaining-time-votePage", remainingTime);
-        console.log("timeRemaining",timeRemaining - diff)
-        console.log("remainingTime", remainingTime);
+        localStorage.setItem("isOutofSync", true);
+
+        // Auto-submit only for the current player
         autoSubmitVote();
+        webWorker.current.postMessage([
+          "vote-page",
+          userData,
+          remainingTime,
+          null,
+        ]);
 
-      }else {
-        console.log(`Player ${userData.playerUID} is still in sync.`);
-        localStorage.setItem("isOutofSync", false);
+        setPageVisibility(false);
+      } else {
+        // Page is visible again, resume the timer
+        console.log(`Player ${userData.playerUID} is back.`);
+        webWorker.current.postMessage("exit");
+
+        let minimizeTime = parseInt(
+          localStorage.getItem("votepage-minimize-time")
+        );
+        let currentTime = new Date().getTime();
+        let diff = currentTime - minimizeTime;
+        diff = Math.floor(diff / 1000);
+
+        setTimeRemaining(timeRemaining - diff);
+        setPageVisibility(true);
+
+        if (
+          timeRemaining - diff < 0 ||
+          localStorage.getItem("isOutofSync") === "true"
+        ) {
+          console.log(`Auto-submitting vote for Player ${userData.playerUID}`);
+          setTimeRemaining(timeRemaining - diff);
+          localStorage.setItem("remaining-time-votePage", remainingTime);
+          console.log("timeRemaining", timeRemaining - diff);
+          console.log("remainingTime", remainingTime);
+          autoSubmitVote();
+        } else {
+          console.log(`Player ${userData.playerUID} is still in sync.`);
+          localStorage.setItem("isOutofSync", false);
+        }
       }
-    }
-  };
+    };
 
-  document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
-  return () => {
-    document.removeEventListener('visibilitychange', handleVisibilityChange);
-  };
-// }, [timeRemaining]);
-}, [remainingTime]);
-// useEffect(() => {
-//   const handleVisibilityChange = () => {
-//     if (document.hidden) {
-//       console.log(`Player ${userData.playerUID} is going out of sync.`);
-//       localStorage.setItem("votepage-minimize-time", new Date().getTime());
-//       localStorage.setItem("remaining-time-votePage", remainingTime);
-//       localStorage.setItem("isOutofSync", true);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+    // }, [timeRemaining]);
+  }, [remainingTime]);
+  // useEffect(() => {
+  //   const handleVisibilityChange = () => {
+  //     if (document.hidden) {
+  //       console.log(`Player ${userData.playerUID} is going out of sync.`);
+  //       localStorage.setItem("votepage-minimize-time", new Date().getTime());
+  //       localStorage.setItem("remaining-time-votePage", remainingTime);
+  //       localStorage.setItem("isOutofSync", true);
 
-//       // Auto-submit only for the current player
-//       autoSubmitVote(); 
-//     } else {
-//       console.log(`Player ${userData.playerUID} is back.`);
-//       const minimizeTime = parseInt(localStorage.getItem("votepage-minimize-time"), 10);
-//       const currentTime = new Date().getTime();
-//       const diff = Math.floor((currentTime - minimizeTime) / 1000);
+  //       // Auto-submit only for the current player
+  //       autoSubmitVote();
+  //     } else {
+  //       console.log(`Player ${userData.playerUID} is back.`);
+  //       const minimizeTime = parseInt(localStorage.getItem("votepage-minimize-time"), 10);
+  //       const currentTime = new Date().getTime();
+  //       const diff = Math.floor((currentTime - minimizeTime) / 1000);
 
-//       const updatedTimeRemaining = remainingTime - diff;
-//       setTimeRemaining(updatedTimeRemaining);
+  //       const updatedTimeRemaining = remainingTime - diff;
+  //       setTimeRemaining(updatedTimeRemaining);
 
-//       // Only auto-submit if this player is out of sync
-//       if (updatedTimeRemaining <= 0 || localStorage.getItem("isOutofSync") === "true") {
-//         console.log(`Auto-submitting vote for Player ${userData.playerUID}`);
-//         autoSubmitVote();
-//       } else {
-//         console.log(`Player ${userData.playerUID} is still in sync.`);
-//         localStorage.setItem("isOutofSync", false);
-//       }
-//     }
-//   };
+  //       // Only auto-submit if this player is out of sync
+  //       if (updatedTimeRemaining <= 0 || localStorage.getItem("isOutofSync") === "true") {
+  //         console.log(`Auto-submitting vote for Player ${userData.playerUID}`);
+  //         autoSubmitVote();
+  //       } else {
+  //         console.log(`Player ${userData.playerUID} is still in sync.`);
+  //         localStorage.setItem("isOutofSync", false);
+  //       }
+  //     }
+  //   };
 
-//   document.addEventListener("visibilitychange", handleVisibilityChange);
+  //   document.addEventListener("visibilitychange", handleVisibilityChange);
 
-//   return () => {
-//     document.removeEventListener("visibilitychange", handleVisibilityChange);
-//   };
-// }, [remainingTime]);
-
+  //   return () => {
+  //     document.removeEventListener("visibilitychange", handleVisibilityChange);
+  //   };
+  // }, [remainingTime]);
 
   async function closeButton() {
     try {
@@ -428,11 +425,12 @@ useEffect(() => {
           scoreboard[i].game_score = 0;
         }
       }
-      await publishWithPopup({data :{
+      await publishWithPopup({
+        data: {
           message: "EndGame vote",
           scoreBoard: scoreboard,
         },
-    });
+      });
     } catch (error) {
       handleApiError(error, closeButton, context);
     }
@@ -506,35 +504,40 @@ useEffect(() => {
 
       //  code added to allow allow api call when player hasnt voted
       let selectedCaption = null;
-      if(selectedCaptionIndex > -1){
+      if (selectedCaptionIndex > -1) {
         selectedCaption = captions[selectedCaptionIndex];
       }
       console.log("before numOfPlayersVoting");
       numOfPlayersVoting = await postVote(selectedCaption, userData);
 
-
       console.log("after numOfPlayersVoting:");
       if (numOfPlayersVoting === 0 || selectedCaptionIndex == -1) {
-
         let publishTimer = 0;
-          
-        if(numOfPlayersVoting != 0)  publishTimer = 5000;
+
+        if (numOfPlayersVoting != 0) publishTimer = 5000;
 
         function timeout() {
+          setTimeout(async () => {
+            console.log(
+              "before publish start scoreboard after numofplayersVoting"
+            );
+            await publishWithPopup({
+              data: {
+                message: "Start ScoreBoard",
+                roundNumber: userData.roundNumber,
+              },
+            });
+          }, publishTimer); // 5000 milliseconds = 5 seconds
+        }
 
-        setTimeout(async () => {
-  
-          console.log("before publish start scoreboard after numofplayersVoting");
-        await publishWithPopup({data:{ message: "Start ScoreBoard", roundNumber: userData.roundNumber } });
-      } , publishTimer); // 5000 milliseconds = 5 seconds
-
-    }
-    
-    console.log("here line 436 numOfPlayersVoting : ",numOfPlayersVoting )
-  if(userData.host || numOfPlayersVoting === 0 || selectedCaptionIndex === -1) timeout();
-}
-
-
+        console.log("here line 436 numOfPlayersVoting : ", numOfPlayersVoting);
+        if (
+          userData.host ||
+          numOfPlayersVoting === 0 ||
+          selectedCaptionIndex === -1
+        )
+          timeout();
+      }
     } catch (error) {
       handleApiError(error, voteButton, context);
     }
@@ -544,22 +547,32 @@ useEffect(() => {
     return backgroundColors[status];
   }
 
+  // Initialize worker once on mount
+  useEffect(() => {
+    webWorker.current = new Worker(
+      new URL("../workers/api-worker.js", import.meta.url)
+    );
+    return () => webWorker.current?.terminate();
+  }, []);
+
   return (
-    <div>       { loadSpinner && <LoadingScreen />}
-    <div
-      style={{
-        background: "#878787",
-        width: "100%",
-        minHeight: "100vh",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-        overflow: "scroll",
-      }}
-    >
-      <Container fluid>
-        {/* Popup Modal */}
-        <Modal show={showPopup} onHide={() => setShowPopup(false)} centered>
+    <div>
+      {" "}
+      {loadSpinner && <LoadingScreen />}
+      <div
+        style={{
+          background: "#878787",
+          width: "100%",
+          minHeight: "100vh",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          overflow: "scroll",
+        }}
+      >
+        <Container fluid>
+          {/* Popup Modal */}
+          <Modal show={showPopup} onHide={() => setShowPopup(false)} centered>
             <Modal.Header closeButton>
               <Modal.Title>Notification</Modal.Title>
             </Modal.Header>
@@ -570,205 +583,205 @@ useEffect(() => {
               </Button>
             </Modal.Footer>
           </Modal>
-        <Row className="text-center">
-          <Col>
-            <CloseButton
-              onClick={() => navigate("/StartGame", { state: userData })}
-              style={{ position: "absolute", right: 5, top: 5 }}
-            />
-          </Col>
-        </Row>
-        <Row className="text-center">
-          <Col>
-            <div
+          <Row className="text-center">
+            <Col>
+              <CloseButton
+                onClick={() => navigate("/StartGame", { state: userData })}
+                style={{ position: "absolute", right: 5, top: 5 }}
+              />
+            </Col>
+          </Row>
+          <Row className="text-center">
+            <Col>
+              <div
+                style={{
+                  width: "90%",
+                  height: 365,
+                  background: "#D9D9D9",
+                  borderRadius: 0,
+                  //position: "absolute",
+                  top: 32,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  marginTop: "2rem",
+                }}
+              >
+                <img
+                  className="imgVote"
+                  src={userData.imageURL}
+                  style={{
+                    width: "96%",
+                    height: "96%",
+                    borderRadius: "0px",
+                    objectFit: "contain",
+                  }}
+                />
+              </div>
+            </Col>
+          </Row>
+
+          <Form>
+            <Row className="text-center">
+              <Col>
+                {voteSubmitted && (
+                  <div
+                    className="submittedVote"
+                    style={{
+                      fontFamily: "Grandstander",
+                      fontSize: "25px",
+                      fontWeight: "600",
+                      marginLeft: "auto",
+                      marginRight: "auto",
+                    }}
+                  >
+                    <br />
+                    <b>Vote submitted.</b>
+                    <br />
+                    Waiting for other players to submit votes...
+                    <br />
+                    <ReactBootStrap.Spinner animation="border" role="status" />
+                  </div>
+                )}
+              </Col>
+            </Row>
+            <Row
+              className="text-center"
               style={{
-                width: "90%",
-                height: 365,
-                background: "#D9D9D9",
-                borderRadius: 0,
-                //position: "absolute",
-                top: 32,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                marginLeft: "auto",
-                marginRight: "auto",
-                marginTop: "2rem",
               }}
             >
-              <img
-                className="imgVote"
-                src={userData.imageURL}
-                style={{
-                  width: "96%",
-                  height: "96%",
-                  borderRadius: "0px",
-                  objectFit: "contain",
-                }}
-              />
-            </div>
-          </Col>
-        </Row>
-
-        <Form>
-          <Row className="text-center">
-            <Col>
-              {voteSubmitted && (
+              <Col>
                 <div
-                  className="submittedVote"
                   style={{
+                    width: 76,
+                    height: 76,
+                    background: "#ADC3EC",
+                    borderRadius: "50%",
+                    position: "relative",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    color: "white",
+                    fontSize: 30,
                     fontFamily: "Grandstander",
-                    fontSize: "25px",
-                    fontWeight: "600",
+                    fontWeight: "700",
+                    wordWrap: "break-word",
+                    //marginBottom: "10rem",
+                    marginTop: "2rem",
                     marginLeft: "auto",
                     marginRight: "auto",
                   }}
                 >
-                  <br />
-                  <b>Vote submitted.</b>
-                  <br />
-                  Waiting for other players to submit votes...
-                  <br />
-                  <ReactBootStrap.Spinner animation="border" role="status" />
+                  <CountdownCircleTimer
+                    size={76}
+                    strokeWidth={5}
+                    isPlaying
+                    // duration={timeRemaining}
+                    duration={userData.roundTime}
+                    colors="#000000"
+                    backgroundColors="#ADC3EC"
+                    onComplete={() => {
+                      // if (!voteSubmitted) {
+                      // wrong value being sent, it should be -1
+                      // voteButton(true);
+                      voteButton(-1);
+                      // }
+                    }}
+                  >
+                    {({ remainingTime }) => {
+                      setRemainingTime(remainingTime);
+
+                      return (
+                        <div className="countdownVote">{remainingTime}</div>
+                      );
+                    }}
+                  </CountdownCircleTimer>
                 </div>
-              )}
-            </Col>
-          </Row>
-          <Row
-            className="text-center"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Col>
-              <div
+              </Col>
+            </Row>
+            {!voteSubmitted && (
+              <Row>
+                <Col>
+                  {shuffledCaptions.map((caption, index) => {
+                    let status = "";
+                    if (caption === isMyCaption) status = "myCaption";
+                    else if (toggles[index] === true) status = "selected";
+                    else status = "default";
+                    return (
+                      // <Row className="text-center">
+                      <Button
+                        onClick={(event) => updateToggles(index)}
+                        style={{
+                          width: "357px",
+                          // height: 54,
+                          background: getBackgroundColor(status),
+                          borderRadius: 30,
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          color: "white",
+                          fontSize: 35,
+                          fontFamily: "Grandstander",
+                          fontWeight: "600",
+                          wordWrap: "break-word",
+                          //marginLeft: "2.5rem",
+                          marginTop: "4rem",
+                          marginLeft: "auto",
+                          marginRight: "auto",
+                        }}
+                      >
+                        {caption}
+                      </Button>
+                      // </Row>
+                    );
+                  })}
+                </Col>
+              </Row>
+            )}
+          </Form>
+          <Row className="text-center">
+            <Col style={{ position: "relative" }}>
+              <div style={{ marginLeft: "-110px" }}>
+                <PolygonWhiteUpward />
+              </div>
+              <input
+                type="text"
                 style={{
-                  width: 76,
-                  height: 76,
-                  background: "#ADC3EC",
-                  borderRadius: "50%",
-                  position: "relative",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "white",
+                  width: "350px",
+                  height: 56,
+                  background: "#FFF",
+                  borderRadius: 30,
+                  paddingLeft: 24,
+                  paddingRight: 24,
+                  paddingTop: 6,
+                  paddingBottom: 6,
+                  color: "black",
                   fontSize: 30,
                   fontFamily: "Grandstander",
                   fontWeight: "700",
                   wordWrap: "break-word",
-                  //marginBottom: "10rem",
-                  marginTop: "2rem",
-                  marginLeft: "auto",
+                  marginTop: "-1px",
+                  border: "none",
+                  outline: "none",
+                  textAlign: "center",
                   marginRight: "auto",
+                  marginLeft: "auto",
                 }}
-              >
-                <CountdownCircleTimer
-                  size={76}
-                  strokeWidth={5}
-                  isPlaying
-                  
-                  // duration={timeRemaining}
-                  duration={userData.roundTime}
-                  colors="#000000"
-                  backgroundColors="#ADC3EC"
-                  onComplete={() => {
-                    // if (!voteSubmitted) {
-                      // wrong value being sent, it should be -1
-                      // voteButton(true);
-                      voteButton(-1)
-                    // }
-                  }}
-                >
-                  {({ remainingTime }) => {
-                   setRemainingTime(remainingTime);
-
-                    return <div className="countdownVote">{remainingTime}</div>;
-                  }}
-                </CountdownCircleTimer>
-              </div>
+                value={userData.deckTitle}
+                readOnly
+              />
             </Col>
           </Row>
-          {!voteSubmitted && (
-            <Row>
-              <Col>
-                {shuffledCaptions.map((caption, index) => {
-                  let status = "";
-                  if (caption === isMyCaption) status = "myCaption";
-                  else if (toggles[index] === true) status = "selected";
-                  else status = "default";
-                  return (
-                    // <Row className="text-center">
-                    <Button
-                      onClick={(event) => updateToggles(index)}
-                      style={{
-                        width: "357px",
-                        // height: 54,
-                        background: getBackgroundColor(status),
-                        borderRadius: 30,
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        color: "white",
-                        fontSize: 35,
-                        fontFamily: "Grandstander",
-                        fontWeight: "600",
-                        wordWrap: "break-word",
-                        //marginLeft: "2.5rem",
-                        marginTop: "4rem",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                      }}
-                    >
-                      {caption}
-                    </Button>
-                    // </Row>
-                  );
-                })}
-              </Col>
-            </Row>
-          )}
-        </Form>
-        <Row className="text-center">
-          <Col style={{ position: "relative" }}>
-            <div style={{ marginLeft: "-110px" }}>
-              <PolygonWhiteUpward />
-            </div>
-            <input
-              type="text"
-              style={{
-                width: "350px",
-                height: 56,
-                background: "#FFF",
-                borderRadius: 30,
-                paddingLeft: 24,
-                paddingRight: 24,
-                paddingTop: 6,
-                paddingBottom: 6,
-                color: "black",
-                fontSize: 30,
-                fontFamily: "Grandstander",
-                fontWeight: "700",
-                wordWrap: "break-word",
-                marginTop: "-1px",
-                border: "none",
-                outline: "none",
-                textAlign: "center",
-                marginRight: "auto",
-                marginLeft: "auto",
-              }}
-              value={userData.deckTitle}
-              readOnly
-            />
-          </Col>
-        </Row>
-      </Container>
+        </Container>
+      </div>
     </div>
-    </div>
- 
   );
 };
 export default VoteImage;
