@@ -4,7 +4,7 @@ import { getApiImagesHelper } from "./ApiHelper"
 const devURL = "http://localhost:4030"; //need captions-backend running locally in lh:4030
 const liveURL = "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev";
 const ec2URL = "https://cap1202sspm.capshnz.com";
-const baseURL = ec2URL;
+const baseURL = liveURL;
 const checkGameURL = baseURL+"/api/v2/checkGame"
 const checkEmailCodeURL = baseURL+"/api/v2/checkEmailValidationCode"
 const addUserURL = baseURL+"/api/v2/addUser"

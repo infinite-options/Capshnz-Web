@@ -40,10 +40,15 @@ export default function GooglePhotos() {
             Accept: "application/json",
             Authorization: "Bearer " + res.data.access_token,
           };
-          console.log(headers);
-          axios.get("https://photoslibrary.googleapis.com/v1/sharedAlbums", { headers: headers }).then((res) => {
-            setAlbums(res.data.sharedAlbums);
-          });
+
+          axios
+            .get("https://photoslibrary.googleapis.com/v1/sharedAlbums", { headers })
+            .then((resAlbums) => {
+              setAlbums(resAlbums.data.sharedAlbums);
+            })
+            .catch((err) => {
+              console.error("Failed to load shared albums:", err);
+            });
         });
     },
     onFailure: (response) => console.log(response),
@@ -59,7 +64,7 @@ export default function GooglePhotos() {
               className={selectedAlbum === entry.title ? "selectedGooglePhotos" : "buttonGooglePhotos"}
               onClick={() => {
                 setSelectedAlbum(entry.title);
-                getPhotos(entry);
+                getPhotos(entry, tokens.access_token);
               }}
             >
               {entry.title}
@@ -71,12 +76,17 @@ export default function GooglePhotos() {
     }
   };
 
-  function getPhotos(entry) {
+  function getPhotos(entry, accessToken) {
+    if (!accessToken) {
+      alert("Access token missing. Please log in again.");
+      return;
+    }
+
     setUserData({
       ...userData,
       googlePhotos: {
         albumId: entry.id,
-        accessToken: tokens.access_token,
+        accessToken: accessToken,
       },
     });
 
@@ -87,20 +97,34 @@ export default function GooglePhotos() {
 
     const headers = {
       Accept: "application/json",
-      Authorization: "Bearer " + tokens.access_token,
+      Authorization: "Bearer " + accessToken,
     };
 
-    axios.post(searchGooglePhotosURL, body, { headers: headers }).then((res) => {
-      let imageUrls = res.data.mediaItems.map((picture) => {
-        return picture.baseUrl;
+    axios
+      .post(searchGooglePhotosURL, body, { headers: headers })
+      .then((res) => {
+        let imageUrls = res.data.mediaItems.map((picture) => {
+          return picture.baseUrl;
+        });
+        setAlbumImages(imageUrls);
+      })
+      .catch((err) => {
+        console.error("Google Photos fetch error:", err.response || err);
+        alert("Failed to load photos. Please check Google account access.");
       });
-      setAlbumImages(imageUrls);
-    });
   }
 
   const submitAlbum = async () => {
     if (albumImages.length < userData.numOfRounds) {
-      alert("Please select an album with enough images for each round." + "\n" + "Total Images: " + albumImages.length + "\n" + "Total Rounds: " + userData.numOfRounds);
+      alert(
+        "Please select an album with enough images for each round." +
+          "\n" +
+          "Total Images: " +
+          albumImages.length +
+          "\n" +
+          "Total Rounds: " +
+          userData.numOfRounds
+      );
       return;
     }
     const updatedUserData = {

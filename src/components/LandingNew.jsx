@@ -30,23 +30,29 @@ const LandingNew = () => {
     else setInvalid(false);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!isInvalid) {
-      try {
-        const res = await addUserByEmail(email);
-        setCookie("email", email, { path: "/" });
-        const userData = {
-          ...res,
-          email: email,
-          playerUID: res.user_uid,
-        };
-        navigate("/EnterName", { state: userData });
-      } catch (err) {
-        console.error(err);
-      }
+const handleSubmit = async (event) => {
+  event.preventDefault();
+  console.log("Submit pressed. Email:", email, "Valid?", !isInvalid);
+
+  if (!isInvalid) {
+    try {
+      const res = await addUserByEmail(email);
+      console.log("API response:", res);
+
+      setCookie("email", email, { path: "/" });
+      const userData = {
+        ...res,
+        email: email,
+        playerUID: res.user_uid,
+      };
+      console.log("Navigating with userData:", userData);
+      navigate("/EnterName", { state: userData });
+    } catch (err) {
+      console.error("API error:", err);
     }
-  };
+  }
+};
+
 
   return (
     <div className='div-main'>

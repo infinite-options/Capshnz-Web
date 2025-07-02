@@ -48,9 +48,11 @@ const VoteImage = () => {
   const [isMyCaption, setIsMyCaption] = useState("");
   const [voteSubmitted, setVoteSubmitted] = useState(false);
   const [votedCaption, setvotedCaption] = useState(-1);
+  const isMounted = useRef(true);
   // const webWorker = new WebWorker(worker,  { type: "module" });
   // const webWorker = new WebWorker(worker,  { type: "module", data: { axios: Axios } });
-  const webWorker = new Worker(new URL("../workers/api-worker.js", import.meta.url));
+  const webWorker = useRef(new Worker(new URL("../workers/api-worker.js", import.meta.url)));
+
   // for timer
   const [remainingTime, setRemainingTime] = useState(10);
   const [isPageVisible, setPageVisibility] = useState(true);
@@ -178,42 +180,48 @@ const VoteImage = () => {
     navigate("/ScoreboardNew", { state: userData });
   }
 
-  useEffect(() => {
-    if (captions.length === 0 && cookies.userData.captions != undefined) {
-      setloadingImg(false);
-      setSubmittedCaptions(cookies.userData.captions);
-      isCaptionSubmitted.current = true;
-    }
 
+    
+    
+useEffect(() => {
     if (userData.host && cookies.userData.captions === undefined) {
-      async function getCaptions() {
-        const submittedCaptions = await getSubmittedCaptions(userData);
-
-        await publishWithPopup({
-          data: {
-            message: "Set Vote",
-            submittedCaptions: submittedCaptions,
-            roundNumber: userData.roundNumber,
-            imageURL: userData.imageURL,
-          },
-        });
-      }
-      getCaptions();
+    getCaptionsForHost();
     }
+    }, [userData]);
 
-    subscribe((event) => {
-      if (event.data.message === "Set Vote") {
-        isCaptionSubmitted.current = true;
-        setloadingImg(false);
-        setSubmittedCaptions(event.data.submittedCaptions);
-        console.log("Captions received:", event.data.submittedCaptions);
-      } else if (event.data.message === "Start ScoreBoard") {
-        handleNavigate();
-        // setCookie("userData", userData, { path: "/" });
-        // navigate("/ScoreboardNew", { state: userData });
-      }
-    });
-  }, [userData]);
+    async function getCaptionsForHost() {
+    const submittedCaptions = await getSubmittedCaptions(userData);
+    await publishWithPopup({
+     data: {
+      message: "Set Vote",
+      submittedCaptions: submittedCaptions,
+      roundNumber: userData.roundNumber,
+      imageURL: userData.imageURL,
+    },
+  });
+}
+
+
+useEffect(() => {
+  const voteEventHandler = (event) => {
+    if (event.data.message === "Set Vote") {
+      isCaptionSubmitted.current = true;
+      setloadingImg(false);
+      setSubmittedCaptions(event.data.submittedCaptions);
+      console.log("Captions received:", event.data.submittedCaptions);
+    } else if (event.data.message === "Start ScoreBoard") {
+      handleNavigate();
+    }
+  };
+
+  subscribe(voteEventHandler);
+
+  return () => {
+    unSubscribe(voteEventHandler);
+  };
+}, []);
+
+  
 
   const handleNavigate = () => {
     setCookie("userData", userData, { path: "/" });
@@ -246,23 +254,34 @@ const VoteImage = () => {
   useEffect(() => {
     localStorage.removeItem("user-caption");
     // localStorage.removeItem("minimize-time")
-    subscribe((event) => {
-      if (event.data.message === "EndGame vote") {
-        detach();
-        if (!userData.host && !isGameEnded.current) {
-          isGameEnded.current = true;
-          alert("Host has Ended the game");
-        }
-        const updatedUserData = {
-          ...userData,
-          scoreBoard: event.data.scoreBoard,
-        };
-        setUserData(updatedUserData);
-        setCookie("userData", updatedUserData, { path: "/" });
-        navigate("/FinalScore", { state: updatedUserData });
-      }
-    });
   }, []);
+   
+ useEffect(() => {
+    const endGameHandler = (event) => {
+    if (event.data.message === "EndGame vote") {
+      detach();
+      if (!userData.host && !isGameEnded.current) {
+        isGameEnded.current = true;
+        alert("Host has Ended the game");
+      }
+      const updatedUserData = {
+        ...userData,
+        scoreBoard: event.data.scoreBoard,
+      };
+      setUserData(updatedUserData);
+      setCookie("userData", updatedUserData, { path: "/" });
+      navigate("/FinalScore", { state: updatedUserData });
+    }
+  };
+
+  subscribe(endGameHandler);
+
+  return () => {
+    unSubscribe(endGameHandler);
+  };
+}, []);
+
+  
   async function getCaptionsForUser() {
     const submittedCaptions = await getSubmittedCaptions(userData);
 
@@ -333,6 +352,21 @@ const VoteImage = () => {
     };
     // }, [timeRemaining]);
   }, [remainingTime]);
+  useEffect(() => {
+  return () => {
+    isMounted.current = false;
+
+    if (webWorker.current) {
+      webWorker.current.postMessage("exit");
+      webWorker.current.terminate();
+    }
+
+    if (unSubscribe) {
+      unSubscribe();
+    }
+  };
+}, []);
+
   // useEffect(() => {
   //   const handleVisibilityChange = () => {
   //     if (document.hidden) {
