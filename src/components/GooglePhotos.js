@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -44,10 +44,21 @@ export default function GooglePhotos() {
           axios
             .get("https://photoslibrary.googleapis.com/v1/sharedAlbums", { headers })
             .then((resAlbums) => {
-              setAlbums(resAlbums.data.sharedAlbums);
+              if (
+                resAlbums.data &&
+                resAlbums.data.sharedAlbums &&
+                resAlbums.data.sharedAlbums.length > 0
+              ) {
+                console.log("Albums received:", resAlbums.data.sharedAlbums);
+                setAlbums(resAlbums.data.sharedAlbums);
+              } else {
+                console.warn("No shared albums found or malformed response:", resAlbums.data);
+                alert("No shared albums found in your Google Photos. Try sharing an album from your Google account first.");
+              }
             })
             .catch((err) => {
               console.error("Failed to load shared albums:", err);
+              alert("Failed to load albums. Please try again.");
             });
         });
     },
@@ -103,10 +114,15 @@ export default function GooglePhotos() {
     axios
       .post(searchGooglePhotosURL, body, { headers: headers })
       .then((res) => {
-        let imageUrls = res.data.mediaItems.map((picture) => {
-          return picture.baseUrl;
-        });
-        setAlbumImages(imageUrls);
+        if (res.data && res.data.mediaItems && res.data.mediaItems.length > 0) {
+          let imageUrls = res.data.mediaItems.map((picture) => picture.baseUrl);
+          console.log("Image URLs loaded:", imageUrls);
+          setAlbumImages(imageUrls);
+        } else {
+          console.warn("No media items found in album:", res.data);
+          alert("This album doesn't contain any images. Try another one.");
+          setAlbumImages([]);
+        }
       })
       .catch((err) => {
         console.error("Google Photos fetch error:", err.response || err);
@@ -141,7 +157,7 @@ export default function GooglePhotos() {
 
   return (
     <div className='googlephotos'>
-      <br></br>
+      <br />
       <div className='headerGooglePhotos'>
         {signedIn ? (
           <div>
@@ -159,15 +175,29 @@ export default function GooglePhotos() {
         )}
       </div>
       <div className='headerGooglePhotos'>{chooseAlbums()}</div>
+      {signedIn && albums.length === 0 && (
+        <p style={{ color: "red", marginTop: "10px" }}>
+          No shared albums available. Please make sure you have shared albums in your Google Photos account.
+        </p>
+      )}
       <div className='containerGooglePhotos'>
         {albumImages.map((url, index) => {
-          return <img key={index} className='imageGooglePhotos' src={url}></img>;
+          return (
+            <img
+              key={index}
+              className='imageGooglePhotos'
+              src={url}
+              alt={`photo-${index}`}
+              onError={(e) => {
+                e.target.style.display = "none";
+                console.warn("Failed to load image:", url);
+              }}
+            />
+          );
         })}
       </div>
       <br />
-      {selectedAlbum === "" ? (
-        ""
-      ) : (
+      {selectedAlbum !== "" && (
         <div>
           <Button className='selectedGooglePhotos' onClick={submitAlbum}>
             Continue
