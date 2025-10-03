@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+/* global google */
+
 // Load Google API scripts
 const loadGoogleScripts = () => {
   return new Promise((resolve) => {
