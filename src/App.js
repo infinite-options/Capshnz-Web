@@ -30,6 +30,7 @@ import CaptionNew from "./components/CaptionNew";
 import VoteImage from "./components/VoteImage";
 import ScoreboardNew from "./components/ScoreboardNew";
 import MidGameWaitingRoom from "./components/MidGameWaitingRoom";
+import OAuthCallback from "./components/OAuthCallback";
 
 export const ErrorContext = createContext();
 
@@ -71,6 +72,7 @@ export default function App() {
                 <Route path='/VoteImage' element={<VoteImage />} />
                 <Route path='/ScoreboardNew' element={<ScoreboardNew />} />
                 <Route path='/MidGameWaitingRoom' element={<MidGameWaitingRoom />} />
+                <Route path='/oauth2callback' element={<OAuthCallback />} />
               </Routes>
             </Router>
           </CookiesProvider>
