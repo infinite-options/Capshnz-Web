@@ -44,7 +44,7 @@ const OAuthCallback = () => {
       // Step A: Exchange code for tokens via backend
       let tokenResult;
       try {
-        const resp = await fetch('https://capshnz.com/api/oauth/token', {
+        const resp = await fetch('https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev/api/oauth/token', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code, state }),
