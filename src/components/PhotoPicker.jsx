@@ -137,6 +137,9 @@ const PhotoPicker = () => {
         console.log('🔑 API Key value:', process.env.REACT_APP_GOOGLE_API_KEY);
         console.log('🔑 Access Token (first 20 chars):', accessToken.substring(0, 20));
         console.log('🔑 Token Scopes:', tokenData.tokens.scope);
+        console.log('🔑 Token Type:', tokenData.tokens.token_type);
+        console.log('🔑 Expires In:', tokenData.tokens.expires_in);
+        console.log('🔑 Full Access Token:', accessToken);
     
     const pickerCallback = (data) => {
       console.log('📸 Picker callback triggered:', data);
