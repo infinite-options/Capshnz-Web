@@ -81,7 +81,7 @@ const PhotoPicker = () => {
         
         // Step 4: Create and show picker
         console.log('🎯 Creating picker with access token:', tokenData.tokens.access_token.substring(0, 20) + '...');
-        createPicker(tokenData.tokens.access_token, sessionIdParam);
+        createPicker(tokenData.tokens.access_token, sessionIdParam, tokenData);
         
       } catch (err) {
         setError('Failed to initialize photo picker: ' + err.message);
@@ -131,9 +131,12 @@ const PhotoPicker = () => {
     });
   };
 
-  const createPicker = (accessToken, sessionId) => {
+  const createPicker = (accessToken, sessionId, tokenData) => {
     console.log('🎨 Creating Google Picker...');
-    console.log('🔑 Using API Key:', process.env.REACT_APP_GOOGLE_API_KEY ? 'Set' : 'NOT SET');
+        console.log('🔑 Using API Key:', process.env.REACT_APP_GOOGLE_API_KEY ? 'Set' : 'NOT SET');
+        console.log('🔑 API Key value:', process.env.REACT_APP_GOOGLE_API_KEY);
+        console.log('🔑 Access Token (first 20 chars):', accessToken.substring(0, 20));
+        console.log('🔑 Token Scopes:', tokenData.tokens.scope);
     
     const pickerCallback = (data) => {
       console.log('📸 Picker callback triggered:', data);
