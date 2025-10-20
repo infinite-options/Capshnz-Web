@@ -8,7 +8,7 @@ import RoundType from "./components/RoundType";
 import ScoreType from "./components/ScoreType";
 
 import SelectDeck from "./components/SelectDeck";
-import GooglePhotos from "./components/GooglePhotos";
+//import GooglePhotos from "./components/GooglePhotos";
 
 import EndGame from "./components/EndGame";
 import CnnDeck from "./components/CnnDeck";
@@ -31,6 +31,7 @@ import VoteImage from "./components/VoteImage";
 import ScoreboardNew from "./components/ScoreboardNew";
 import MidGameWaitingRoom from "./components/MidGameWaitingRoom";
 import PhotoPicker from "./components/PhotoPicker";
+import GooglePhotosWithPicker from "./components/GooglePhotosWithPicker";
 
 export const ErrorContext = createContext();
 
@@ -56,7 +57,7 @@ export default function App() {
                 <Route path='/RoundType' element={<RoundType />} />
 
                 <Route path='/SelectDeck' element={<SelectDeck />} />
-                <Route path='/GooglePhotos' element={<GooglePhotos />} />
+                <Route path='/GooglePhotos' element={<GooglePhotosWithPicker />} />
 
                 <Route path='/EndGame' element={<EndGame />} />
                 <Route path='/CnnDeck' element={<CnnDeck />} />
