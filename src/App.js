@@ -8,7 +8,8 @@ import RoundType from "./components/RoundType";
 import ScoreType from "./components/ScoreType";
 
 import SelectDeck from "./components/SelectDeck";
-//import GooglePhotos from "./components/GooglePhotos";
+import GooglePhotos from "./components/GooglePhotos"; 
+import GooglePhotosWithPicker from "./components/GooglePhotosWithPicker";
 
 import EndGame from "./components/EndGame";
 import CnnDeck from "./components/CnnDeck";
@@ -30,8 +31,6 @@ import CaptionNew from "./components/CaptionNew";
 import VoteImage from "./components/VoteImage";
 import ScoreboardNew from "./components/ScoreboardNew";
 import MidGameWaitingRoom from "./components/MidGameWaitingRoom";
-import PhotoPicker from "./components/PhotoPicker";
-import GooglePhotosWithPicker from "./components/GooglePhotosWithPicker";
 
 export const ErrorContext = createContext();
 
@@ -57,7 +56,7 @@ export default function App() {
                 <Route path='/RoundType' element={<RoundType />} />
 
                 <Route path='/SelectDeck' element={<SelectDeck />} />
-                <Route path='/GooglePhotos' element={<GooglePhotosWithPicker />} />
+                <Route path='/GooglePhotos' element={<GooglePhotosWithPicker />} /> 
 
                 <Route path='/EndGame' element={<EndGame />} />
                 <Route path='/CnnDeck' element={<CnnDeck />} />
@@ -73,7 +72,6 @@ export default function App() {
                 <Route path='/VoteImage' element={<VoteImage />} />
                 <Route path='/ScoreboardNew' element={<ScoreboardNew />} />
                 <Route path='/MidGameWaitingRoom' element={<MidGameWaitingRoom />} />
-                <Route path='/photos/picker' element={<PhotoPicker />} />
               </Routes>
             </Router>
           </CookiesProvider>

@@ -1,5 +1,5 @@
 // src/components/GooglePhotosWithPicker.jsx
-// Google Photos Picker API - Session-Based Implementation (CORRECT)
+// Google Photos Picker API - Session-Based Implementation (FIXED)
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCookies } from "react-cookie";
@@ -22,13 +22,20 @@ const GooglePhotosWithPicker = () => {
   const [sessionId, setSessionId] = useState(null);
   const [polling, setPolling] = useState(false);
 
-  const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+  const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID || "336598290180-69pe1qeuqku450vnoi8v1ehhi19jhpmt.apps.googleusercontent.com";
+  
+  // Use localhost for development, production URL for deployed
+  const backendUrl = window.location.hostname === 'localhost' 
+    ? 'http://localhost:5000' 
+    : process.env.REACT_APP_SERVER_BASE_URI || window.location.origin;
+
+  console.log("Backend URL:", backendUrl);
 
   // Check if we have the required credentials
   useEffect(() => {
     if (!clientId) {
-      console.error("Missing REACT_APP_GOOGLE_CLIENT_ID in .env");
-      setError("Google Client ID missing. Please check your .env file.");
+      console.error("Missing REACT_APP_GOOGLE_CLIENT_ID");
+      setError("Google Client ID missing. Please check your configuration.");
     }
   }, [clientId]);
 
@@ -74,10 +81,10 @@ const GooglePhotosWithPicker = () => {
     setError(null);
 
     try {
-      // Step 1: Get OAuth token
+      // Step 1: Get OAuth token with BOTH picker and library permissions
       const tokenClient = window.google.accounts.oauth2.initTokenClient({
         client_id: clientId,
-        scope: "https://www.googleapis.com/auth/photospicker.mediaitems.readonly",
+        scope: "https://www.googleapis.com/auth/photoslibrary.readonly https://www.googleapis.com/auth/photospicker.mediaitems.readonly",
         callback: async (tokenResponse) => {
           if (tokenResponse.error) {
             console.error("❌ Token error:", tokenResponse);
@@ -86,10 +93,10 @@ const GooglePhotosWithPicker = () => {
             return;
           }
 
-          console.log("✅ Access token received");
+          console.log("✅ Access token received with both scopes");
           setAccessToken(tokenResponse.access_token);
           
-          // Step 2: Create a picker session
+          // Step 2: Create a picker session via backend
           await createPickerSession(tokenResponse.access_token);
         },
       });
@@ -102,29 +109,26 @@ const GooglePhotosWithPicker = () => {
     }
   };
 
-  // Create a Picker session
+  // Create a Picker session using backend
   const createPickerSession = async (token) => {
     try {
-      console.log("📸 Creating Picker session...");
+      console.log("📸 Creating Picker session via backend...");
+      console.log("Using backend URL:", backendUrl);
 
-      const response = await fetch(
-        "https://photospicker.googleapis.com/v1/sessions",
-        {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            // Optional configuration
-          }),
-        }
-      );
+      const response = await fetch(`${backendUrl}/api/photos/create-session`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          accessToken: token,
+        }),
+      });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("❌ Session creation failed:", errorText);
-        throw new Error("Failed to create picker session");
+        const errorData = await response.json();
+        console.error("❌ Session creation failed:", errorData);
+        throw new Error(errorData.error || "Failed to create picker session");
       }
 
       const sessionData = await response.json();
@@ -134,26 +138,28 @@ const GooglePhotosWithPicker = () => {
       const pickerUri = sessionData.pickerUri;
       
       setSessionId(pickerSessionId);
+      console.log("📌 Session ID saved:", pickerSessionId);
 
       // Step 3: Open the picker URL
-      openPickerWindow(pickerUri, token);
+      openPickerWindow(pickerUri, token, pickerSessionId);
 
     } catch (error) {
       console.error("❌ Error creating session:", error);
-      setError("Failed to initialize photo picker. Please try again.");
+      setError(`Failed to initialize photo picker: ${error.message}`);
       setIsLoadingPicker(false);
     }
   };
 
   // Open the Picker window
-  const openPickerWindow = (pickerUri, token) => {
+  const openPickerWindow = (pickerUri, token, sessionIdToUse) => {
     try {
       console.log("🖼️ Opening Picker window...");
+      console.log("Session ID:", sessionIdToUse);
+      console.log("Picker URI:", pickerUri);
       
-      // Open picker in a new window/tab
-      // Adding /autoclose will automatically close the window after selection
+      // Open picker in a new window
       const pickerWindow = window.open(
-        pickerUri + "/autoclose",
+        pickerUri,
         "PhotoPicker",
         "width=800,height=600,scrollbars=yes,resizable=yes"
       );
@@ -165,7 +171,7 @@ const GooglePhotosWithPicker = () => {
       }
 
       // Start polling the session
-      startPollingSession(token);
+      startPollingSession(token, sessionIdToUse);
 
     } catch (error) {
       console.error("❌ Error opening picker:", error);
@@ -175,10 +181,10 @@ const GooglePhotosWithPicker = () => {
   };
 
   // Poll the session to check if user has selected photos
-  const startPollingSession = async (token) => {
+  const startPollingSession = async (token, sessionIdToUse) => {
     setPolling(true);
     let attempts = 0;
-    const maxAttempts = 60; // Poll for up to 5 minutes (60 * 5 seconds)
+    const maxAttempts = 60;
 
     const pollInterval = setInterval(async () => {
       attempts++;
@@ -192,23 +198,23 @@ const GooglePhotosWithPicker = () => {
       }
 
       try {
-        console.log(`📊 Polling session... (attempt ${attempts})`);
+        console.log(`📊 Polling session ${sessionIdToUse}... (attempt ${attempts})`);
 
-        const response = await fetch(
-          `https://photospicker.googleapis.com/v1/sessions/${sessionId}`,
-          {
-            headers: {
-              "Authorization": `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${backendUrl}/api/photos/session/${sessionIdToUse}`, {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+        });
 
         if (!response.ok) {
+          const errorText = await response.text();
+          console.error("❌ Poll failed:", errorText);
           throw new Error("Failed to poll session");
         }
 
         const sessionData = await response.json();
-        console.log("Session status:", sessionData);
+        console.log(`📋 Session status (attempt ${attempts}):`, sessionData);
 
         // Check if mediaItemsSet is true
         if (sessionData.mediaItemsSet === true) {
@@ -217,7 +223,7 @@ const GooglePhotosWithPicker = () => {
           setPolling(false);
           
           // Fetch the selected media items
-          await fetchSelectedMediaItems(token);
+          await fetchSelectedMediaItems(token, sessionIdToUse);
         }
 
       } catch (error) {
@@ -225,24 +231,25 @@ const GooglePhotosWithPicker = () => {
         // Continue polling despite errors
       }
 
-    }, 5000); // Poll every 5 seconds
+    }, 3000); // Poll every 3 seconds
   };
 
   // Fetch selected media items
-  const fetchSelectedMediaItems = async (token) => {
+  const fetchSelectedMediaItems = async (token, sessionIdToUse) => {
     try {
-      console.log("📥 Fetching selected media items...");
+      console.log(`📥 Fetching selected media items from session: ${sessionIdToUse}`);
 
-      const response = await fetch(
-        `https://photospicker.googleapis.com/v1/sessions/${sessionId}/mediaItems`,
-        {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
-        }
-      );
+      const amazonApiUrl = "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev";
+      const response = await fetch(`${amazonApiUrl}/api/photos/picker/media?sessionId=${sessionIdToUse}`, {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+      });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error("❌ Fetch failed:", errorText);
         throw new Error("Failed to fetch media items");
       }
 
@@ -252,8 +259,9 @@ const GooglePhotosWithPicker = () => {
       if (data.mediaItems && data.mediaItems.length > 0) {
         // Extract photo URLs
         const photoUrls = data.mediaItems.map(item => {
-          // Get high-resolution URLs
-          return item.mediaItem.baseUrl + "=w2048-h2048";
+          // Use the baseUrl directly since the Amazon API should provide the correct format
+          const baseUrl = item.mediaItem?.baseUrl || item.baseUrl;
+          return baseUrl;
         });
 
         setSelectedPhotos(photoUrls);
@@ -264,13 +272,13 @@ const GooglePhotosWithPicker = () => {
 
     } catch (error) {
       console.error("❌ Error fetching media items:", error);
-      setError("Failed to load selected photos. Please try again.");
+      setError(`Failed to load selected photos: ${error.message}`);
     } finally {
       setIsLoadingPicker(false);
     }
   };
 
-  // Submit selected photos
+  // Limit number of selected photos
   const submitPhotos = () => {
     if (selectedPhotos.length < userData.numOfRounds) {
       alert(
@@ -338,7 +346,7 @@ const GooglePhotosWithPicker = () => {
                 outline: "none",
                 textAlign: "center",
               }}
-              value="Google Photos"
+              value="Google Photos Picker"
               readOnly
             />
           </Col>
@@ -347,7 +355,7 @@ const GooglePhotosWithPicker = () => {
         {error && (
           <Row className="text-center mb-3">
             <Col>
-              <Alert variant="danger" style={{ fontFamily: "Grandstander" }}>
+              <Alert variant="danger" style={{ fontFamily: "Grandstander", maxWidth: "500px", margin: "0 auto" }}>
                 {error}
               </Alert>
             </Col>
@@ -365,7 +373,7 @@ const GooglePhotosWithPicker = () => {
                   color: "#333",
                 }}
               >
-                Select photos from your Google Photos library
+                Select photos directly from your Google Photos library
               </p>
               <Button
                 onClick={startPhotoPicker}
@@ -394,7 +402,7 @@ const GooglePhotosWithPicker = () => {
                     {polling ? "Waiting for selection..." : "Loading..."}
                   </>
                 ) : (
-                  "Select Photos"
+                  "Open Photo Picker"
                 )}
               </Button>
               {polling && (
@@ -455,7 +463,7 @@ const GooglePhotosWithPicker = () => {
                       }}
                       onError={(e) => {
                         console.error("❌ Image failed to load:", url);
-                        e.target.style.display = "none";
+                        e.target.style.border = "2px solid red";
                       }}
                     />
                   ))}
