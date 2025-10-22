@@ -192,6 +192,42 @@ app.get('/api/photos/session/:sessionId/mediaItems', async (req, res) => {
   }
 });
 
+// Proxy an image URL through the backend so the browser can fetch images that require
+// an Authorization header (Google Photos baseUrls often require auth and return 403).
+// Usage: /api/photos/proxy-image?url=<encoded_url>&token=<accessToken>
+app.get('/api/photos/proxy-image', async (req, res) => {
+  try {
+    const url = req.query.url;
+    const token = req.query.token || req.headers.authorization?.replace('Bearer ', '');
+
+    if (!url) {
+      return res.status(400).json({ error: 'Missing url query parameter' });
+    }
+
+    console.log('🔁 Proxying image URL:', url);
+
+    const response = await axios.get(url, {
+      responseType: 'stream',
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      // allow redirects
+      maxRedirects: 5,
+    });
+
+    // Forward content-type from upstream
+    const contentType = response.headers['content-type'] || 'application/octet-stream';
+    res.setHeader('Content-Type', contentType);
+    // Cache images for a short time
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+
+    response.data.pipe(res);
+  } catch (error) {
+    console.error('❌ Error proxying image:', error.response?.status, error.response?.data || error.message);
+    const status = error.response?.status || 500;
+    const message = error.response?.data || error.message || 'Failed to proxy image';
+    res.status(status).json({ error: message });
+  }
+});
+
 // ========== STATIC FILES & ROUTES ==========
 
 app.use(express.static(path.join(__dirname, 'build')));

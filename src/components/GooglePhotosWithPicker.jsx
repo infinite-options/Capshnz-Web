@@ -257,15 +257,46 @@ const GooglePhotosWithPicker = () => {
       console.log("✅ Media items received:", data);
 
       if (data.mediaItems && data.mediaItems.length > 0) {
-        // Extract photo URLs
+        // Build usable photo URLs. Prefer proxy-provided 'url' when available.
         const photoUrls = data.mediaItems.map(item => {
-          // Use the baseUrl directly since the Amazon API should provide the correct format
-          const baseUrl = item.mediaItem?.baseUrl || item.baseUrl;
-          return baseUrl;
-        });
+          // Possible fields returned by proxy/server: item.url, item.mediaItem.baseUrl, item.baseUrl, item.mediaFile.baseUrl
+          let url = item.url || item.mediaItem?.baseUrl || item.baseUrl || item.mediaFile?.baseUrl;
 
-        setSelectedPhotos(photoUrls);
-        console.log(`✅ Loaded ${photoUrls.length} photos`);
+          if (!url) return null;
+
+          // Ensure https
+          if (url.startsWith('http://')) {
+            url = url.replace('http://', 'https://');
+          }
+
+          // If this looks like a Google Photos baseUrl (no query params), append sizing to get an image
+          // Google Photos baseUrls are typically like: https://lh3.googleusercontent.com/....
+          if (!url.includes('=') && (url.includes('googleusercontent') || url.includes('photoslibrary.googleapis.com') || url.includes('lh3.googleusercontent'))) {
+            // Append sizing param for Google baseUrl
+            const sized = url + "=w2048-h2048";
+
+            // In dev, route through local backend proxy to attach Authorization header and avoid 403
+            if (backendUrl.includes('localhost') || backendUrl.includes('127.0.0.1')) {
+              const proxied = `${backendUrl}/api/photos/proxy-image?url=${encodeURIComponent(sized)}&token=${token}`;
+              url = proxied;
+            } else {
+              // Production: rely on proxy (Amazon) to provide view URLs; use sized URL directly
+              url = sized;
+            }
+          }
+
+          // Log final URL for debugging
+          console.log('🔗 Final photo URL:', url);
+
+          return url;
+        }).filter(Boolean);
+
+        if (photoUrls.length === 0) {
+          setError("No usable photo URLs returned from proxy.");
+        } else {
+          setSelectedPhotos(photoUrls);
+          console.log(`✅ Loaded ${photoUrls.length} photos`);
+        }
       } else {
         setError("No photos were selected.");
       }
