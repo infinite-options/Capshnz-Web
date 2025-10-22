@@ -93,7 +93,7 @@ const GooglePhotosWithPicker = () => {
             return;
           }
 
-          console.log("✅ Access token received with both scopes");
+          console.log("✅ Access token received");
           setAccessToken(tokenResponse.access_token);
           
           // Step 2: Create a picker session via backend
@@ -311,9 +311,9 @@ const GooglePhotosWithPicker = () => {
 
   // Limit number of selected photos
   const submitPhotos = () => {
-    if (selectedPhotos.length < userData.numOfRounds) {
+    if (selectedPhotos.length <= userData.numOfRounds) {
       alert(
-        `Please select at least ${userData.numOfRounds} images for your game.\n\nCurrently selected: ${selectedPhotos.length} photo(s)`
+        `Please select more than ${userData.numOfRounds} images for your game.\n\nCurrently selected: ${selectedPhotos.length} photo(s)`
       );
       return;
     }
@@ -433,7 +433,7 @@ const GooglePhotosWithPicker = () => {
                     {polling ? "Waiting for selection..." : "Loading..."}
                   </>
                 ) : (
-                  "Open Photo Picker"
+                  "Select Photos"
                 )}
               </Button>
               {polling && (
@@ -460,7 +460,7 @@ const GooglePhotosWithPicker = () => {
                   Selected {selectedPhotos.length} photo(s)
                   <br />
                   <small style={{ fontSize: "16px", fontWeight: "400", color: "#666" }}>
-                    (Need at least {userData.numOfRounds} for your game)
+                    (Need at least {userData.numOfRounds + 1} for your game)
                   </small>
                 </p>
               </Col>
@@ -522,7 +522,7 @@ const GooglePhotosWithPicker = () => {
                     cursor: selectedPhotos.length >= userData.numOfRounds ? "pointer" : "not-allowed",
                   }}
                 >
-                  Continue to Game ({selectedPhotos.length} selected)
+                  Continue to Game
                 </Button>
               </Col>
             </Row>

@@ -136,7 +136,7 @@ export default function GooglePhotos() {
   };
 
   const submitPhotos = async () => {
-    if (allPhotos.length < userData.numOfRounds) {
+    if (allPhotos.length <= userData.numOfRounds) {
       alert(
         `You need at least ${userData.numOfRounds} photos for your game.\n\n` +
         `Currently loaded: ${allPhotos.length} photo(s)\n\n` +
