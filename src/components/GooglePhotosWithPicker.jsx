@@ -22,8 +22,8 @@ const GooglePhotosWithPicker = () => {
   const [sessionId, setSessionId] = useState(null);
   const [polling, setPolling] = useState(false);
 
-  const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID || "336598290180-69pe1qeuqku450vnoi8v1ehhi19jhpmt.apps.googleusercontent.com";
-  
+  const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+
   // Use localhost for development, production URL for deployed
   const backendUrl = window.location.hostname === 'localhost' 
     ? 'http://localhost:5000' 

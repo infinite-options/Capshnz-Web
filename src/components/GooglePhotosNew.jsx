@@ -17,8 +17,8 @@ const GooglePhotosNew = () => {
   const [selectedAlbum, setSelectedAlbum] = useState("");
   const [albumImages, setAlbumImages] = useState([]);
   const searchGooglePhotosURL = "https://photoslibrary.googleapis.com/v1/mediaItems:search";
-  const clientID = "336598290180-69pe1qeuqku450vnoi8v1ehhi19jhpmt.apps.googleusercontent.com";
-  const clientSecret = "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";
+  const clientID = REACT_APP_GOOGLE_CLIENT_ID;
+  const clientSecret = REACT_APP_GOOGLE_CLIENT_SECRET;
 
   const login = useGoogleLogin({
     flow: "auth-code",

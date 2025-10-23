@@ -43,7 +43,7 @@ export default function App() {
     <div className='app'>
       <ErrorContext.Provider value={{ setShow, setOnRetry, setTitle, setDescription }}>
         <ApiError show={show} onRetry={onRetry} title={title} description={description} />
-        <GoogleOAuthProvider clientId='336598290180-69pe1qeuqku450vnoi8v1ehhi19jhpmt.apps.googleusercontent.com'>
+        <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
           <CookiesProvider>
             <Router>
               <Routes>

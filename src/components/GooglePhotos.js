@@ -22,8 +22,8 @@ export default function GooglePhotos() {
   const [error, setError] = useState(null);
   const [loadingPhotos, setLoadingPhotos] = useState(false);
   
-  const clientID = "336598290180-69pe1qeuqku450vnoi8v1ehhi19jhpmt.apps.googleusercontent.com";
-  const clientSecret = "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";
+  const clientID = REACT_APP_GOOGLE_CLIENT_ID;
+  const clientSecret = REACT_APP_GOOGLE_CLIENT_SECRET;
 
   const login = useGoogleLogin({
     flow: "auth-code",
