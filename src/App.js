@@ -8,7 +8,6 @@ import RoundType from "./components/RoundType";
 import ScoreType from "./components/ScoreType";
 
 import SelectDeck from "./components/SelectDeck";
-import GooglePhotos from "./components/GooglePhotos"; 
 import GooglePhotosWithPicker from "./components/GooglePhotosWithPicker";
 
 import EndGame from "./components/EndGame";

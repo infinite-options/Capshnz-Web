@@ -223,7 +223,7 @@ app.get('/api/photos/proxy-image', async (req, res) => {
   } catch (error) {
     console.error('❌ Error proxying image:', error.response?.status, error.response?.data || error.message);
     const status = error.response?.status || 500;
-    const message = error.response?.data || error.message || 'Failed to proxy image';
+    const message = error.response?.data || error.message || 'Failed to get image';
     res.status(status).json({ error: message });
   }
 });

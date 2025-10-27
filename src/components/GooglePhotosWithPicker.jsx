@@ -25,10 +25,9 @@ const GooglePhotosWithPicker = () => {
   const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
   // Use localhost for development, production URL for deployed
-  const backendUrl = window.location.hostname === 'localhost' 
-    ? 'http://localhost:5000' 
-    : process.env.REACT_APP_SERVER_BASE_URI || window.location.origin;
-
+   const backendUrl = process.env.NODE_ENV === 'production' 
+    ? 'https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev'
+    : 'http://localhost:4030';
   console.log("Backend URL:", backendUrl);
 
   // Check if we have the required credentials
@@ -436,11 +435,7 @@ const GooglePhotosWithPicker = () => {
                   "Select Photos"
                 )}
               </Button>
-              {polling && (
-                <p style={{ fontFamily: "Grandstander", fontSize: "14px", color: "#666", marginTop: "1rem" }}>
-                  Select your photos in the popup window. This page will update automatically.
-                </p>
-              )}
+              
             </div>
           </Col>
         </Row>

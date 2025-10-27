@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+/*import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -158,4 +158,4 @@ const GooglePhotosNew = () => {
   );
 };
 
-export default GooglePhotosNew;
+export default GooglePhotosNew;*/

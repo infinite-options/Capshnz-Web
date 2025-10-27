@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+/*import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -23,7 +23,7 @@ export default function GooglePhotos() {
   const [loadingPhotos, setLoadingPhotos] = useState(false);
   
   const clientID = REACT_APP_GOOGLE_CLIENT_ID;
-  const clientSecret = REACT_APP_GOOGLE_CLIENT_SECRET;
+  //const clientSecret = REACT_APP_GOOGLE_CLIENT_SECRET;
 
   const login = useGoogleLogin({
     flow: "auth-code",
@@ -367,4 +367,4 @@ export default function GooglePhotos() {
       </Container>
     </div>
   );
-}
+}*/
