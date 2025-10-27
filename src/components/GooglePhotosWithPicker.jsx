@@ -93,6 +93,7 @@ const GooglePhotosWithPicker = () => {
           }
 
           console.log("✅ Access token received");
+          console.log("Access Token:", tokenResponse.access_token);
           setAccessToken(tokenResponse.access_token);
           
           // Step 2: Create a picker session via backend
