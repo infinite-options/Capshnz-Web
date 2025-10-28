@@ -1,5 +1,4 @@
 // src/components/GooglePhotosWithPicker.jsx
-// Google Photos Picker API - Session-Based Implementation (FIXED)
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCookies } from "react-cookie";
@@ -8,7 +7,6 @@ import { ReactComponent as Polygon } from "../assets/Polygon 1.svg";
 import { ReactComponent as CloseButton } from "../assets/close-button.svg";
 
 const GooglePhotosWithPicker = () => {
-  console.log("In GooglePhotosWithPicker - Session-Based Picker API");
   const navigate = useNavigate();
   const location = useLocation();
   const [userData, setUserData] = useState(location.state);
@@ -23,11 +21,8 @@ const GooglePhotosWithPicker = () => {
   const [polling, setPolling] = useState(false);
 
   const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-
-  // Use localhost for development, production URL for deployed
-   const backendUrl = process.env.NODE_ENV === 'production' 
-    ? 'https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev'
-    : 'http://localhost:4030';
+  const backendUrl = 'https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev';
+  
   console.log("Backend URL:", backendUrl);
 
   // Check if we have the required credentials
@@ -93,7 +88,24 @@ const GooglePhotosWithPicker = () => {
           }
 
           console.log("✅ Access token received");
-          console.log("Access Token:", tokenResponse.access_token);
+          console.log("🔍 Token scopes granted:", tokenResponse.scope);
+          console.log("🔑 Access token: ", tokenResponse.access_token.substring(0, 20));
+          
+          // Check what scopes were actually granted
+          const grantedScopes = tokenResponse.scope || "";
+          const hasLibraryScope = grantedScopes.includes("photoslibrary.readonly");
+          const hasPickerScope = grantedScopes.includes("photospicker.mediaitems.readonly");
+          
+          console.log("📋 Has library scope:", hasLibraryScope);
+          console.log("📋 Has picker scope:", hasPickerScope);
+          
+          if (!hasLibraryScope) {
+            console.error("❌ MISSING LIBRARY SCOPE! User didn't grant photoslibrary.readonly permission");
+            setError("You need to grant permission to view your Google Photos. Please try again and make sure to check BOTH permission boxes.");
+            setIsLoadingPicker(false);
+            return;
+          }
+          
           setAccessToken(tokenResponse.access_token);
           
           // Step 2: Create a picker session via backend
@@ -239,8 +251,8 @@ const GooglePhotosWithPicker = () => {
     try {
       console.log(`📥 Fetching selected media items from session: ${sessionIdToUse}`);
 
-      const amazonApiUrl = "https://bmarz6chil.execute-api.us-west-1.amazonaws.com/dev";
-      const response = await fetch(`${amazonApiUrl}/api/photos/picker/media?sessionId=${sessionIdToUse}`, {
+      // Use the session-based endpoint that already exists on AWS
+      const response = await fetch(`${backendUrl}/api/photos/session/${sessionIdToUse}/mediaItems`, {
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -248,19 +260,30 @@ const GooglePhotosWithPicker = () => {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("❌ Fetch failed:", errorText);
-        throw new Error("Failed to fetch media items");
+        let errorText;
+        try {
+          const errorData = await response.json();
+          console.error("❌ Fetch failed:", errorData);
+          errorText = errorData.error || errorData.message || "Failed to fetch media items";
+          
+          // Show helpful message for permission errors
+          if (response.status === 403) {
+            errorText = "Permission denied";
+          }
+        } catch (e) {
+          errorText = await response.text();
+          console.error("❌ Fetch failed (raw):", errorText);
+        }
+        throw new Error(errorText);
       }
 
       const data = await response.json();
       console.log("✅ Media items received:", data);
 
       if (data.mediaItems && data.mediaItems.length > 0) {
-        // Build usable photo URLs. Prefer proxy-provided 'url' when available.
+        // Build usable photo URLs
         const photoUrls = data.mediaItems.map(item => {
-          // Possible fields returned by proxy/server: item.url, item.mediaItem.baseUrl, item.baseUrl, item.mediaFile.baseUrl
-          let url = item.url || item.mediaItem?.baseUrl || item.baseUrl || item.mediaFile?.baseUrl;
+          let url = item.url || item.baseUrl || item.mediaFile?.baseUrl;
 
           if (!url) return null;
 
@@ -269,30 +292,17 @@ const GooglePhotosWithPicker = () => {
             url = url.replace('http://', 'https://');
           }
 
-          // If this looks like a Google Photos baseUrl (no query params), append sizing to get an image
-          // Google Photos baseUrls are typically like: https://lh3.googleusercontent.com/....
-          if (!url.includes('=') && (url.includes('googleusercontent') || url.includes('photoslibrary.googleapis.com') || url.includes('lh3.googleusercontent'))) {
-            // Append sizing param for Google baseUrl
-            const sized = url + "=w2048-h2048";
-
-            // In dev, route through local backend proxy to attach Authorization header and avoid 403
-            if (backendUrl.includes('localhost') || backendUrl.includes('127.0.0.1')) {
-              const proxied = `${backendUrl}/api/photos/proxy-image?url=${encodeURIComponent(sized)}&token=${token}`;
-              url = proxied;
-            } else {
-              // Production: rely on proxy (Amazon) to provide view URLs; use sized URL directly
-              url = sized;
-            }
+          // Add sizing parameter for Google Photos URLs
+          if (!url.includes('=') && url.includes('googleusercontent')) {
+            url = url + "=w2048-h2048";
           }
 
-          // Log final URL for debugging
           console.log('🔗 Final photo URL:', url);
-
           return url;
         }).filter(Boolean);
 
         if (photoUrls.length === 0) {
-          setError("No usable photo URLs returned from proxy.");
+          setError("No usable photo URLs returned.");
         } else {
           setSelectedPhotos(photoUrls);
           console.log(`✅ Loaded ${photoUrls.length} photos`);
@@ -309,7 +319,7 @@ const GooglePhotosWithPicker = () => {
     }
   };
 
-  // Limit number of selected photos
+  // Submit photos to game
   const submitPhotos = () => {
     if (selectedPhotos.length <= userData.numOfRounds) {
       alert(
@@ -436,7 +446,11 @@ const GooglePhotosWithPicker = () => {
                   "Select Photos"
                 )}
               </Button>
-              
+              {polling && (
+                <p style={{ fontFamily: "Grandstander", fontSize: "14px", color: "#666", marginTop: "1rem" }}>
+                  Select your photos in the popup window. This page will update automatically.
+                </p>
+              )}
             </div>
           </Col>
         </Row>
